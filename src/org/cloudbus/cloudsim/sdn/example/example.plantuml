@@ -1,0 +1,351 @@
+@startuml
+
+title __EXAMPLE's Class Diagram__\n
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.LogPrinter {
+              {static} + fFloat : String
+              {static} + fInt : String
+              {static} + fString : String
+              {static} + indent : String
+              {static} + tabSize : String
+              {static} - finishTime : double
+              {static} - startTime : double
+              {static} + printCloudletList()
+              {static} + printEnergyConsumption()
+              {static} + printGroupStatistics()
+              {static} + printWorkloadList()
+              {static} - printCloudlet()
+              {static} - printHostUtilizationHistory()
+              {static} - printRequest()
+              {static} - printRequestTitle()
+              {static} - printSwitchUtilizationHistory()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.SDNBroker {
+              {static} + appId : int
+              - applicationFileName : String
+              - cloudletList : List<Cloudlet>
+              - workloadFileNames : List<String>
+              - workloads : List<Workload>
+              + SDNBroker()
+              + getCloudletReceivedList()
+              + getWorkloads()
+              + processEvent()
+              + shutdownEntity()
+              + startEntity()
+              + submitDeployApplication()
+              + submitRequests()
+              - applicationSubmitCompleted()
+              - processVmCreate()
+              - requestCompleted()
+              - scheduleRequest()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.SDNExample {
+              {static} # deploymentFile : String
+              {static} # maxHostHandler : PowerUtilizationMaxHostInterface
+              {static} # nos : NetworkOperatingSystem
+              {static} # physicalTopologyFile : String
+              {static} # workload_files : String[]
+              {static} # workloads : List<String>
+              {static} ~ WORKLOAD_GROUP_FILENAME : String
+              {static} ~ WORKLOAD_GROUP_FILENAME_BG : String
+              {static} ~ WORKLOAD_GROUP_NUM : int
+              {static} ~ WORKLOAD_GROUP_PRIORITY : int
+              {static} - logEnabled : boolean
+              {static} + main()
+              {static} + printArguments()
+              {static} + submitGroupWorkloads()
+              {static} + submitWorkloads()
+              {static} # createBroker()
+              {static} # createSDNDatacenter()
+              {static} - printUsage()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          enum VmAllocationPolicyEnum {
+            CombLFF
+            CombMFF
+            LFF
+            MFF
+            MipLFF
+            MipMFF
+            OverLFF
+            OverMFF
+            Overbooking
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          interface org.cloudbus.cloudsim.sdn.example.SDNExample.VmAllocationPolicyFactory {
+              {abstract} + create()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.SimpleNetworkOperatingSystem {
+              ~ i : int
+              + SimpleNetworkOperatingSystem()
+              + deployApplication()
+              + deployFlow()
+              + processVmCreateAck()
+              # deployMiddlebox()
+              - buildForwardingTables()
+              - selectLinkByChannelCount()
+              - selectLinkByDestination()
+              - selectLinkByFlow()
+              - selectLinkFirst()
+              - selectLinkRandom()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.VmAllocationPolicyCombinedLeastFullFirst {
+              + VmAllocationPolicyCombinedLeastFullFirst()
+              + allocateHostForVm()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.VmAllocationPolicyCombinedMostFullFirst {
+              # hostTotalBw : double
+              # hostTotalMips : double
+              # hostTotalPes : int
+              # maxNumHostsUsed : int
+              - freeBw : List<Long>
+              - freeMips : List<Long>
+              - freePes : List<Integer>
+              - usedBw : Map<String, Long>
+              - usedMips : Map<String, Long>
+              - usedPes : Map<String, Integer>
+              - vmTable : Map<String, Host>
+              + VmAllocationPolicyCombinedMostFullFirst()
+              + allocateHostForVm()
+              + allocateHostForVm()
+              + deallocateHostForVm()
+              + getHost()
+              + getHost()
+              + getMaxNumHostsUsed()
+              + getVmTable()
+              + optimizeAllocation()
+              # convertWeightedMetric()
+              # getFreeBw()
+              # getFreeMips()
+              # getFreePes()
+              # getUsedBw()
+              # getUsedMips()
+              # getUsedPes()
+              # logMaxNumHostsUsed()
+              # setFreeBw()
+              # setFreeMips()
+              # setFreePes()
+              # setUsedBw()
+              # setUsedMips()
+              # setUsedPes()
+              # setVmTable()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.VmAllocationPolicyMipsLeastFullFirst {
+              + VmAllocationPolicyMipsLeastFullFirst()
+              + allocateHostForVm()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.VmAllocationPolicyMipsMostFullFirst {
+              + VmAllocationPolicyMipsMostFullFirst()
+              + allocateHostForVm()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.VmSchedulerSpaceSharedEnergy {
+              - freePes : List<Pe>
+              - peAllocationMap : Map<String, List<Pe>>
+              {static} - powerOffDuration : double
+              - utilizationHistories : List<HistoryEntry>
+              + VmSchedulerSpaceSharedEnergy()
+              + allocatePesForVm()
+              + deallocatePesForVm()
+              + getUtilizationEnergyConsumption()
+              + getUtilizationHisotry()
+              + getUtilizationTotalMips()
+              # getFreePes()
+              # getPeAllocationMap()
+              # setAvailableMips()
+              # setFreePes()
+              # setPeAllocationMap()
+              - addUtilizationEntry()
+              - calculatePower()
+              - getTotalMips()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.VmSchedulerSpaceSharedEnergy.HistoryEntry {
+              + startTime : double
+              + usedMips : double
+              ~ HistoryEntry()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.Workload {
+              + appId : int
+              + submitPktSize : int
+              + submitVmId : int
+              + time : double
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          class org.cloudbus.cloudsim.sdn.example.WorkloadParser {
+              - allCloudlets : List<Cloudlet>
+              {static} - cloudletId : int
+              - file : String
+              - flowNames : Map<String, Integer>
+              - lastCloudlets : List<Cloudlet>
+              {static} - reqId : int
+              - userId : int
+              - vmNames : Map<String, Integer>
+              - workloads : List<Workload>
+              + WorkloadParser()
+              + getAllCloudlets()
+              + getLastCloudlets()
+              + getWorkloads()
+              - generateCloudlet()
+              - getVmId()
+              - parseRequest()
+              - startParsing()
+          }
+        }
+      }
+    }
+  }
+  
+
+  org.cloudbus.cloudsim.sdn.example.SDNBroker -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.cloudbus.cloudsim.sdn.example.SDNBroker o-- org.cloudbus.cloudsim.sdn.SDNDatacenter : datacenter
+  org.cloudbus.cloudsim.sdn.example.SDNExample +-down- org.cloudbus.cloudsim.sdn.example.SDNExample.VmAllocationPolicyEnum
+  org.cloudbus.cloudsim.sdn.example.SDNExample +-down- org.cloudbus.cloudsim.sdn.example.SDNExample.VmAllocationPolicyFactory
+  org.cloudbus.cloudsim.sdn.example.SimpleNetworkOperatingSystem -up-|> org.cloudbus.cloudsim.sdn.NetworkOperatingSystem
+  org.cloudbus.cloudsim.sdn.example.VmAllocationPolicyCombinedLeastFullFirst -up-|> org.cloudbus.cloudsim.sdn.example.VmAllocationPolicyCombinedMostFullFirst
+  org.cloudbus.cloudsim.sdn.example.VmAllocationPolicyCombinedMostFullFirst -up-|> org.cloudbus.cloudsim.VmAllocationPolicy
+  org.cloudbus.cloudsim.sdn.example.VmAllocationPolicyMipsLeastFullFirst -up-|> org.cloudbus.cloudsim.sdn.example.VmAllocationPolicyCombinedMostFullFirst
+  org.cloudbus.cloudsim.sdn.example.VmAllocationPolicyMipsMostFullFirst -up-|> org.cloudbus.cloudsim.sdn.example.VmAllocationPolicyCombinedMostFullFirst
+  org.cloudbus.cloudsim.sdn.example.VmSchedulerSpaceSharedEnergy -up-|> org.cloudbus.cloudsim.VmScheduler
+  org.cloudbus.cloudsim.sdn.example.VmSchedulerSpaceSharedEnergy +-down- org.cloudbus.cloudsim.sdn.example.VmSchedulerSpaceSharedEnergy.HistoryEntry
+  org.cloudbus.cloudsim.sdn.example.Workload o-- org.cloudbus.cloudsim.sdn.Request : request
+  org.cloudbus.cloudsim.sdn.example.WorkloadParser o-- org.cloudbus.cloudsim.UtilizationModel : utilizationModel
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

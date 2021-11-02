@@ -1,0 +1,307 @@
+@startuml
+
+title __DIALOG's Class Diagram__\n
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.About {
+          + About()
+          + initUI()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddActuator {
+          - actuatorName : JTextField
+          - actuatorType : JTextField
+          {static} - serialVersionUID : long
+          + AddActuator()
+          {static} + setUIFont()
+          - createButtonPanel()
+          - createInputPanelArea()
+          - prompt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddActuatorModule {
+          - actuatorType : JTextField
+          {static} - serialVersionUID : long
+          + AddActuatorModule()
+          {static} + setUIFont()
+          - createButtonPanel()
+          - createInputPanelArea()
+          - prompt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddAppEdge {
+          {static} - serialVersionUID : long
+          - sourceNode : JComboBox
+          - targetNode : JComboBox
+          - tupleCpuLen : JTextField
+          - tupleNwLen : JTextField
+          - tupleType : JTextField
+          + AddAppEdge()
+          - createButtonPanel()
+          - createInputPanel()
+          - prompt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddApplicationModule {
+          {static} - serialVersionUID : long
+          - tfName : JTextField
+          + AddApplicationModule()
+          {static} + setUIFont()
+          - createButtonPanel()
+          - createInputPanelArea()
+          - prompt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddFogDevice {
+          - deviceName : JTextField
+          - deviceNameLabel : JLabel
+          - downBw : JTextField
+          - downBwLabel : JLabel
+          - level : JTextField
+          - levelLabel : JLabel
+          - mips : JTextField
+          - mipsLabel : JLabel
+          - ram : JTextField
+          - ramLabel : JLabel
+          - rate : JTextField
+          - rateLabel : JLabel
+          {static} - serialVersionUID : long
+          - upBw : JTextField
+          - upBwLabel : JLabel
+          + AddFogDevice()
+          {static} + setUIFont()
+          - createButtonPanel()
+          - createInputPanelArea()
+          - prompt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddLink {
+          {static} - serialVersionUID : long
+          - sourceNode : JComboBox
+          - targetNode : JComboBox
+          - tfLatency : JTextField
+          + AddLink()
+          - createButtonPanel()
+          - createInputPanel()
+          - prompt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddPhysicalEdge {
+          {static} - serialVersionUID : long
+          - sourceNode : JComboBox
+          - targetNode : JComboBox
+          - tfLatency : JTextField
+          + AddPhysicalEdge()
+          - createButtonPanel()
+          - createInputPanel()
+          - prompt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddPhysicalNode {
+          - cType : JComboBox
+          - lBw : JLabel
+          - lName : JLabel
+          - lType : JLabel
+          - lop1 : JLabel
+          - lop2 : JLabel
+          - lop3 : JLabel
+          - lop4 : JLabel
+          {static} - serialVersionUID : long
+          - tfBw : JTextField
+          - tfName : JTextField
+          - top1 : JTextField
+          - top2 : JTextField
+          - top3 : JTextField
+          - top4 : JTextField
+          + AddPhysicalNode()
+          {static} + setUIFont()
+          - createButtonPanel()
+          - createInputPanelArea()
+          - getType()
+          - prompt()
+          - updatePanel()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddSensor {
+          - deterministicValue : JTextField
+          - distribution : JComboBox
+          - normalMean : JTextField
+          - normalStdDev : JTextField
+          - sensorName : JTextField
+          - sensorType : JTextField
+          {static} - serialVersionUID : long
+          - uniformLowerBound : JTextField
+          - uniformUpperBound : JTextField
+          + AddSensor()
+          {static} + setUIFont()
+          # updatePanel()
+          - createButtonPanel()
+          - createInputPanelArea()
+          - prompt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddSensorModule {
+          - sensorType : JTextField
+          {static} - serialVersionUID : long
+          + AddSensorModule()
+          {static} + setUIFont()
+          - createButtonPanel()
+          - createInputPanelArea()
+          - prompt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddVirtualEdge {
+          {static} - serialVersionUID : long
+          - sourceNode : JComboBox
+          - targetNode : JComboBox
+          - tfBandwidth : JTextField
+          - tfName : JTextField
+          + AddVirtualEdge()
+          - createButtonPanel()
+          - createInputPanel()
+          - prompt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.AddVirtualNode {
+          - cType : JComboBox
+          {static} - serialVersionUID : long
+          - tfMips : JTextField
+          - tfName : JTextField
+          - tfPes : JTextField
+          - tfRam : JTextField
+          - tfSize : JTextField
+          + AddVirtualNode()
+          {static} + setUIFont()
+          - createButtonPanel()
+          - createInputPanelArea()
+          - prompt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.dialog {
+      class org.fog.gui.dialog.SDNRun {
+          - counter : int
+          - deploymentFile : String
+          - imageLabel : JLabel
+          - msgLabel : JLabel
+          - outputArea : JTextArea
+          - pane : JScrollPane
+          - panel : JPanel
+          - physicalTopologyFile : String
+          {static} - serialVersionUID : long
+          - space : JComponent
+          - timer : Timer
+          - workloads : String
+          - workloads_background : String
+          + SDNRun()
+          - append()
+          - initUI()
+          - readFile()
+          - run()
+          - startTest()
+      }
+    }
+  }
+  
+
+  org.fog.gui.dialog.About -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddActuator -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddActuator o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.AddActuatorModule -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddActuatorModule o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.AddAppEdge -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddAppEdge o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.AddApplicationModule -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddApplicationModule o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.AddFogDevice -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddFogDevice o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.AddLink -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddLink o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.AddPhysicalEdge -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddPhysicalEdge o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.AddPhysicalNode -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddPhysicalNode o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.AddSensor -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddSensor o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.AddSensorModule -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddSensorModule o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.AddVirtualEdge -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddVirtualEdge o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.AddVirtualNode -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.AddVirtualNode o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.dialog.SDNRun -up-|> javax.swing.JDialog
+  org.fog.gui.dialog.SDNRun o-- org.cloudbus.cloudsim.sdn.graph.example.GraphicSDNExample : sdn
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

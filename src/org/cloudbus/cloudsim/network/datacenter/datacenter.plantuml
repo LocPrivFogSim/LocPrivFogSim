@@ -1,0 +1,504 @@
+@startuml
+
+title __DATACENTER's Class Diagram__\n
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.AggregateSwitch {
+              + AggregateSwitch()
+              # processpacket_down()
+              # processpacket_up()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.AppCloudlet {
+              {static} + APP_MC : int
+              {static} + APP_Workflow : int
+              + accuracy : double
+              + appID : int
+              + clist : ArrayList<NetworkCloudlet>
+              + deadline : double
+              + exeTime : double
+              + numbervm : int
+              + requestclass : int
+              + type : int
+              + userId : int
+              + AppCloudlet()
+              + createCloudletList()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.EdgeSwitch {
+              + EdgeSwitch()
+              # processpacket_up()
+              # processpacketforward()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.HostPacket {
+              ~ data : double
+              ~ reciever : int
+              ~ recievetime : double
+              ~ sender : int
+              ~ sendtime : double
+              ~ virtualrecvid : int
+              ~ virtualsendid : int
+              + HostPacket()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.NetDatacenterBroker {
+              {static} + cachedcloudlet : int
+              + createvmflag : boolean
+              {static} + linkDC : NetworkDatacenter
+              - appCloudletList : List<? extends AppCloudlet>
+              - appCloudletRecieved : Map<Integer, Integer>
+              - cloudletList : List<? extends NetworkCloudlet>
+              - cloudletReceivedList : List<? extends Cloudlet>
+              - cloudletSubmittedList : List<? extends Cloudlet>
+              - cloudletsSubmitted : int
+              - datacenterCharacteristicsList : Map<Integer, DatacenterCharacteristics>
+              - datacenterIdsList : List<Integer>
+              - datacenterRequestedIdsList : List<Integer>
+              - vmList : List<? extends Vm>
+              - vmsAcks : int
+              - vmsCreatedList : List<? extends Vm>
+              - vmsDestroyed : int
+              - vmsRequested : int
+              - vmsToDatacentersMap : Map<Integer, Integer>
+              + NetDatacenterBroker()
+              + getAppCloudletList()
+              + getCloudletList()
+              + getCloudletReceivedList()
+              + getCloudletSubmittedList()
+              + getVmList()
+              + getVmsCreatedList()
+              + processEvent()
+              + setAppCloudletList()
+              + setLinkDC()
+              + shutdownEntity()
+              + startEntity()
+              + submitCloudletList()
+              + submitVmList()
+              # clearDatacenters()
+              # createVmsInDatacenterBase()
+              # getDatacenterCharacteristicsList()
+              # getDatacenterIdsList()
+              # getDatacenterRequestedIdsList()
+              # getVmsAcks()
+              # getVmsDestroyed()
+              # getVmsRequested()
+              # getVmsToDatacentersMap()
+              # incrementVmsAcks()
+              # processCloudletReturn()
+              # processOtherEvent()
+              # processResourceCharacteristics()
+              # processResourceCharacteristicsRequest()
+              # setCloudletList()
+              # setCloudletReceivedList()
+              # setCloudletSubmittedList()
+              # setDatacenterCharacteristicsList()
+              # setDatacenterIdsList()
+              # setDatacenterRequestedIdsList()
+              # setVmList()
+              # setVmsAcks()
+              # setVmsCreatedList()
+              # setVmsDestroyed()
+              # setVmsRequested()
+              # setVmsToDatacentersMap()
+              - CreateVMs()
+              - finishExecution()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.NetworkCloudlet {
+              + currStagenum : int
+              + exetime : double
+              + finishtime : double
+              + numStage : double
+              + stages : ArrayList<TaskStage>
+              + starttime : double
+              + submittime : double
+              + timeCommunicate : Map<Double, HostPacket>
+              + timespentInStage : double
+              + timetostartStage : double
+              ~ memory : long
+              + NetworkCloudlet()
+              + compareTo()
+              + getSubmittime()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.NetworkCloudletSpaceSharedScheduler {
+              + pktrecv : Map<Integer, List<HostPacket>>
+              + pkttosend : Map<Integer, List<HostPacket>>
+              # currentCpus : int
+              # usedPes : int
+              - cloudletExecList : List<? extends ResCloudlet>
+              - cloudletFinishedList : List<? extends ResCloudlet>
+              - cloudletPausedList : List<? extends ResCloudlet>
+              - cloudletWaitingList : List<? extends ResCloudlet>
+              + NetworkCloudletSpaceSharedScheduler()
+              + cloudletCancel()
+              + cloudletFinish()
+              + cloudletPause()
+              + cloudletResume()
+              + cloudletSubmit()
+              + cloudletSubmit()
+              + getCloudletStatus()
+              + getCurrentRequestedMips()
+              + getCurrentRequestedUtilizationOfBw()
+              + getCurrentRequestedUtilizationOfRam()
+              + getNextFinishedCloudlet()
+              + getTotalCurrentAllocatedMipsForCloudlet()
+              + getTotalCurrentAvailableMipsForCloudlet()
+              + getTotalCurrentRequestedMipsForCloudlet()
+              + getTotalUtilizationOfCpu()
+              + isFinishedCloudlets()
+              + migrateCloudlet()
+              + runningCloudlets()
+              + updateVmProcessing()
+              # cloudletWaitingList()
+              # getCloudletExecList()
+              # getCloudletFinishedList()
+              # getCloudletPausedList()
+              # getCloudletWaitingList()
+              # setCloudletExecList()
+              # setCloudletFinishedList()
+              # setCloudletPausedList()
+              - changetonextstage()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.NetworkConstants {
+              {static} + AggSwitchPort : double
+              {static} + Agg_LEVEL : int
+              {static} + BASE : boolean
+              {static} + BandWidthAggRoot : long
+              {static} + BandWidthEdgeAgg : long
+              {static} + BandWidthEdgeHost : long
+              {static} + COMMUNICATION_LENGTH : int
+              {static} + EDGE_LEVEL : int
+              {static} + EXECUTION : int
+              {static} + EdgeSwitchPort : double
+              {static} + FILE_SIZE : int
+              {static} + FINISH : int
+              {static} + HOST_PEs : int
+              {static} + OUTPUT_SIZE : int
+              {static} + PES_NUMBER : int
+              {static} + ROOT_LEVEL : int
+              {static} + RootSwitchPort : double
+              {static} + SwitchingDelayAgg : double
+              {static} + SwitchingDelayEdge : double
+              {static} + SwitchingDelayRoot : double
+              {static} + WAIT_RECV : int
+              {static} + WAIT_SEND : int
+              {static} + currentAppId : int
+              {static} + currentCloudletId : int
+              {static} + iteration : int
+              {static} + logflag : boolean
+              {static} + maxMemperVM : double
+              {static} + maxhostVM : int
+              {static} + nexttime : int
+              {static} + seed : double
+              {static} + totaldatatransfer : int
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.NetworkDatacenter {
+              + HostToSwitchid : Map<Integer, Integer>
+              + Switchlist : Map<Integer, Switch>
+              + VmToSwitchid : Map<Integer, Integer>
+              + VmtoHostlist : Map<Integer, Integer>
+              + NetworkDatacenter()
+              + getEdgeSwitch()
+              + processVmCreateNetwork()
+              # processCloudletSubmit()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.NetworkHost {
+              + CPUfinTimeCPU : List<Double>
+              + bandwidth : double
+              + fintime : double
+              + memory : double
+              + packetTosendGlobal : List<NetworkPacket>
+              + packetTosendLocal : List<NetworkPacket>
+              + packetrecieved : List<NetworkPacket>
+              + NetworkHost()
+              + getMaxUtilizationAmongVmsPes()
+              + updateVmsProcessing()
+              - recvpackets()
+              - sendpackets()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.NetworkPacket {
+              ~ cloudletid : int
+              ~ recieverhostid : int
+              ~ recievervmid : int
+              ~ rtime : double
+              ~ senderhostid : int
+              ~ sendervmid : int
+              ~ stime : double
+              + NetworkPacket()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.NetworkVm {
+              + cloudletlist : ArrayList<NetworkCloudlet>
+              + finishtime : double
+              + flagfree : boolean
+              + memory : double
+              + recvPktlist : ArrayList<HostPacket>
+              ~ type : int
+              + NetworkVm()
+              + compareTo()
+              + isFree()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.NetworkVmAllocationPolicy {
+              - freePes : List<Integer>
+              - usedPes : Map<String, Integer>
+              - vmTable : Map<String, Host>
+              + NetworkVmAllocationPolicy()
+              + allocateHostForVm()
+              + allocateHostForVm()
+              + deallocateHostForVm()
+              + getHost()
+              + getHost()
+              + getVmTable()
+              + optimizeAllocation()
+              # getFreePes()
+              # getMaxUtilizationAfterAllocation()
+              # getUsedPes()
+              # setFreePes()
+              # setUsedPes()
+              # setVmTable()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.RootSwitch {
+              + RootSwitch()
+              # processpacket_up()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.Switch {
+              + BagofTaskVm : List<Vm>
+              + Vmlist : Map<Integer, NetworkVm>
+              + datacenterid : int
+              + downlinkbandwidth : double
+              + downlinkswitches : List<Switch>
+              + downlinkswitchpktlist : Map<Integer, List<NetworkPacket>>
+              + fintimelistHost : SortedMap<Double, List<NetworkHost>>
+              + fintimelistVM : SortedMap<Double, List<NetworkVm>>
+              + hostlist : Map<Integer, NetworkHost>
+              + id : int
+              + latency : double
+              + level : int
+              + numport : double
+              + packetTohost : Map<Integer, List<NetworkPacket>>
+              + pktlist : ArrayList<NetworkPacket>
+              + switching_delay : double
+              + uplinkbandwidth : double
+              + uplinkswitches : List<Switch>
+              + uplinkswitchpktlist : Map<Integer, List<NetworkPacket>>
+              ~ type : int
+              + Switch()
+              + processEvent()
+              + shutdownEntity()
+              + startEntity()
+              # getHostwithVM()
+              # getfreeVmlist()
+              # getfreehostlist()
+              # processhostpacket()
+              # processpacket()
+              # processpacket_down()
+              # processpacket_up()
+              # processpacketforward()
+              - processOtherEvent()
+              - registerHost()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.TaskStage {
+              ~ data : double
+              ~ memory : long
+              ~ peer : int
+              ~ stageid : double
+              ~ time : double
+              ~ type : int
+              ~ vpeer : int
+              + TaskStage()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace network {
+        namespace datacenter {
+          class org.cloudbus.cloudsim.network.datacenter.WorkflowApp {
+              + WorkflowApp()
+              + createCloudletList()
+          }
+        }
+      }
+    }
+  }
+  
+
+  org.cloudbus.cloudsim.network.datacenter.AggregateSwitch -up-|> org.cloudbus.cloudsim.network.datacenter.Switch
+  org.cloudbus.cloudsim.network.datacenter.EdgeSwitch -up-|> org.cloudbus.cloudsim.network.datacenter.Switch
+  org.cloudbus.cloudsim.network.datacenter.NetDatacenterBroker -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.cloudbus.cloudsim.network.datacenter.NetworkCloudlet .up.|> java.lang.Comparable
+  org.cloudbus.cloudsim.network.datacenter.NetworkCloudlet -up-|> org.cloudbus.cloudsim.Cloudlet
+  org.cloudbus.cloudsim.network.datacenter.NetworkCloudletSpaceSharedScheduler -up-|> org.cloudbus.cloudsim.CloudletScheduler
+  org.cloudbus.cloudsim.network.datacenter.NetworkDatacenter -up-|> org.cloudbus.cloudsim.Datacenter
+  org.cloudbus.cloudsim.network.datacenter.NetworkHost -up-|> org.cloudbus.cloudsim.Host
+  org.cloudbus.cloudsim.network.datacenter.NetworkHost o-- org.cloudbus.cloudsim.network.datacenter.Switch : sw
+  org.cloudbus.cloudsim.network.datacenter.NetworkPacket o-- org.cloudbus.cloudsim.network.datacenter.HostPacket : pkt
+  org.cloudbus.cloudsim.network.datacenter.NetworkVm .up.|> java.lang.Comparable
+  org.cloudbus.cloudsim.network.datacenter.NetworkVm -up-|> org.cloudbus.cloudsim.Vm
+  org.cloudbus.cloudsim.network.datacenter.NetworkVmAllocationPolicy -up-|> org.cloudbus.cloudsim.VmAllocationPolicy
+  org.cloudbus.cloudsim.network.datacenter.RootSwitch -up-|> org.cloudbus.cloudsim.network.datacenter.Switch
+  org.cloudbus.cloudsim.network.datacenter.Switch -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.cloudbus.cloudsim.network.datacenter.Switch o-- org.cloudbus.cloudsim.network.datacenter.NetworkDatacenter : dc
+  org.cloudbus.cloudsim.network.datacenter.WorkflowApp -up-|> org.cloudbus.cloudsim.network.datacenter.AppCloudlet
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

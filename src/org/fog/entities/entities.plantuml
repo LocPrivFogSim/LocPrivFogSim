@@ -1,0 +1,609 @@
+@startuml
+
+title __ENTITIES's Class Diagram__\n
+
+ namespace  {
+    namespace rg.fog.entities {
+      class org.fog.entities.Actuator {
+          - actuatorType : String
+          - appId : String
+          - gatewayDeviceId : int
+          - latency : double
+          - myId : int
+          - userId : int
+          + Actuator()
+          + Actuator()
+          + getActuatorType()
+          + getApp()
+          + getAppId()
+          + getGatewayDeviceId()
+          + getGeoLocation()
+          + getLatency()
+          + getMyId()
+          + getUserId()
+          + printResults()
+          + processEvent()
+          + setActuatorType()
+          + setApp()
+          + setAppId()
+          + setGatewayDeviceId()
+          + setGeoLocation()
+          + setLatency()
+          + setMyId()
+          + setUserId()
+          + shutdownEntity()
+          + startEntity()
+          - processTupleArrival()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.entities {
+      class org.fog.entities.ApDevice {
+          - edge : int
+          - maxSmartThing : int
+          - status : boolean
+          + ApDevice()
+          + ApDevice()
+          + ApDevice()
+          {static} + connectApSmartThing()
+          + desconnectApSmartThing()
+          + getEdge()
+          + getMaxSmartThing()
+          + getServerCloudlet()
+          + isStatus()
+          + setEdge()
+          + setMaxSmartThing()
+          + setServerCloudlet()
+          + setStatus()
+          + toString()
+          # processOtherEvent()
+          - handoff()
+          {static} - saveConnectionAPSmartThing()
+          - unLockedHandoff()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.entities {
+      class org.fog.entities.FogBroker {
+          + FogBroker()
+          + processEvent()
+          + shutdownEntity()
+          + startEntity()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.entities {
+      class org.fog.entities.FogDevice {
+          # activeApplications : List<String>
+          # apDevices : Set<ApDevice>
+          # appToModulesMap : Map<String, List<String>>
+          # applicationMap : Map<String, Application>
+          # associatedActuatorIds : List<Pair<Integer, Double>>
+          # available : boolean
+          # childToLatencyMap : Map<Integer, Double>
+          # childToOperatorsMap : Map<Integer, List<String>>
+          # childrenIds : List<Integer>
+          # cloudTrafficMap : Map<Integer, Integer>
+          # controllerId : int
+          # downlinkBandwidth : double
+          # energyConsumption : double
+          # isNorthLinkBusy : boolean
+          # isSouthLinkBusy : boolean
+          # lastUtilization : double
+          # lastUtilizationUpdateTime : double
+          # lockTime : double
+          # mobilityPrecitionError : int
+          # moduleInstanceCount : Map<String, Map<String, Integer>>
+          # myId : int
+          # northTupleQueue : Queue<Tuple>
+          # parentId : int
+          # path : ArrayList<String[]>
+          # policyReplicaVM : int
+          # ratePerMips : double
+          # serverCloudlets : Set<FogDevice>
+          # smartThings : Set<MobileDevice>
+          # smartThingsWithVm : Set<MobileDevice>
+          # southTupleQueue : Queue<Pair<Tuple, Integer>>
+          # startTravelTime : int
+          # totalCost : double
+          # travelPredicTime : int
+          # travelTimeId : int
+          # uplinkBandwidth : double
+          # uplinkLatency : double
+          # volatilParentId : int
+          ~ numClients : int
+          - level : int
+          - netServerCloudlets : HashMap<FogDevice, Double>
+          + FogDevice()
+          + FogDevice()
+          + FogDevice()
+          + FogDevice()
+          + FogDevice()
+          + FogDevice()
+          + FogDevice()
+          + connectServerCloudletSmartThing()
+          + desconnectServerCloudletSmartThing()
+          + getActiveApplications()
+          + getApDevices()
+          + getApplicationMap()
+          + getAssociatedActuatorIds()
+          + getBeforeMigrate()
+          + getChildToLatencyMap()
+          + getChildToOperatorsMap()
+          + getChildrenIds()
+          + getControllerId()
+          + getCoord()
+          + getDownlinkBandwidth()
+          + getEnergyConsumption()
+          + getHost()
+          + getLevel()
+          + getMigrationStrategy()
+          + getMobilityPrecitionError()
+          + getModuleInstanceCount()
+          + getMyId()
+          + getNetServerCloudlets()
+          + getNorthTupleQueue()
+          + getOperatorName()
+          + getParentId()
+          + getPath()
+          + getPolicyReplicaVM()
+          + getRatePerMips()
+          + getServerCloudletToVmMigrate()
+          + getServerCloudlets()
+          + getService()
+          + getSmartThings()
+          + getSmartThingsWithVm()
+          + getSouthTupleQueue()
+          + getStartTravelTime()
+          + getTotalCost()
+          + getTravelPredicTime()
+          + getTravelTimeId()
+          + getUplinkBandwidth()
+          + getUplinkLatency()
+          + getVolatilParentId()
+          + isAvailable()
+          + isNorthLinkBusy()
+          + isSouthLinkBusy()
+          + printResults()
+          + saveLostTupple()
+          + setActiveApplications()
+          + setApDevices()
+          + setApplicationMap()
+          + setAssociatedActuatorIds()
+          + setAvailable()
+          + setBeforeMigrate()
+          + setChildToLatencyMap()
+          + setChildToOperatorsMap()
+          + setChildrenIds()
+          + setControllerId()
+          + setCoord()
+          + setDownlinkBandwidth()
+          + setEnergyConsumption()
+          + setLevel()
+          + setMigrationStrategy()
+          + setMobilityPredictionError()
+          + setModuleInstanceCount()
+          + setMyId()
+          + setNetServerCloudlets()
+          + setNorthLinkBusy()
+          + setNorthTupleQueue()
+          + setParentId()
+          + setPath()
+          + setPolicyReplicaVM()
+          + setRatePerMips()
+          + setServerCloudletToVmMigrate()
+          + setServerCloudlets()
+          + setService()
+          + setSmartThings()
+          + setSmartThingsWithVm()
+          + setSouthLinkBusy()
+          + setSouthTupleQueue()
+          + setStartTravelTime()
+          + setTotalCost()
+          + setTravelPredicTime()
+          + setTravelTimeId()
+          + setUplinkBandwidth()
+          + setUplinkLatency()
+          + setVolatilParentId()
+          # addChild()
+          # checkCloudletCompletion()
+          # executeTuple()
+          # getChildIdForTuple()
+          # getChildIdWithRouteTo()
+          # processActuatorJoined()
+          # processAppSubmit()
+          # processModuleArrival()
+          # processOperatorRelease()
+          # processOtherEvent()
+          # processSensorJoining()
+          # processTupleArrival()
+          # registerOtherEntity()
+          # removeChild()
+          # sendDown()
+          # sendDownFreeLink()
+          # sendToSelf()
+          # sendTupleToActuator()
+          # sendUp()
+          # sendUpFreeLink()
+          # updateActiveApplications()
+          # updateAllocatedMips()
+          # updateCloudTraffic()
+          # updateCloudetProcessingWithoutSchedulingFutureEventsForce()
+          # updateNorthTupleQueue()
+          # updateSouthTupleQueue()
+          # updateTimingsOnReceipt()
+          # updateTimingsOnSending()
+          - addVmNewServerCloudlet()
+          - connectServerCloudletSmartThing()
+          - deliveryVM()
+          - desconnectServerCloudletSmartThing()
+          - initializePeriodicTuples()
+          - invokeAbortMigration()
+          - invokeBeforeMigration()
+          - invokeDecisionMigration()
+          - invokeNoMigration()
+          - invokeStartMigration()
+          - manageResources()
+          - migStatusToLiveMigration()
+          - migrationTimeToLiveMigration()
+          - myVmMigrate()
+          - removeVmOldServerCloudlet()
+          - saveConnectionCloudletSmartThing()
+          {static} - saveMigration()
+          - sendPeriodicTuple()
+          - unLockedMigration()
+          - updateEnergyConsumption()
+          - updateModuleInstanceCount()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.entities {
+      class org.fog.entities.FogDeviceCharacteristics {
+          {static} + ADVANCE_RESERVATION : int
+          {static} + OTHER_POLICY_DIFFERENT_RATING : int
+          {static} + OTHER_POLICY_SAME_RATING : int
+          {static} + SPACE_SHARED : int
+          {static} + TIME_SHARED : int
+          - allocationPolicy : int
+          - architecture : String
+          - costPerBw : double
+          - costPerMem : double
+          - costPerSecond : double
+          - costPerStorage : double
+          - hostList : List<? extends Host>
+          - id : int
+          - os : String
+          - timeZone : double
+          - vmm : String
+          + FogDeviceCharacteristics()
+          + getCostPerBw()
+          + getCostPerMem()
+          + getCostPerMi()
+          + getCostPerSecond()
+          + getCostPerStorage()
+          + getCpuTime()
+          + getGeoCoverage()
+          + getHostList()
+          + getHostWithFreePe()
+          + getHostWithFreePe()
+          + getId()
+          + getMips()
+          + getMipsOfOnePe()
+          + getMipsOfOnePe()
+          + getNumberOfBusyPes()
+          + getNumberOfFailedHosts()
+          + getNumberOfFreePes()
+          + getNumberOfHosts()
+          + getNumberOfPes()
+          + getResourceName()
+          + getVmm()
+          + isWorking()
+          + setCostPerBw()
+          + setCostPerMem()
+          + setCostPerStorage()
+          + setGeoCoverage()
+          + setId()
+          + setPeStatus()
+          # getAllocationPolicy()
+          # getArchitecture()
+          # getOs()
+          # getTimeZone()
+          # setAllocationPolicy()
+          # setArchitecture()
+          # setCostPerSecond()
+          # setHostList()
+          # setOs()
+          # setTimeZone()
+          # setVmm()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.entities {
+      class org.fog.entities.MobileActuator {
+          + MobileActuator()
+          + MobileActuator()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.entities {
+      class org.fog.entities.MobileDevice {
+          - abortMigration : boolean
+          - actuators : Set<MobileActuator>
+          - direction : int
+          - handoffStatus : boolean
+          - lockedToHandoff : boolean
+          - lockedToMigration : boolean
+          - maxServiceValue : float
+          - migPoint : boolean
+          - migStatus : boolean
+          - migStatusLive : boolean
+          - migTime : double
+          - migZone : boolean
+          - postCopyStatus : boolean
+          - sensors : Set<MobileSensor>
+          - speed : int
+          - status : boolean
+          - tempSimulation : double
+          - timeFinishDeliveryVm : double
+          - timeFinishHandoff : double
+          - timeStartLiveMigration : double
+          - vmSize : double
+          + MobileDevice()
+          + MobileDevice()
+          + MobileDevice()
+          + MobileDevice()
+          + equals()
+          + getActuators()
+          + getDestinationAp()
+          + getDestinationServerCloudlet()
+          + getDirection()
+          + getFutureCoord()
+          + getMaxServiceValue()
+          + getMigTime()
+          + getMigrationTechnique()
+          + getNextServerClouletId()
+          + getSensors()
+          + getSourceAp()
+          + getSourceServerCloudlet()
+          + getSpeed()
+          + getTempSimulation()
+          + getTimeFinishDeliveryVm()
+          + getTimeFinishHandoff()
+          + getTimeStartLiveMigration()
+          + getVmLocalServerCloudlet()
+          + getVmMobileDevice()
+          + getVmSize()
+          + hashCode()
+          + isAbortMigration()
+          + isHandoffStatus()
+          + isLockedToHandoff()
+          + isLockedToMigration()
+          + isMigPoint()
+          + isMigStatus()
+          + isMigStatusLive()
+          + isMigZone()
+          + isPostCopyStatus()
+          + isStatus()
+          + saveLostTupple()
+          + setAbortMigration()
+          + setActuators()
+          + setDestinationAp()
+          + setDestinationServerCloudlet()
+          + setDirection()
+          + setFutureCoord()
+          + setHandoffStatus()
+          + setLockedToHandoff()
+          + setLockedToMigration()
+          + setMaxServiceValue()
+          + setMigPoint()
+          + setMigStatus()
+          + setMigStatusLive()
+          + setMigTime()
+          + setMigZone()
+          + setMigrationTechnique()
+          + setNextServerClouletId()
+          + setPostCopyStatus()
+          + setSensors()
+          + setSourceAp()
+          + setSourceServerCloudlet()
+          + setSpeed()
+          + setStatus()
+          + setTempSimulation()
+          + setTimeFinishDeliveryVm()
+          + setTimeFinishHandoff()
+          + setTimeStartLiveMigration()
+          + setVmLocalServerCloudlet()
+          + setVmMobileDevice()
+          + setVmSize()
+          + toString()
+          # processOtherEvent()
+          # processTupleArrival()
+          - manageResources()
+          - sendPeriodicTuple()
+          - updateModuleInstanceCount()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.entities {
+      class org.fog.entities.MobileSensor {
+          + MobileSensor()
+          + MobileSensor()
+          + MobileSensor()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.entities {
+      class org.fog.entities.PhysicalTopology {
+          - actuators : List<Actuator>
+          - fogDevices : List<FogDevice>
+          - sensors : List<Sensor>
+          + getActuators()
+          + getFogDevices()
+          + getSensors()
+          + setActuators()
+          + setFogDevices()
+          + setSensors()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.entities {
+      class org.fog.entities.Sensor {
+          - appId : String
+          - controllerId : int
+          - destModuleName : String
+          - gatewayDeviceId : int
+          - latency : double
+          - outputSize : long
+          - sensorName : String
+          - tupleType : String
+          - userId : int
+          + Sensor()
+          + Sensor()
+          + Sensor()
+          + getApp()
+          + getAppId()
+          + getControllerId()
+          + getDestModuleName()
+          + getGatewayDeviceId()
+          + getGeoLocation()
+          + getLatency()
+          + getSensorName()
+          + getTransmitDistribution()
+          + getTupleType()
+          + getUserId()
+          + processEvent()
+          + setApp()
+          + setAppId()
+          + setControllerId()
+          + setDestModuleName()
+          + setGatewayDeviceId()
+          + setGeoLocation()
+          + setLatency()
+          + setSensorName()
+          + setTransmitDistribution()
+          + setTupleType()
+          + setUserId()
+          + shutdownEntity()
+          + startEntity()
+          + transmit()
+          - updateTimings()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.entities {
+      class org.fog.entities.Tuple {
+          {static} + ACTUATOR : int
+          {static} + DOWN : int
+          {static} + UP : int
+          - actualTupleId : int
+          - actuatorId : int
+          - appId : String
+          - destModuleName : String
+          - direction : int
+          - finalTime : double
+          - initialTime : double
+          - moduleCopyMap : Map<String, Integer>
+          - myTupleId : int
+          - sourceDeviceId : int
+          - srcModuleName : String
+          - tupleType : String
+          + Tuple()
+          + getActualTupleId()
+          + getActuatorId()
+          + getAppId()
+          + getDestModuleName()
+          + getDirection()
+          + getFinalTime()
+          + getInitialTime()
+          + getModuleCopyMap()
+          + getMyTupleId()
+          + getSourceDeviceId()
+          + getSrcModuleName()
+          + getTupleType()
+          + setActualTupleId()
+          + setActuatorId()
+          + setAppId()
+          + setDestModuleName()
+          + setDirection()
+          + setFinalTime()
+          + setInitialTime()
+          + setModuleCopyMap()
+          + setMyTupleId()
+          + setSourceDeviceId()
+          + setSrcModuleName()
+          + setTupleType()
+      }
+    }
+  }
+  
+
+  org.fog.entities.Actuator -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.fog.entities.Actuator o-- org.fog.application.Application : app
+  org.fog.entities.Actuator o-- org.fog.utils.GeoLocation : geoLocation
+  org.fog.entities.ApDevice -up-|> org.fog.entities.FogDevice
+  org.fog.entities.ApDevice o-- org.fog.entities.FogDevice : serverCloudlet
+  org.fog.entities.FogBroker -up-|> org.cloudbus.cloudsim.power.PowerDatacenterBroker
+  org.fog.entities.FogDevice -up-|> org.cloudbus.cloudsim.power.PowerDatacenter
+  org.fog.entities.FogDevice o-- org.fog.vmmigration.BeforeMigration : beforeMigration
+  org.fog.entities.FogDevice o-- org.fog.localization.Coordinate : coord
+  org.fog.entities.FogDevice o-- org.fog.vmmigration.DecisionMigration : migrationStrategy
+  org.fog.entities.FogDevice o-- org.fog.vmmigration.Service : service
+  org.fog.entities.FogDevice o-- org.fog.entities.FogDevice : serverCloudletToVmMigrate
+  org.fog.entities.FogDeviceCharacteristics -up-|> org.cloudbus.cloudsim.DatacenterCharacteristics
+  org.fog.entities.FogDeviceCharacteristics o-- org.fog.utils.GeoCoverage : geoCoverage
+  org.fog.entities.MobileActuator -up-|> org.fog.entities.Actuator
+  org.fog.entities.MobileDevice -up-|> org.fog.entities.FogDevice
+  org.fog.entities.MobileDevice o-- org.fog.localization.Coordinate : futureCoord
+  org.fog.entities.MobileDevice o-- org.fog.vmmigration.VmMigrationTechnique : migrationTechnique
+  org.fog.entities.MobileDevice o-- org.fog.entities.ApDevice : destinationAp
+  org.fog.entities.MobileDevice o-- org.fog.entities.FogDevice : destinationServerCloudlet
+  org.fog.entities.MobileDevice o-- org.fog.entities.ApDevice : sourceAp
+  org.fog.entities.MobileDevice o-- org.fog.entities.FogDevice : sourceServerCloudlet
+  org.fog.entities.MobileDevice o-- org.fog.entities.FogDevice : vmLocalServerCloudlet
+  org.fog.entities.MobileDevice o-- org.cloudbus.cloudsim.Vm : vmMobileDevice
+  org.fog.entities.MobileSensor -up-|> org.fog.entities.Sensor
+  org.fog.entities.Sensor -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.fog.entities.Sensor o-- org.fog.application.Application : app
+  org.fog.entities.Sensor o-- org.fog.utils.GeoLocation : geoLocation
+  org.fog.entities.Sensor o-- org.fog.utils.distribution.Distribution : transmitDistribution
+  org.fog.entities.Tuple -up-|> org.cloudbus.cloudsim.Cloudlet
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

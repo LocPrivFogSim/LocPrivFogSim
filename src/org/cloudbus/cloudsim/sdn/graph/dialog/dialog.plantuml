@@ -1,0 +1,169 @@
+@startuml
+
+title __DIALOG's Class Diagram__\n
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.dialog {
+          class org.cloudbus.cloudsim.sdn.graph.dialog.About {
+              + About()
+              + initUI()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.dialog {
+          class org.cloudbus.cloudsim.sdn.graph.dialog.AddPhysicalEdge {
+              {static} - serialVersionUID : long
+              - sourceNode : JComboBox
+              - targetNode : JComboBox
+              - tfLatency : JTextField
+              + AddPhysicalEdge()
+              - createButtonPanel()
+              - createInputPanel()
+              - prompt()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.dialog {
+          class org.cloudbus.cloudsim.sdn.graph.dialog.AddPhysicalNode {
+              - cType : JComboBox
+              - lBw : JLabel
+              - lName : JLabel
+              - lType : JLabel
+              - lop1 : JLabel
+              - lop2 : JLabel
+              - lop3 : JLabel
+              - lop4 : JLabel
+              {static} - serialVersionUID : long
+              - tfBw : JTextField
+              - tfName : JTextField
+              - top1 : JTextField
+              - top2 : JTextField
+              - top3 : JTextField
+              - top4 : JTextField
+              + AddPhysicalNode()
+              {static} + setUIFont()
+              - createButtonPanel()
+              - createInputPanelArea()
+              - getType()
+              - prompt()
+              - updatePanel()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.dialog {
+          class org.cloudbus.cloudsim.sdn.graph.dialog.AddVirtualEdge {
+              {static} - serialVersionUID : long
+              - sourceNode : JComboBox
+              - targetNode : JComboBox
+              - tfBandwidth : JTextField
+              - tfName : JTextField
+              + AddVirtualEdge()
+              - createButtonPanel()
+              - createInputPanel()
+              - prompt()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.dialog {
+          class org.cloudbus.cloudsim.sdn.graph.dialog.AddVirtualNode {
+              - cType : JComboBox
+              {static} - serialVersionUID : long
+              - tfMips : JTextField
+              - tfName : JTextField
+              - tfPes : JTextField
+              - tfRam : JTextField
+              - tfSize : JTextField
+              + AddVirtualNode()
+              {static} + setUIFont()
+              - createButtonPanel()
+              - createInputPanelArea()
+              - prompt()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.dialog {
+          class org.cloudbus.cloudsim.sdn.graph.dialog.SDNRun {
+              - counter : int
+              - deploymentFile : String
+              - imageLabel : JLabel
+              - msgLabel : JLabel
+              - outputArea : JTextArea
+              - pane : JScrollPane
+              - panel : JPanel
+              - physicalTopologyFile : String
+              {static} - serialVersionUID : long
+              - space : JComponent
+              - timer : Timer
+              - workloads : String
+              - workloads_background : String
+              + SDNRun()
+              - append()
+              - initUI()
+              - readFile()
+              - run()
+              - startTest()
+          }
+        }
+      }
+    }
+  }
+  
+
+  org.cloudbus.cloudsim.sdn.graph.dialog.About -up-|> javax.swing.JDialog
+  org.cloudbus.cloudsim.sdn.graph.dialog.AddPhysicalEdge -up-|> javax.swing.JDialog
+  org.cloudbus.cloudsim.sdn.graph.dialog.AddPhysicalEdge o-- org.cloudbus.cloudsim.sdn.graph.core.Graph : graph
+  org.cloudbus.cloudsim.sdn.graph.dialog.AddPhysicalNode -up-|> javax.swing.JDialog
+  org.cloudbus.cloudsim.sdn.graph.dialog.AddPhysicalNode o-- org.cloudbus.cloudsim.sdn.graph.core.Graph : graph
+  org.cloudbus.cloudsim.sdn.graph.dialog.AddVirtualEdge -up-|> javax.swing.JDialog
+  org.cloudbus.cloudsim.sdn.graph.dialog.AddVirtualEdge o-- org.cloudbus.cloudsim.sdn.graph.core.Graph : graph
+  org.cloudbus.cloudsim.sdn.graph.dialog.AddVirtualNode -up-|> javax.swing.JDialog
+  org.cloudbus.cloudsim.sdn.graph.dialog.AddVirtualNode o-- org.cloudbus.cloudsim.sdn.graph.core.Graph : graph
+  org.cloudbus.cloudsim.sdn.graph.dialog.SDNRun -up-|> javax.swing.JDialog
+  org.cloudbus.cloudsim.sdn.graph.dialog.SDNRun o-- org.cloudbus.cloudsim.sdn.graph.example.GraphicSDNExample : sdn
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

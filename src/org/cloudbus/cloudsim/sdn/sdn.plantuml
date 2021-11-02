@@ -1,0 +1,594 @@
+@startuml
+
+title __SDN's Class Diagram__\n
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        interface org.cloudbus.cloudsim.sdn.Activity {
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.AggregationSwitch {
+            + AggregationSwitch()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.Arc {
+            ~ dstId : int
+            ~ flowId : int
+            ~ requiredBandwidth : long
+            ~ requiredLatency : double
+            ~ srcId : int
+            + Arc()
+            + getBw()
+            + getDstId()
+            + getFlowId()
+            + getLatency()
+            + getSrcId()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.Channel {
+            - allocatedBandwidth : double
+            - chId : int
+            - completed : LinkedList<Transmission>
+            - dstId : int
+            - inTransmission : LinkedList<Transmission>
+            - links : List<Link>
+            - nodes : List<Node>
+            - previousTime : double
+            - requestedBandwidth : double
+            - srcId : int
+            + Channel()
+            + addTransmission()
+            + adjustDedicatedBandwidthAlongLink()
+            + adjustSharedBandwidthAlongLink()
+            + changeBandwidth()
+            + getActiveTransmissionNum()
+            + getAdjustedRequestedBandwidth()
+            + getAllocatedBandwidth()
+            + getArrivedPackages()
+            + getChId()
+            + getDstId()
+            + getLastNode()
+            + getLastUpdateTime()
+            + getRequestedBandwidth()
+            + getSrcId()
+            + initialize()
+            + nextFinishTime()
+            + removeTransmission()
+            + terminate()
+            + toString()
+            + updatePackageProcessing()
+            - estimateFinishTime()
+            - getAllocatedBandwidthPerTransmission()
+            - getLowestSharedBandwidth()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.Constants {
+            {static} + APPLICATION_SUBMIT : int
+            {static} + APPLICATION_SUBMIT_ACK : int
+            {static} + REQUEST_COMPLETED : int
+            {static} + REQUEST_SUBMIT : int
+            {static} + SDN_INTERNAL_PACKAGE_PROCESS : int
+            {static} + SDN_PACKAGE : int
+            {static} - SDN_BASE : int
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.CoreSwitch {
+            + CoreSwitch()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.EdgeSwitch {
+            + EdgeSwitch()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.ForwardingRule {
+            ~ table : Table<Integer, Integer, Map<Integer, Node>>
+            + ForwardingRule()
+            + addRule()
+            + clear()
+            + getRoute()
+            + printForwardingTable()
+            + removeRule()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.Link {
+            ~ downBW : double
+            ~ latency : double
+            ~ upBW : double
+            - downChannels : List<Channel>
+            - upChannels : List<Channel>
+            + Link()
+            + Link()
+            + addChannel()
+            + getAllocatedBandwidthForDedicatedChannels()
+            + getBw()
+            + getBw()
+            + getChannelCount()
+            + getDedicatedChannelAdjustFactor()
+            + getDedicatedChannelCount()
+            + getFreeBandwidth()
+            + getFreeBandwidthForDedicatedChannel()
+            + getHighOrder()
+            + getLatency()
+            + getLowOrder()
+            + getOtherNode()
+            + getRequestedBandwidthForDedicatedChannels()
+            + getSharedBandwidthPerChannel()
+            + getSharedChannelCount()
+            + isActive()
+            + removeChannel()
+            + toString()
+            - getChannels()
+            - isUplink()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        abstract class org.cloudbus.cloudsim.sdn.Middlebox {
+            {static} ~ id : int
+            ~ mipsPerOp : int
+            + Middlebox()
+            {abstract} + editRequest()
+            + getId()
+            + getVm()
+            + setHost()
+            + submitRequest()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        abstract class org.cloudbus.cloudsim.sdn.NetworkOperatingSystem {
+            {static} + debugFlowIdName : Map<Integer, String>
+            {static} + debugVmIdName : Map<Integer, String>
+            {static} + minTimeBetweenEvents : double
+            {static} + resolutionPlaces : int
+            {static} + timeUnit : int
+            # arcList : LinkedList<Arc>
+            # sdnhosts : List<SDNHost>
+            # switches : List<Switch>
+            # vmList : LinkedList<Vm>
+            ~ channelTable : Hashtable<String, Channel>
+            ~ flowIdArcTable : Map<Integer, Arc>
+            ~ flowNameIdTable : Map<String, Integer>
+            ~ hosts : List<Host>
+            ~ isApplicationDeployed : boolean
+            ~ physicalTopologyFileName : String
+            ~ pkgTable : Hashtable<Package, Node>
+            ~ vmId : int
+            ~ vmNameIdTable : Map<String, Integer>
+            {static} - flowNumbers : int
+            + NetworkOperatingSystem()
+            + addPackageToChannel()
+            + deployApplication()
+            + getFlowNameIdTable()
+            + getHostAddressByVmId()
+            + getHostList()
+            {static} + getMinTimeBetweenNetworkEvents()
+            + getSwitchList()
+            + getVmNameIdTable()
+            + isApplicationDeployed()
+            + processEvent()
+            + processVmCreateAck()
+            {static} + round()
+            + setDatacenter()
+            + shutdownEntity()
+            + startEntity()
+            # createHost()
+            {abstract} # deployApplication()
+            {abstract} # deployMiddlebox()
+            # findSDNHost()
+            # findSDNHost()
+            # findVm()
+            # initPhysicalTopology()
+            # processVmDestroyAck()
+            - addChannel()
+            - adjustAllChannels()
+            - createChannel()
+            - findChannel()
+            - getKey()
+            - getKey()
+            - internalPackageProcess()
+            - nextFinishTime()
+            - processCompletePackages()
+            - removeChannel()
+            - sendInternalEvent()
+            - updateChannel()
+            - updatePackageProcessing()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        interface org.cloudbus.cloudsim.sdn.Node {
+            {abstract} + addLink()
+            {abstract} + addRoute()
+            {abstract} + addVMRoute()
+            {abstract} + clearVMRoutingTable()
+            {abstract} + getAddress()
+            {abstract} + getBandwidth()
+            {abstract} + getRank()
+            {abstract} + getRoute()
+            {abstract} + getRoutingTable()
+            {abstract} + getVMRoute()
+            {abstract} + printVMRoute()
+            {abstract} + removeVMRoute()
+            {abstract} + setRank()
+            {abstract} + updateNetworkUtilization()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.Package {
+            ~ destination : int
+            ~ flowId : int
+            ~ origin : int
+            ~ size : long
+            - finishTime : double
+            - startTime : double
+            + Package()
+            + getDestination()
+            + getFinishTime()
+            + getFlowId()
+            + getOrigin()
+            + getPayload()
+            + getSize()
+            + getStartTime()
+            + setFinishTime()
+            + setStartTime()
+            + toString()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.PhysicalTopology {
+            ~ links : Table<Integer, Integer, Link>
+            ~ nodeLinks : Multimap<Node, Link>
+            ~ nodesTable : Hashtable<Integer, Node>
+            + PhysicalTopology()
+            + addLink()
+            + addNode()
+            + buildDefaultRouting()
+            + getAdjacentLinks()
+            + getAllLinks()
+            + getAllNodes()
+            + getLink()
+            + getLinkBandwidth()
+            + getLinkLatency()
+            + getNode()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.Processing {
+            ~ requestId : long
+            + Processing()
+            + getCloudlet()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.Request {
+            ~ activities : LinkedList<Activity>
+            ~ requestId : long
+            ~ userId : int
+            - removedActivites : LinkedList<Activity>
+            + Request()
+            + addActivity()
+            + getNextActivity()
+            + getNextTransmission()
+            + getRemovedActivities()
+            + getRequestId()
+            + getUserId()
+            + isFinished()
+            + removeNextActivity()
+            + toString()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.RoutingTable {
+            ~ table : Map<Node, List<Link>>
+            + RoutingTable()
+            + addRoute()
+            + clear()
+            + getKnownDestination()
+            + getRoute()
+            + printRoutingTable()
+            + removeRoute()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.SDNDatacenter {
+            + SDNDatacenter()
+            + addVm()
+            + getFlowNameIdTable()
+            + getVmNameIdTable()
+            + processOtherEvent()
+            # checkCloudletCompletion()
+            # processVmCreate()
+            - processApplication()
+            - processRequest()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.SDNHost {
+            ~ middleboxes : Hashtable<Integer, Middlebox>
+            ~ rank : int
+            ~ requestsTable : Hashtable<Cloudlet, Request>
+            {static} - PROCESSING_DELAY : double
+            + addLink()
+            + addMiddlebox()
+            + addRoute()
+            + addVMRoute()
+            + clearVMRoutingTable()
+            + getAddress()
+            + getBandwidth()
+            + getHost()
+            + getRank()
+            + getRoute()
+            + getRoutingTable()
+            + getVMRoute()
+            + printVMRoute()
+            + processEvent()
+            + removeVMRoute()
+            + setEdgeSwitch()
+            + setRank()
+            + shutdownEntity()
+            + startEntity()
+            + toString()
+            + updateNetworkUtilization()
+            ~ SDNHost()
+            - findVm()
+            - processActivity()
+            - processCloudletReturn()
+            - processPackage()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.Switch {
+            ~ bw : int
+            ~ currentdownports : int
+            ~ currentupports : int
+            ~ downports : Node[]
+            ~ iops : long
+            ~ links : ArrayList<Link>
+            ~ previousTime : double
+            ~ processingTable : Hashtable<Package, Long>
+            ~ rank : int
+            ~ upports : Node[]
+            {static} - POWER_CONSUMPTION_IDLE : double
+            {static} - POWER_CONSUMPTION_PER_ACTIVE_PORT : double
+            {static} - powerOffDuration : double
+            - utilizationHistories : List<HistoryEntry>
+            + Switch()
+            + addLink()
+            + addRoute()
+            + addUtilizationEntryTermination()
+            + addVMRoute()
+            + clearVMRoutingTable()
+            + getAddress()
+            + getBandwidth()
+            + getRank()
+            + getRoute()
+            + getRoutingTable()
+            + getUtilizationEnergyConsumption()
+            + getUtilizationHisotry()
+            + getVMRoute()
+            + printVMRoute()
+            + processEvent()
+            + removeVMRoute()
+            + setRank()
+            + shutdownEntity()
+            + startEntity()
+            + toString()
+            + updateNetworkUtilization()
+            - addUtilizationEntry()
+            - calculatePower()
+            - getTotalActivePorts()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.Switch.HistoryEntry {
+            + numActivePorts : int
+            + startTime : double
+            ~ HistoryEntry()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.TimedVm {
+            - finishTime : double
+            - startTime : double
+            + TimedVm()
+            + TimedVm()
+            + getFinishTime()
+            + getStartTime()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        class org.cloudbus.cloudsim.sdn.Transmission {
+            ~ amountToBeProcessed : long
+            + Transmission()
+            + Transmission()
+            + addCompletedLength()
+            + getPackage()
+            + getSize()
+            + isCompleted()
+            + toString()
+        }
+      }
+    }
+  }
+  
+
+  org.cloudbus.cloudsim.sdn.AggregationSwitch -up-|> org.cloudbus.cloudsim.sdn.Switch
+  org.cloudbus.cloudsim.sdn.CoreSwitch -up-|> org.cloudbus.cloudsim.sdn.Switch
+  org.cloudbus.cloudsim.sdn.EdgeSwitch -up-|> org.cloudbus.cloudsim.sdn.Switch
+  org.cloudbus.cloudsim.sdn.Link o-- org.cloudbus.cloudsim.sdn.Node : highOrder
+  org.cloudbus.cloudsim.sdn.Link o-- org.cloudbus.cloudsim.sdn.Node : lowOrder
+  org.cloudbus.cloudsim.sdn.Middlebox o-- org.cloudbus.cloudsim.sdn.SDNHost : host
+  org.cloudbus.cloudsim.sdn.Middlebox o-- org.cloudbus.cloudsim.Vm : vm
+  org.cloudbus.cloudsim.sdn.NetworkOperatingSystem -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.cloudbus.cloudsim.sdn.NetworkOperatingSystem o-- org.cloudbus.cloudsim.sdn.SDNDatacenter : datacenter
+  org.cloudbus.cloudsim.sdn.NetworkOperatingSystem o-- org.cloudbus.cloudsim.sdn.PhysicalTopology : topology
+  org.cloudbus.cloudsim.sdn.Package o-- org.cloudbus.cloudsim.sdn.Request : payload
+  org.cloudbus.cloudsim.sdn.Processing .up.|> org.cloudbus.cloudsim.sdn.Activity
+  org.cloudbus.cloudsim.sdn.Processing o-- org.cloudbus.cloudsim.Cloudlet : cl
+  org.cloudbus.cloudsim.sdn.SDNDatacenter -up-|> org.cloudbus.cloudsim.Datacenter
+  org.cloudbus.cloudsim.sdn.SDNDatacenter o-- org.cloudbus.cloudsim.sdn.NetworkOperatingSystem : nos
+  org.cloudbus.cloudsim.sdn.SDNHost .up.|> org.cloudbus.cloudsim.sdn.Node
+  org.cloudbus.cloudsim.sdn.SDNHost -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.cloudbus.cloudsim.sdn.SDNHost o-- org.cloudbus.cloudsim.sdn.ForwardingRule : forwardingTable
+  org.cloudbus.cloudsim.sdn.SDNHost o-- org.cloudbus.cloudsim.Host : host
+  org.cloudbus.cloudsim.sdn.SDNHost o-- org.cloudbus.cloudsim.sdn.NetworkOperatingSystem : nos
+  org.cloudbus.cloudsim.sdn.SDNHost o-- org.cloudbus.cloudsim.sdn.RoutingTable : routingTable
+  org.cloudbus.cloudsim.sdn.SDNHost o-- org.cloudbus.cloudsim.sdn.EdgeSwitch : sw
+  org.cloudbus.cloudsim.sdn.Switch .up.|> org.cloudbus.cloudsim.sdn.Node
+  org.cloudbus.cloudsim.sdn.Switch -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.cloudbus.cloudsim.sdn.Switch o-- org.cloudbus.cloudsim.sdn.ForwardingRule : forwardingTable
+  org.cloudbus.cloudsim.sdn.Switch o-- org.cloudbus.cloudsim.sdn.NetworkOperatingSystem : nos
+  org.cloudbus.cloudsim.sdn.Switch o-- org.cloudbus.cloudsim.sdn.RoutingTable : routingTable
+  org.cloudbus.cloudsim.sdn.Switch +-down- org.cloudbus.cloudsim.sdn.Switch.HistoryEntry
+  org.cloudbus.cloudsim.sdn.TimedVm -up-|> org.cloudbus.cloudsim.Vm
+  org.cloudbus.cloudsim.sdn.Transmission .up.|> org.cloudbus.cloudsim.sdn.Activity
+  org.cloudbus.cloudsim.sdn.Transmission o-- org.cloudbus.cloudsim.sdn.Package : pkg
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

@@ -1,0 +1,394 @@
+@startuml
+
+title __POWER's Class Diagram__\n
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.MyPowerVmMigration {
+            + MyPowerVmMigration()
+            # isHostOverUtilized()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerDatacenter {
+            - cloudletSubmitted : double
+            - disableMigrations : boolean
+            - migrationCount : int
+            - power : double
+            + PowerDatacenter()
+            + PowerDatacenter()
+            + PowerDatacenter()
+            + getMigrationCount()
+            + getPower()
+            + isDisableMigrations()
+            + setDisableMigrations()
+            # getCloudletSubmitted()
+            # incrementMigrationCount()
+            # isInMigration()
+            # processCloudletSubmit()
+            # processVmMigrate()
+            # setCloudletSubmitted()
+            # setMigrationCount()
+            # setPower()
+            # updateCloudetProcessingWithoutSchedulingFutureEvents()
+            # updateCloudetProcessingWithoutSchedulingFutureEventsForce()
+            # updateCloudletProcessing()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerDatacenterBroker {
+            + PowerDatacenterBroker()
+            # processVmCreate()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerDatacenterNonPowerAware {
+            + PowerDatacenterNonPowerAware()
+            # updateCloudletProcessing()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerHost {
+            + PowerHost()
+            + getEnergyLinearInterpolation()
+            + getMaxPower()
+            + getPower()
+            + getPowerModel()
+            # getPower()
+            # setPowerModel()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerHostUtilizationHistory {
+            + PowerHostUtilizationHistory()
+            # getUtilizationHistory()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerVm {
+            {static} + HISTORY_LENGTH : int
+            - previousTime : double
+            - schedulingInterval : double
+            - utilizationHistory : List<Double>
+            + PowerVm()
+            + addUtilizationHistoryValue()
+            + getPreviousTime()
+            + getSchedulingInterval()
+            + getUtilizationMad()
+            + getUtilizationMean()
+            + getUtilizationVariance()
+            + setPreviousTime()
+            + updateVmProcessing()
+            # getUtilizationHistory()
+            # setSchedulingInterval()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        abstract class org.cloudbus.cloudsim.power.PowerVmAllocationPolicyAbstract {
+            - vmTable : Map<String, Host>
+            + PowerVmAllocationPolicyAbstract()
+            + allocateHostForVm()
+            + allocateHostForVm()
+            + deallocateHostForVm()
+            + findHostForVm()
+            + getHost()
+            + getHost()
+            + getVmTable()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        abstract class org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationAbstract {
+            - executionTimeHistoryHostSelection : List<Double>
+            - executionTimeHistoryTotal : List<Double>
+            - executionTimeHistoryVmReallocation : List<Double>
+            - executionTimeHistoryVmSelection : List<Double>
+            - metricHistory : Map<Integer, List<Double>>
+            - savedAllocation : List<Map<String, Object>>
+            - timeHistory : Map<Integer, List<Double>>
+            - utilizationHistory : Map<Integer, List<Double>>
+            + PowerVmAllocationPolicyMigrationAbstract()
+            + findHostForVm()
+            + findHostForVm()
+            + getExecutionTimeHistoryHostSelection()
+            + getExecutionTimeHistoryTotal()
+            + getExecutionTimeHistoryVmReallocation()
+            + getExecutionTimeHistoryVmSelection()
+            + getMetricHistory()
+            + getTimeHistory()
+            + getUtilizationHistory()
+            + optimizeAllocation()
+            # addHistoryEntry()
+            # areAllVmsMigratingOutOrAnyVmMigratingIn()
+            # extractHostListFromMigrationMap()
+            # getMaxUtilizationAfterAllocation()
+            # getMigrationMapFromUnderUtilizedHosts()
+            # getNewVmPlacement()
+            # getNewVmPlacementFromUnderUtilizedHost()
+            # getOverUtilizedHosts()
+            # getPowerAfterAllocation()
+            # getSavedAllocation()
+            # getSwitchedOffHosts()
+            # getUnderUtilizedHost()
+            # getUtilizationOfCpuMips()
+            # getVmSelectionPolicy()
+            # getVmsToMigrateFromHosts()
+            # getVmsToMigrateFromUnderUtilizedHost()
+            {abstract} # isHostOverUtilized()
+            # isHostOverUtilizedAfterAllocation()
+            # printOverUtilizedHosts()
+            # restoreAllocation()
+            # saveAllocation()
+            # setVmSelectionPolicy()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationInterQuartileRange {
+            - safetyParameter : double
+            + PowerVmAllocationPolicyMigrationInterQuartileRange()
+            + PowerVmAllocationPolicyMigrationInterQuartileRange()
+            + getFallbackVmAllocationPolicy()
+            + setFallbackVmAllocationPolicy()
+            # getHostUtilizationIqr()
+            # getSafetyParameter()
+            # isHostOverUtilized()
+            # setSafetyParameter()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationLocalRegression {
+            - safetyParameter : double
+            - schedulingInterval : double
+            + PowerVmAllocationPolicyMigrationLocalRegression()
+            + PowerVmAllocationPolicyMigrationLocalRegression()
+            + getFallbackVmAllocationPolicy()
+            + getSafetyParameter()
+            + setFallbackVmAllocationPolicy()
+            + setSafetyParameter()
+            # getMaximumVmMigrationTime()
+            # getParameterEstimates()
+            # getSchedulingInterval()
+            # isHostOverUtilized()
+            # setSchedulingInterval()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationLocalRegressionRobust {
+            + PowerVmAllocationPolicyMigrationLocalRegressionRobust()
+            + PowerVmAllocationPolicyMigrationLocalRegressionRobust()
+            # getParameterEstimates()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationMedianAbsoluteDeviation {
+            - safetyParameter : double
+            + PowerVmAllocationPolicyMigrationMedianAbsoluteDeviation()
+            + PowerVmAllocationPolicyMigrationMedianAbsoluteDeviation()
+            + getFallbackVmAllocationPolicy()
+            + setFallbackVmAllocationPolicy()
+            # getHostUtilizationMad()
+            # getSafetyParameter()
+            # isHostOverUtilized()
+            # setSafetyParameter()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationStaticThreshold {
+            - utilizationThreshold : double
+            + PowerVmAllocationPolicyMigrationStaticThreshold()
+            # getUtilizationThreshold()
+            # isHostOverUtilized()
+            # setUtilizationThreshold()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerVmAllocationPolicySimple {
+            + PowerVmAllocationPolicySimple()
+            + optimizeAllocation()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        abstract class org.cloudbus.cloudsim.power.PowerVmSelectionPolicy {
+            {abstract} + getVmToMigrate()
+            # getMigratableVms()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerVmSelectionPolicyMaximumCorrelation {
+            + PowerVmSelectionPolicyMaximumCorrelation()
+            + getFallbackPolicy()
+            + getVmToMigrate()
+            + setFallbackPolicy()
+            # getCorrelationCoefficients()
+            # getMinUtilizationHistorySize()
+            # getUtilizationMatrix()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerVmSelectionPolicyMinimumMigrationTime {
+            + getVmToMigrate()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerVmSelectionPolicyMinimumUtilization {
+            + getVmToMigrate()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        class org.cloudbus.cloudsim.power.PowerVmSelectionPolicyRandomSelection {
+            + getVmToMigrate()
+        }
+      }
+    }
+  }
+  
+
+  org.cloudbus.cloudsim.power.MyPowerVmMigration -up-|> org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationAbstract
+  org.cloudbus.cloudsim.power.PowerDatacenter -up-|> org.cloudbus.cloudsim.Datacenter
+  org.cloudbus.cloudsim.power.PowerDatacenterBroker -up-|> org.cloudbus.cloudsim.DatacenterBroker
+  org.cloudbus.cloudsim.power.PowerDatacenterNonPowerAware -up-|> org.cloudbus.cloudsim.power.PowerDatacenter
+  org.cloudbus.cloudsim.power.PowerHost -up-|> org.cloudbus.cloudsim.HostDynamicWorkload
+  org.cloudbus.cloudsim.power.PowerHost o-- org.cloudbus.cloudsim.power.models.PowerModel : powerModel
+  org.cloudbus.cloudsim.power.PowerHostUtilizationHistory -up-|> org.cloudbus.cloudsim.power.PowerHost
+  org.cloudbus.cloudsim.power.PowerVm -up-|> org.cloudbus.cloudsim.Vm
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicyAbstract -up-|> org.cloudbus.cloudsim.VmAllocationPolicy
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationAbstract -up-|> org.cloudbus.cloudsim.power.PowerVmAllocationPolicyAbstract
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationAbstract o-- org.cloudbus.cloudsim.power.PowerVmSelectionPolicy : vmSelectionPolicy
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationInterQuartileRange -up-|> org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationAbstract
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationInterQuartileRange o-- org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationAbstract : fallbackVmAllocationPolicy
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationLocalRegression -up-|> org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationAbstract
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationLocalRegression o-- org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationAbstract : fallbackVmAllocationPolicy
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationLocalRegressionRobust -up-|> org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationLocalRegression
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationMedianAbsoluteDeviation -up-|> org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationAbstract
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationMedianAbsoluteDeviation o-- org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationAbstract : fallbackVmAllocationPolicy
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationStaticThreshold -up-|> org.cloudbus.cloudsim.power.PowerVmAllocationPolicyMigrationAbstract
+  org.cloudbus.cloudsim.power.PowerVmAllocationPolicySimple -up-|> org.cloudbus.cloudsim.power.PowerVmAllocationPolicyAbstract
+  org.cloudbus.cloudsim.power.PowerVmSelectionPolicyMaximumCorrelation -up-|> org.cloudbus.cloudsim.power.PowerVmSelectionPolicy
+  org.cloudbus.cloudsim.power.PowerVmSelectionPolicyMaximumCorrelation o-- org.cloudbus.cloudsim.power.PowerVmSelectionPolicy : fallbackPolicy
+  org.cloudbus.cloudsim.power.PowerVmSelectionPolicyMinimumMigrationTime -up-|> org.cloudbus.cloudsim.power.PowerVmSelectionPolicy
+  org.cloudbus.cloudsim.power.PowerVmSelectionPolicyMinimumUtilization -up-|> org.cloudbus.cloudsim.power.PowerVmSelectionPolicy
+  org.cloudbus.cloudsim.power.PowerVmSelectionPolicyRandomSelection -up-|> org.cloudbus.cloudsim.power.PowerVmSelectionPolicy
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

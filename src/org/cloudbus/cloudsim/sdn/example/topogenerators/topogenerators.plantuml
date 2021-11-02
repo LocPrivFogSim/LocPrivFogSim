@@ -1,0 +1,275 @@
+@startuml
+
+title __TOPOGENERATORS's Class Diagram__\n
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            class org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator {
+                ~ vmId : int
+                - hosts : List<HostSpec>
+                - links : List<LinkSpec>
+                - switches : List<SwitchSpec>
+                + addHost()
+                + addHost()
+                + addSwitch()
+                + createHostSpec()
+                + createTopology()
+                {static} + main()
+                + wrtieJSON()
+                - addLink()
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            class org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.HostSpec {
+                ~ mips : long
+                ~ pe : int
+                ~ ram : int
+                ~ storage : long
+                + HostSpec()
+                ~ toJSON()
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            class org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.LinkSpec {
+                ~ destination : String
+                ~ latency : double
+                ~ source : String
+                + LinkSpec()
+                ~ toJSON()
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            class org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.NodeSpec {
+                ~ bw : long
+                ~ name : String
+                ~ type : String
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            class org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.SwitchSpec {
+                ~ iops : long
+                ~ toJSON()
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            class org.cloudbus.cloudsim.sdn.example.topogenerators.VMRequestRandomGenerator {
+                ~ jsonFileName : String
+                ~ numVms : int
+                {static} - seed : long
+                + VMRequestRandomGenerator()
+                + generateVMsRandom()
+                {static} + main()
+                + start()
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            class org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGenerator {
+                ~ vmId : int
+                - dummyWorkload : List<DummyWorkloadSpec>
+                - links : List<LinkSpec>
+                - vms : List<VMSpec>
+                + addLink()
+                + addVM()
+                + addVM()
+                + addWorkload()
+                + createVmSpec()
+                + wrtieJSON()
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            class org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGenerator.DummyWorkloadSpec {
+                ~ destination : String
+                ~ linkname : String
+                ~ source : String
+                ~ startTime : double
+                + DummyWorkloadSpec()
+                + toString()
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            class org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGenerator.LinkSpec {
+                ~ bw : Long
+                ~ destination : String
+                ~ name : String
+                ~ source : String
+                + LinkSpec()
+                ~ toJSON()
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            class org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGenerator.VMSpec {
+                ~ bw : long
+                ~ endtime : double
+                ~ mips : long
+                ~ name : String
+                ~ pe : int
+                ~ ram : int
+                ~ size : long
+                ~ starttime : double
+                ~ type : String
+                + VMSpec()
+                ~ toJSON()
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            class org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGeneratorVmTypes {
+                ~ vmGroupId : int
+                ~ vmNum : int
+                + createVM()
+                + generate3TierTopology()
+                + generateVMGroup()
+                {static} + main()
+                - addLinkAutoName()
+                - addLinkAutoNameBoth()
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace example {
+          namespace topogenerators {
+            enum VMtype {
+              AppServer
+              DBServer
+              Firewall
+              Proxy
+              WebServer
+            }
+          }
+        }
+      }
+    }
+  }
+  
+
+  org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator +-down- org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.HostSpec
+  org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator +-down- org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.LinkSpec
+  org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator +-down- org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.NodeSpec
+  org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator +-down- org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.SwitchSpec
+  org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.HostSpec -up-|> org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.NodeSpec
+  org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.SwitchSpec -up-|> org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator.NodeSpec
+  org.cloudbus.cloudsim.sdn.example.topogenerators.VMRequestRandomGenerator o-- org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGeneratorVmTypes : vmGenerator
+  org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGenerator +-down- org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGenerator.DummyWorkloadSpec
+  org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGenerator +-down- org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGenerator.LinkSpec
+  org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGenerator +-down- org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGenerator.VMSpec
+  org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGeneratorVmTypes -up-|> org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGenerator
+  org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGeneratorVmTypes +-down- org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGeneratorVmTypes.VMtype
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

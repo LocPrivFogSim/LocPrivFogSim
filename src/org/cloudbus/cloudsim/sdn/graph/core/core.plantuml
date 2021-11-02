@@ -1,0 +1,278 @@
+@startuml
+
+title __CORE's Class Diagram__\n
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.core {
+          class org.cloudbus.cloudsim.sdn.graph.core.Bridge {
+              {static} + graphToJson()
+              {static} + jsonToGraph()
+              {static} - getNode()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.core {
+          class org.cloudbus.cloudsim.sdn.graph.core.Coordinates {
+              - x : int
+              - y : int
+              + Coordinates()
+              + Coordinates()
+              + getX()
+              + getY()
+              + setX()
+              + setY()
+              + toString()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.core {
+          class org.cloudbus.cloudsim.sdn.graph.core.Edge {
+              - bandwidth : long
+              - latency : double
+              - name : String
+              {static} - serialVersionUID : long
+              + Edge()
+              + Edge()
+              + Edge()
+              + Edge()
+              + getBandwidth()
+              + getInfo()
+              + getLatency()
+              + getNode()
+              + setInfo()
+              + toString()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.core {
+          class org.cloudbus.cloudsim.sdn.graph.core.Graph {
+              - adjacencyList : Map<Node, List<Edge>>
+              {static} - serialVersionUID : long
+              + Graph()
+              + Graph()
+              + addEdge()
+              + addNode()
+              + clearGraph()
+              + getAdjacencyList()
+              + removeEdge()
+              + removeNode()
+              + setAdjacencyList()
+              + toJsonString()
+              + toString()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.core {
+          class org.cloudbus.cloudsim.sdn.graph.core.GraphView {
+              - ARR_SIZE : int
+              - canvas : JPanel
+              - imgHost : Image
+              - imgSwitch : Image
+              - imgVm : Image
+              {static} - serialVersionUID : long
+              + GraphView()
+              + setGraph()
+              - drawArrow()
+              - initComponents()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.core {
+          class org.cloudbus.cloudsim.sdn.graph.core.HostNode {
+              - bw : long
+              - mips : long
+              - pes : long
+              - ram : int
+              {static} - serialVersionUID : long
+              - storage : long
+              + HostNode()
+              + HostNode()
+              + getBw()
+              + getMips()
+              + getPes()
+              + getRam()
+              + getStorage()
+              + setBw()
+              + setMips()
+              + setPes()
+              + setRam()
+              + setStorage()
+              + toString()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.core {
+          class org.cloudbus.cloudsim.sdn.graph.core.Node {
+              - name : String
+              {static} - serialVersionUID : long
+              - type : String
+              + Node()
+              + Node()
+              + equals()
+              + getCoordinate()
+              + getName()
+              + getType()
+              + hashCode()
+              + setCoordinate()
+              + setName()
+              + setType()
+              + toString()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.core {
+          class org.cloudbus.cloudsim.sdn.graph.core.NodeCellRenderer {
+              {static} - serialVersionUID : long
+              + getListCellRendererComponent()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.core {
+          class org.cloudbus.cloudsim.sdn.graph.core.SpringUtilities {
+              {static} + makeCompactGrid()
+              {static} + makeGrid()
+              {static} + printSizes()
+              {static} - getConstraintsForCell()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.core {
+          class org.cloudbus.cloudsim.sdn.graph.core.SwitchNode {
+              - bw : long
+              - downports : int
+              - iops : long
+              {static} - serialVersionUID : long
+              - upports : int
+              + SwitchNode()
+              + SwitchNode()
+              + getBw()
+              + getDownports()
+              + getIops()
+              + getUpports()
+              + setBw()
+              + setDownports()
+              + setIops()
+              + setUpports()
+              + toString()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace graph.core {
+          class org.cloudbus.cloudsim.sdn.graph.core.VmNode {
+              - mips : long
+              - pes : int
+              - ram : int
+              {static} - serialVersionUID : long
+              - size : long
+              + VmNode()
+              + VmNode()
+              + getMips()
+              + getPes()
+              + getRam()
+              + getSize()
+              + setMips()
+              + setPes()
+              + setRam()
+              + setSize()
+              + toString()
+          }
+        }
+      }
+    }
+  }
+  
+
+  org.cloudbus.cloudsim.sdn.graph.core.Edge .up.|> java.io.Serializable
+  org.cloudbus.cloudsim.sdn.graph.core.Edge o-- org.cloudbus.cloudsim.sdn.graph.core.Node : dest
+  org.cloudbus.cloudsim.sdn.graph.core.Graph .up.|> java.io.Serializable
+  org.cloudbus.cloudsim.sdn.graph.core.GraphView -up-|> javax.swing.JPanel
+  org.cloudbus.cloudsim.sdn.graph.core.GraphView o-- org.cloudbus.cloudsim.sdn.graph.core.Graph : graph
+  org.cloudbus.cloudsim.sdn.graph.core.HostNode -up-|> org.cloudbus.cloudsim.sdn.graph.core.Node
+  org.cloudbus.cloudsim.sdn.graph.core.Node .up.|> java.io.Serializable
+  org.cloudbus.cloudsim.sdn.graph.core.Node o-- org.cloudbus.cloudsim.sdn.graph.core.Coordinates : coord
+  org.cloudbus.cloudsim.sdn.graph.core.NodeCellRenderer .up.|> javax.swing.ListCellRenderer
+  org.cloudbus.cloudsim.sdn.graph.core.NodeCellRenderer -up-|> javax.swing.JLabel
+  org.cloudbus.cloudsim.sdn.graph.core.SwitchNode -up-|> org.cloudbus.cloudsim.sdn.graph.core.Node
+  org.cloudbus.cloudsim.sdn.graph.core.VmNode -up-|> org.cloudbus.cloudsim.sdn.graph.core.Node
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

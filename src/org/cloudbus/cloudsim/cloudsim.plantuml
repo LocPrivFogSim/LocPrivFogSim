@@ -1,0 +1,1396 @@
+@startuml
+
+title __CLOUDSIM's Class Diagram__\n
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.Cloudlet {
+          {static} + CANCELED : int
+          {static} + CREATED : int
+          {static} + FAILED : int
+          {static} + FAILED_RESOURCE_UNAVAILABLE : int
+          {static} + INEXEC : int
+          {static} + PAUSED : int
+          {static} + QUEUED : int
+          {static} + READY : int
+          {static} + RESUMED : int
+          {static} + SUCCESS : int
+          # accumulatedBwCost : double
+          # costPerBw : double
+          # vmId : int
+          - classType : int
+          - cloudletFileSize : long
+          - cloudletId : int
+          - cloudletLength : long
+          - cloudletOutputSize : long
+          - execStartTime : double
+          - finishTime : double
+          - history : StringBuffer
+          - index : int
+          - netToS : int
+          - newline : String
+          - num : DecimalFormat
+          - numberOfPes : int
+          - record : boolean
+          - requiredFiles : List<String>
+          - resList : List<Resource>
+          - reservationId : int
+          - status : int
+          - userId : int
+          + Cloudlet()
+          + Cloudlet()
+          + Cloudlet()
+          + Cloudlet()
+          + addRequiredFile()
+          + deleteRequiredFile()
+          + getActualCPUTime()
+          + getActualCPUTime()
+          + getAllResourceId()
+          + getAllResourceName()
+          + getClassType()
+          + getCloudletFileSize()
+          + getCloudletFinishedSoFar()
+          + getCloudletFinishedSoFar()
+          + getCloudletHistory()
+          + getCloudletId()
+          + getCloudletLength()
+          + getCloudletOutputSize()
+          + getCloudletStatus()
+          + getCloudletStatusString()
+          + getCloudletTotalLength()
+          + getCostPerSec()
+          + getCostPerSec()
+          + getExecStartTime()
+          + getFinishTime()
+          + getNetServiceLevel()
+          + getNumberOfPes()
+          + getProcessingCost()
+          + getRequiredFiles()
+          + getReservationId()
+          + getResourceById()
+          + getResourceId()
+          + getResourceName()
+          + getStatus()
+          {static} + getStatusString()
+          + getSubmissionTime()
+          + getSubmissionTime()
+          + getUserId()
+          + getUtilizationModelBw()
+          + getUtilizationModelCpu()
+          + getUtilizationModelRam()
+          + getUtilizationOfBw()
+          + getUtilizationOfCpu()
+          + getUtilizationOfRam()
+          + getVmId()
+          + getWaitingTime()
+          + getWallClockTime()
+          + getWallClockTime()
+          + hasReserved()
+          + isFinished()
+          + requiresFiles()
+          + setClassType()
+          + setCloudletFinishedSoFar()
+          + setCloudletLength()
+          + setCloudletStatus()
+          + setExecParam()
+          + setExecStartTime()
+          + setNetServiceLevel()
+          + setNumberOfPes()
+          + setReservationId()
+          + setResourceParameter()
+          + setResourceParameter()
+          + setSubmissionTime()
+          + setUserId()
+          + setUtilizationModelBw()
+          + setUtilizationModelCpu()
+          + setUtilizationModelRam()
+          + setVmId()
+          # setRequiredFiles()
+          # write()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.Cloudlet.Resource {
+          + actualCPUTime : double
+          + costPerSec : double
+          + finishedSoFar : long
+          + resourceId : int
+          + resourceName : String
+          + submissionTime : double
+          + wallClockTime : double
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      abstract class org.cloudbus.cloudsim.CloudletScheduler {
+          - currentMipsShare : List<Double>
+          - previousTime : double
+          - userId : String
+          + CloudletScheduler()
+          {abstract} + cloudletCancel()
+          {abstract} + cloudletFinish()
+          {abstract} + cloudletPause()
+          {abstract} + cloudletResume()
+          {abstract} + cloudletSubmit()
+          {abstract} + cloudletSubmit()
+          {abstract} + getCloudletStatus()
+          + getCurrentMipsShare()
+          {abstract} + getCurrentRequestedMips()
+          {abstract} + getCurrentRequestedUtilizationOfBw()
+          {abstract} + getCurrentRequestedUtilizationOfRam()
+          {abstract} + getNextFinishedCloudlet()
+          + getPreviousTime()
+          {abstract} + getTotalCurrentAllocatedMipsForCloudlet()
+          {abstract} + getTotalCurrentAvailableMipsForCloudlet()
+          {abstract} + getTotalCurrentRequestedMipsForCloudlet()
+          {abstract} + getTotalUtilizationOfCpu()
+          + getUserId()
+          {abstract} + isFinishedCloudlets()
+          {abstract} + migrateCloudlet()
+          {abstract} + runningCloudlets()
+          {abstract} + updateVmProcessing()
+          # setCurrentMipsShare()
+          # setPreviousTime()
+          # setUserId()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.CloudletSchedulerDynamicWorkload {
+          - cacheCurrentRequestedMips : List<Double>
+          - cachePreviousTime : double
+          - mips : double
+          - numberOfPes : int
+          - totalMips : double
+          - underAllocatedMips : Map<String, Double>
+          + CloudletSchedulerDynamicWorkload()
+          + cloudletFinish()
+          + cloudletSubmit()
+          + cloudletSubmit()
+          + getCurrentRequestedMips()
+          + getEstimatedFinishTime()
+          + getMips()
+          + getNumberOfPes()
+          + getTotalCurrentAllocatedMipsForCloudlet()
+          + getTotalCurrentAvailableMipsForCloudlet()
+          + getTotalCurrentMips()
+          + getTotalCurrentRequestedMipsForCloudlet()
+          + getTotalMips()
+          + getTotalUtilizationOfCpu()
+          + getUnderAllocatedMips()
+          + setMips()
+          + setNumberOfPes()
+          + setTotalMips()
+          + setUnderAllocatedMips()
+          + updateUnderAllocatedMipsForCloudlet()
+          + updateVmProcessing()
+          # getCacheCurrentRequestedMips()
+          # getCachePreviousTime()
+          # setCacheCurrentRequestedMips()
+          # setCachePreviousTime()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.CloudletSchedulerSpaceShared {
+          # currentCpus : int
+          # usedPes : int
+          - cloudletExecList : List<? extends ResCloudlet>
+          - cloudletFinishedList : List<? extends ResCloudlet>
+          - cloudletPausedList : List<? extends ResCloudlet>
+          - cloudletWaitingList : List<? extends ResCloudlet>
+          + CloudletSchedulerSpaceShared()
+          + cloudletCancel()
+          + cloudletFinish()
+          + cloudletPause()
+          + cloudletResume()
+          + cloudletSubmit()
+          + cloudletSubmit()
+          + getCloudletStatus()
+          + getCurrentRequestedMips()
+          + getCurrentRequestedUtilizationOfBw()
+          + getCurrentRequestedUtilizationOfRam()
+          + getNextFinishedCloudlet()
+          + getTotalCurrentAllocatedMipsForCloudlet()
+          + getTotalCurrentAvailableMipsForCloudlet()
+          + getTotalCurrentRequestedMipsForCloudlet()
+          + getTotalUtilizationOfCpu()
+          + isFinishedCloudlets()
+          + migrateCloudlet()
+          + runningCloudlets()
+          + updateVmProcessing()
+          # cloudletWaitingList()
+          # getCloudletExecList()
+          # getCloudletFinishedList()
+          # getCloudletPausedList()
+          # getCloudletWaitingList()
+          # setCloudletExecList()
+          # setCloudletFinishedList()
+          # setCloudletPausedList()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.CloudletSchedulerTimeShared {
+          # currentCPUs : int
+          - cloudletExecList : List<? extends ResCloudlet>
+          - cloudletFinishedList : List<? extends ResCloudlet>
+          - cloudletPausedList : List<? extends ResCloudlet>
+          + CloudletSchedulerTimeShared()
+          + cloudletCancel()
+          + cloudletFinish()
+          + cloudletPause()
+          + cloudletResume()
+          + cloudletSubmit()
+          + cloudletSubmit()
+          + getCloudletStatus()
+          + getCurrentRequestedMips()
+          + getCurrentRequestedUtilizationOfBw()
+          + getCurrentRequestedUtilizationOfRam()
+          + getNextFinishedCloudlet()
+          + getTotalCurrentAllocatedMipsForCloudlet()
+          + getTotalCurrentAvailableMipsForCloudlet()
+          + getTotalCurrentRequestedMipsForCloudlet()
+          + getTotalUtilizationOfCpu()
+          + isFinishedCloudlets()
+          + migrateCloudlet()
+          + print()
+          + printTempo()
+          + runningCloudlets()
+          + updateVmProcessing()
+          # getCapacity()
+          # getCloudletExecList()
+          # getCloudletFinishedList()
+          # getCloudletPausedList()
+          # setCloudletExecList()
+          # setCloudletFinishedList()
+          # setCloudletPausedList()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.Consts {
+          {static} + MILLION : int
+          - Consts()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.DataCloudTags {
+          {static} + CTLG_ADD_MASTER : int
+          {static} + CTLG_ADD_MASTER_ERROR : int
+          {static} + CTLG_ADD_MASTER_ERROR_FULL : int
+          {static} + CTLG_ADD_MASTER_RESULT : int
+          {static} + CTLG_ADD_MASTER_SUCCESSFUL : int
+          {static} + CTLG_ADD_REPLICA : int
+          {static} + CTLG_ADD_REPLICA_ERROR : int
+          {static} + CTLG_ADD_REPLICA_ERROR_DOESNT_EXIST : int
+          {static} + CTLG_ADD_REPLICA_ERROR_FULL : int
+          {static} + CTLG_ADD_REPLICA_RESULT : int
+          {static} + CTLG_ADD_REPLICA_SUCCESSFUL : int
+          {static} + CTLG_DELETE_MASTER : int
+          {static} + CTLG_DELETE_MASTER_DOESNT_EXIST : int
+          {static} + CTLG_DELETE_MASTER_ERROR : int
+          {static} + CTLG_DELETE_MASTER_REPLICAS_EXIST : int
+          {static} + CTLG_DELETE_MASTER_RESULT : int
+          {static} + CTLG_DELETE_MASTER_SUCCESSFUL : int
+          {static} + CTLG_DELETE_REPLICA : int
+          {static} + CTLG_DELETE_REPLICA_ERROR : int
+          {static} + CTLG_DELETE_REPLICA_ERROR_DOESNT_EXIST : int
+          {static} + CTLG_DELETE_REPLICA_RESULT : int
+          {static} + CTLG_DELETE_REPLICA_SUCCESSFUL : int
+          {static} + CTLG_FILE_ATTR_DELIVERY : int
+          {static} + CTLG_FILTER : int
+          {static} + CTLG_FILTER_DELIVERY : int
+          {static} + CTLG_GET_FILE_ATTR : int
+          {static} + CTLG_GET_REPLICA : int
+          {static} + CTLG_GET_REPLICA_LIST : int
+          {static} + CTLG_MODIFY_MASTER : int
+          {static} + CTLG_MODIFY_MASTER_ERROR : int
+          {static} + CTLG_MODIFY_MASTER_ERROR_DOESNT_EXIST : int
+          {static} + CTLG_MODIFY_MASTER_ERROR_READ_ONLY : int
+          {static} + CTLG_MODIFY_MASTER_RESULT : int
+          {static} + CTLG_MODIFY_MASTER_SUCCESSFUL : int
+          {static} + CTLG_REPLICA_DELIVERY : int
+          {static} + CTLG_REPLICA_LIST_DELIVERY : int
+          {static} + DATAcloudlet_SUBMIT : int
+          {static} + DEFAULT_MTU : int
+          {static} + DEFAULT_STORAGE_SIZE : int
+          {static} + FILE_ADD_ERROR : int
+          {static} + FILE_ADD_ERROR_ACCESS_DENIED : int
+          {static} + FILE_ADD_ERROR_EMPTY : int
+          {static} + FILE_ADD_ERROR_EXIST_READ_ONLY : int
+          {static} + FILE_ADD_ERROR_STORAGE_FULL : int
+          {static} + FILE_ADD_MASTER : int
+          {static} + FILE_ADD_MASTER_RESULT : int
+          {static} + FILE_ADD_REPLICA : int
+          {static} + FILE_ADD_REPLICA_RESULT : int
+          {static} + FILE_ADD_SUCCESSFUL : int
+          {static} + FILE_DELETE_ERROR : int
+          {static} + FILE_DELETE_ERROR_ACCESS_DENIED : int
+          {static} + FILE_DELETE_ERROR_DOESNT_EXIST : int
+          {static} + FILE_DELETE_ERROR_IN_USE : int
+          {static} + FILE_DELETE_ERROR_READ_ONLY : int
+          {static} + FILE_DELETE_MASTER : int
+          {static} + FILE_DELETE_MASTER_RESULT : int
+          {static} + FILE_DELETE_REPLICA : int
+          {static} + FILE_DELETE_REPLICA_RESULT : int
+          {static} + FILE_DELETE_SUCCESSFUL : int
+          {static} + FILE_DELIVERY : int
+          {static} + FILE_MODIFY : int
+          {static} + FILE_MODIFY_ERROR : int
+          {static} + FILE_MODIFY_ERROR_ACCESS_DENIED : int
+          {static} + FILE_MODIFY_ERROR_DOESNT_EXIST : int
+          {static} + FILE_MODIFY_ERROR_IN_USE : int
+          {static} + FILE_MODIFY_ERROR_READ_ONLY : int
+          {static} + FILE_MODIFY_RESULT : int
+          {static} + FILE_MODIFY_SUCCESSFUL : int
+          {static} + FILE_REQUEST : int
+          {static} + INQUIRY_GLOBAL_RC_LIST : int
+          {static} + INQUIRY_LOCAL_RC_LIST : int
+          {static} + INQUIRY_RC_LIST : int
+          {static} + INQUIRY_RC_RESULT : int
+          {static} + PKT_SIZE : int
+          {static} + REGISTER_REPLICA_CTLG : int
+          {static} - BASE : int
+          {static} - CTLG_BASE : int
+          {static} - RM_BASE : int
+          - DataCloudTags()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.Datacenter {
+          - lastProcessTime : double
+          - regionalCisName : String
+          - schedulingInterval : double
+          - storageList : List<Storage>
+          - vmList : List<? extends Vm>
+          + Datacenter()
+          + Datacenter()
+          + Datacenter()
+          + addFile()
+          + getCharacteristics()
+          + getHostList()
+          + getVmAllocationPolicy()
+          + getVmList()
+          + processEvent()
+          + shutdownEntity()
+          + startEntity()
+          # checkCloudletCompletion()
+          # contains()
+          # contains()
+          # getLastProcessTime()
+          # getRegionalCisName()
+          # getSchedulingInterval()
+          # getStorageList()
+          # predictFileTransferTime()
+          # processCloudlet()
+          # processCloudletCancel()
+          # processCloudletMove()
+          # processCloudletPause()
+          # processCloudletResume()
+          # processCloudletStatus()
+          # processCloudletSubmit()
+          # processDataAdd()
+          # processDataDelete()
+          # processOtherEvent()
+          # processPingRequest()
+          # processVmCreate()
+          # processVmDestroy()
+          # processVmMigrate()
+          # registerOtherEntity()
+          # setCharacteristics()
+          # setLastProcessTime()
+          # setRegionalCisName()
+          # setSchedulingInterval()
+          # setStorageList()
+          # setVmAllocationPolicy()
+          # setVmList()
+          # updateCloudletProcessing()
+          - deleteFileFromStorage()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.DatacenterBroker {
+          # cloudletList : List<? extends Cloudlet>
+          # cloudletReceivedList : List<? extends Cloudlet>
+          # cloudletSubmittedList : List<? extends Cloudlet>
+          # cloudletsSubmitted : int
+          # datacenterCharacteristicsList : Map<Integer, DatacenterCharacteristics>
+          # datacenterIdsList : List<Integer>
+          # datacenterRequestedIdsList : List<Integer>
+          # vmList : List<? extends Vm>
+          # vmsAcks : int
+          # vmsCreatedList : List<? extends Vm>
+          # vmsDestroyed : int
+          # vmsRequested : int
+          # vmsToDatacentersMap : Map<Integer, Integer>
+          + DatacenterBroker()
+          + bindCloudletToVm()
+          + getCloudletList()
+          + getCloudletReceivedList()
+          + getCloudletSubmittedList()
+          + getVmList()
+          + getVmsCreatedList()
+          + processEvent()
+          + shutdownEntity()
+          + startEntity()
+          + submitCloudletList()
+          + submitVmList()
+          # clearDatacenters()
+          # createVmsInDatacenter()
+          # finishExecution()
+          # getDatacenterCharacteristicsList()
+          # getDatacenterIdsList()
+          # getDatacenterRequestedIdsList()
+          # getVmsAcks()
+          # getVmsDestroyed()
+          # getVmsRequested()
+          # getVmsToDatacentersMap()
+          # incrementVmsAcks()
+          # processCloudletReturn()
+          # processOtherEvent()
+          # processResourceCharacteristics()
+          # processResourceCharacteristicsRequest()
+          # processVmCreate()
+          # setCloudletList()
+          # setCloudletReceivedList()
+          # setCloudletSubmittedList()
+          # setDatacenterCharacteristicsList()
+          # setDatacenterIdsList()
+          # setDatacenterRequestedIdsList()
+          # setVmList()
+          # setVmsAcks()
+          # setVmsCreatedList()
+          # setVmsDestroyed()
+          # setVmsRequested()
+          # setVmsToDatacentersMap()
+          # submitCloudlets()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.DatacenterCharacteristics {
+          {static} + ADVANCE_RESERVATION : int
+          {static} + OTHER_POLICY_DIFFERENT_RATING : int
+          {static} + OTHER_POLICY_SAME_RATING : int
+          {static} + SPACE_SHARED : int
+          {static} + TIME_SHARED : int
+          - allocationPolicy : int
+          - architecture : String
+          - costPerBw : double
+          - costPerMem : double
+          - costPerSecond : double
+          - costPerStorage : double
+          - hostList : List<? extends Host>
+          - id : int
+          - os : String
+          - timeZone : double
+          - vmm : String
+          + DatacenterCharacteristics()
+          + getCostPerBw()
+          + getCostPerMem()
+          + getCostPerMi()
+          + getCostPerSecond()
+          + getCostPerStorage()
+          + getCpuTime()
+          + getHostList()
+          + getHostWithFreePe()
+          + getHostWithFreePe()
+          + getId()
+          + getMips()
+          + getMipsOfOnePe()
+          + getMipsOfOnePe()
+          + getNumberOfBusyPes()
+          + getNumberOfFailedHosts()
+          + getNumberOfFreePes()
+          + getNumberOfHosts()
+          + getNumberOfPes()
+          + getResourceName()
+          + getVmm()
+          + isWorking()
+          + setCostPerBw()
+          + setCostPerMem()
+          + setCostPerStorage()
+          + setId()
+          + setPeStatus()
+          # getAllocationPolicy()
+          # getArchitecture()
+          # getOs()
+          # getTimeZone()
+          # setAllocationPolicy()
+          # setArchitecture()
+          # setCostPerSecond()
+          # setHostList()
+          # setOs()
+          # setTimeZone()
+          # setVmm()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.File {
+          {static} + NOT_REGISTERED : int
+          {static} + TYPE_RAW_DATA : int
+          {static} + TYPE_RECONSTRUCTED_DATA : int
+          {static} + TYPE_TAG_DATA : int
+          {static} + TYPE_UNKOWN : int
+          - name : String
+          - transactionTime : double
+          + File()
+          + File()
+          + getAttributeSize()
+          + getChecksum()
+          + getCost()
+          + getCreationTime()
+          + getFileAttribute()
+          + getLastUpdateTime()
+          + getName()
+          + getOwnerName()
+          + getRegistrationID()
+          + getResourceID()
+          + getSize()
+          + getSizeInByte()
+          + getTransactionTime()
+          + getType()
+          + isMasterCopy()
+          + isReadOnly()
+          + isRegistered()
+          + makeMasterCopy()
+          + makeReplica()
+          + setChecksum()
+          + setCost()
+          + setFileSize()
+          + setMasterCopy()
+          + setName()
+          + setOwnerName()
+          + setReadOnly()
+          + setRegistrationID()
+          + setResourceID()
+          + setTransactionTime()
+          + setType()
+          + setUpdateTime()
+          - makeCopy()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.FileAttribute {
+          - checksum : int
+          - cost : double
+          - creationTime : long
+          - id : int
+          - lastUpdateTime : double
+          - masterCopy : boolean
+          - name : String
+          - ownerName : String
+          - readOnly : boolean
+          - resourceId : int
+          - size : int
+          - type : int
+          + FileAttribute()
+          + copyValue()
+          + getAttributeSize()
+          + getChecksum()
+          + getCost()
+          + getCreationTime()
+          + getFileSize()
+          + getFileSizeInByte()
+          + getLastUpdateTime()
+          + getName()
+          + getOwnerName()
+          + getRegistrationID()
+          + getResourceID()
+          + getType()
+          + isMasterCopy()
+          + isReadOnly()
+          + isRegistered()
+          + setChecksum()
+          + setCost()
+          + setCreationTime()
+          + setFileSize()
+          + setMasterCopy()
+          + setName()
+          + setOwnerName()
+          + setReadOnly()
+          + setRegistrationId()
+          + setResourceID()
+          + setType()
+          + setUpdateTime()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.HarddriveStorage {
+          - avgSeekTime : double
+          - capacity : double
+          - currentSize : double
+          - fileList : List<File>
+          - latency : double
+          - maxTransferRate : double
+          - name : String
+          - nameList : List<String>
+          + HarddriveStorage()
+          + HarddriveStorage()
+          + addFile()
+          + addFile()
+          + addReservedFile()
+          + contains()
+          + contains()
+          + deleteFile()
+          + deleteFile()
+          + deleteFile()
+          + getAvailableSpace()
+          + getAvgSeekTime()
+          + getCapacity()
+          + getCurrentSize()
+          + getFile()
+          + getFileNameList()
+          + getLatency()
+          + getMaxTransferRate()
+          + getName()
+          + getNumStoredFile()
+          + hasPotentialAvailableSpace()
+          + isFull()
+          + renameFile()
+          + reserveSpace()
+          + setAvgSeekTime()
+          + setAvgSeekTime()
+          + setLatency()
+          + setMaxTransferRate()
+          - getSeekTime()
+          - getTransferTime()
+          - init()
+          - isFileValid()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.Host {
+          - failed : boolean
+          - id : int
+          - peList : List<? extends Pe>
+          - storage : long
+          - vmList : List<? extends Vm>
+          - vmsMigratingIn : List<Vm>
+          + Host()
+          + addMigratingInVm()
+          + allocatePesForVm()
+          + deallocatePesForVm()
+          + getAllocatedMipsForVm()
+          + getAvailableMips()
+          + getBw()
+          + getBwProvisioner()
+          + getDatacenter()
+          + getId()
+          + getMaxAvailableMips()
+          + getNumberOfFreePes()
+          + getNumberOfPes()
+          + getPeList()
+          + getRam()
+          + getRamProvisioner()
+          + getStorage()
+          + getTotalAllocatedMipsForVm()
+          + getTotalMips()
+          + getVm()
+          + getVmList()
+          + getVmScheduler()
+          + getVmsMigratingIn()
+          + isFailed()
+          + isSuitableForVm()
+          + printHost()
+          + reallocateMigratingInVms()
+          + removeMigratingInVm()
+          + setDatacenter()
+          + setFailed()
+          + setFailed()
+          + setPeStatus()
+          + toString()
+          + updateVmsProcessing()
+          + vmCreate()
+          + vmDestroy()
+          + vmDestroyAll()
+          # setBwProvisioner()
+          # setId()
+          # setPeList()
+          # setRamProvisioner()
+          # setStorage()
+          # setVmScheduler()
+          # vmDeallocate()
+          # vmDeallocateAll()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.HostDynamicWorkload {
+          - previousUtilizationMips : double
+          - stateHistory : List<HostStateHistoryEntry>
+          - utilizationMips : double
+          + HostDynamicWorkload()
+          + addStateHistoryEntry()
+          + getCompletedVms()
+          + getMaxUtilization()
+          + getMaxUtilizationAmongVmsPes()
+          + getPreviousUtilizationMips()
+          + getPreviousUtilizationOfCpu()
+          + getStateHistory()
+          + getUtilizationMips()
+          + getUtilizationOfBw()
+          + getUtilizationOfCpu()
+          + getUtilizationOfCpuMips()
+          + getUtilizationOfRam()
+          + updateVmsProcessing()
+          # setPreviousUtilizationMips()
+          # setUtilizationMips()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.HostStateHistoryEntry {
+          - allocatedMips : double
+          - isActive : boolean
+          - requestedMips : double
+          - time : double
+          + HostStateHistoryEntry()
+          + getAllocatedMips()
+          + getRequestedMips()
+          + getTime()
+          + isActive()
+          + setActive()
+          # setAllocatedMips()
+          # setRequestedMips()
+          # setTime()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.InfoPacket {
+          - bandwidth : double
+          - baudRates : Vector<Double>
+          - destId : int
+          - entities : Vector<Integer>
+          - entryTimes : Vector<Double>
+          - exitTimes : Vector<Double>
+          - hopsNumber : int
+          - last : int
+          - name : String
+          - netServiceType : int
+          - num : DecimalFormat
+          - packetId : int
+          - pingSize : long
+          - size : long
+          - srcId : int
+          - tag : int
+          + InfoPacket()
+          + addBaudRate()
+          + addEntryTime()
+          + addExitTime()
+          + addHop()
+          + getBaudRate()
+          + getDestId()
+          + getDetailBaudRate()
+          + getDetailEntryTimes()
+          + getDetailExitTimes()
+          + getDetailHops()
+          + getId()
+          + getLast()
+          + getNetServiceType()
+          + getNumHop()
+          + getOriginalPingSize()
+          + getSize()
+          + getSrcId()
+          + getTag()
+          + getTotalResponseTime()
+          + setDestId()
+          + setLast()
+          + setNetServiceType()
+          + setOriginalPingSize()
+          + setSize()
+          + setTag()
+          + toString()
+          - getData()
+          - init()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.Log {
+          {static} - LINE_SEPARATOR : String
+          {static} - disabled : boolean
+          {static} - output : OutputStream
+          {static} + disable()
+          {static} + enable()
+          {static} + format()
+          {static} + formatLine()
+          {static} + getOutput()
+          {static} + isDisabled()
+          {static} + print()
+          {static} + print()
+          {static} + printLine()
+          {static} + printLine()
+          {static} + printLine()
+          {static} + setDisabled()
+          {static} + setOutput()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.NetworkTopology {
+          {static} # bwMatrix : double[][]
+          {static} # delayMatrix : DelayMatrix_Float
+          {static} # graph : TopologicalGraph
+          {static} # map : Map<Integer, Integer>
+          {static} # nextIdx : int
+          {static} - networkEnabled : boolean
+          {static} + addLink()
+          {static} + buildNetworkTopology()
+          {static} + getDelay()
+          {static} + isNetworkEnabled()
+          {static} + mapNode()
+          {static} + unmapNode()
+          {static} - createBwMatrix()
+          {static} - generateMatrices()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      interface org.cloudbus.cloudsim.Packet {
+          {abstract} + getDestId()
+          {abstract} + getId()
+          {abstract} + getLast()
+          {abstract} + getNetServiceType()
+          {abstract} + getSize()
+          {abstract} + getSrcId()
+          {abstract} + getTag()
+          {abstract} + setLast()
+          {abstract} + setNetServiceType()
+          {abstract} + setSize()
+          {abstract} + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.ParameterException {
+          - message : String
+          {static} - serialVersionUID : long
+          + ParameterException()
+          + ParameterException()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.Pe {
+          {static} + BUSY : int
+          {static} + FAILED : int
+          {static} + FREE : int
+          - id : int
+          - status : int
+          + Pe()
+          + getId()
+          + getMips()
+          + getPeProvisioner()
+          + getStatus()
+          + setMips()
+          + setStatus()
+          + setStatusBusy()
+          + setStatusFailed()
+          + setStatusFree()
+          # setId()
+          # setPeProvisioner()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.ResCloudlet {
+          {static} - NOT_FOUND : int
+          - arrivalTime : double
+          - cloudletFinishedSoFar : long
+          - duration : int
+          - finishedTime : double
+          - index : int
+          - machineArrayId : int[]
+          - machineId : int
+          - peArrayId : int[]
+          - peId : int
+          - pesNumber : int
+          - reservId : int
+          - startExecTime : double
+          - startTime : long
+          - totalCompletionTime : double
+          + ResCloudlet()
+          + ResCloudlet()
+          + finalizeCloudlet()
+          + getClouddletFinishTime()
+          + getCloudlet()
+          + getCloudletArrivalTime()
+          + getCloudletClassType()
+          + getCloudletId()
+          + getCloudletLength()
+          + getCloudletStatus()
+          + getCloudletTotalLength()
+          + getDurationTime()
+          + getExecStartTime()
+          + getMachineId()
+          + getMachineIdList()
+          + getNumberOfPes()
+          + getPeId()
+          + getPeIdList()
+          + getRemainingCloudletLength()
+          + getReservationID()
+          + getStartTime()
+          + getUid()
+          + getUserId()
+          + hasReserved()
+          + setCloudletStatus()
+          + setExecParam()
+          + setFinishTime()
+          + setMachineAndPeId()
+          + updateCloudletFinishedSoFar()
+          - init()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.SanStorage {
+          ~ bandwidth : double
+          ~ networkLatency : double
+          + SanStorage()
+          + SanStorage()
+          + addFile()
+          + addFile()
+          + addReservedFile()
+          + deleteFile()
+          + deleteFile()
+          + getMaxTransferRate()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      interface org.cloudbus.cloudsim.Storage {
+          {abstract} + addFile()
+          {abstract} + addFile()
+          {abstract} + addReservedFile()
+          {abstract} + contains()
+          {abstract} + contains()
+          {abstract} + deleteFile()
+          {abstract} + deleteFile()
+          {abstract} + deleteFile()
+          {abstract} + getAvailableSpace()
+          {abstract} + getCapacity()
+          {abstract} + getCurrentSize()
+          {abstract} + getFile()
+          {abstract} + getFileNameList()
+          {abstract} + getMaxTransferRate()
+          {abstract} + getName()
+          {abstract} + getNumStoredFile()
+          {abstract} + hasPotentialAvailableSpace()
+          {abstract} + isFull()
+          {abstract} + renameFile()
+          {abstract} + reserveSpace()
+          {abstract} + setMaxTransferRate()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      interface org.cloudbus.cloudsim.UtilizationModel {
+          {abstract} + getUtilization()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.UtilizationModelFull {
+          + getUtilization()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.UtilizationModelNull {
+          + getUtilization()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.UtilizationModelPlanetLabInMemory {
+          - data : double[]
+          - schedulingInterval : double
+          + UtilizationModelPlanetLabInMemory()
+          + UtilizationModelPlanetLabInMemory()
+          + getSchedulingInterval()
+          + getUtilization()
+          + setSchedulingInterval()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.UtilizationModelStochastic {
+          - history : Map<Double, Double>
+          - randomGenerator : Random
+          + UtilizationModelStochastic()
+          + UtilizationModelStochastic()
+          + getRandomGenerator()
+          + getUtilization()
+          + loadHistory()
+          + saveHistory()
+          + setRandomGenerator()
+          # getHistory()
+          # setHistory()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.Vm {
+          - beingInstantiated : boolean
+          - bw : long
+          - currentAllocatedBw : long
+          - currentAllocatedMips : List<Double>
+          - currentAllocatedRam : int
+          - currentAllocatedSize : long
+          - id : int
+          - inMigration : boolean
+          - mips : double
+          - numberOfPes : int
+          - ram : int
+          - size : long
+          - stateHistory : List<VmStateHistoryEntry>
+          - uid : String
+          - userId : int
+          - vmm : String
+          + Vm()
+          + addStateHistoryEntry()
+          + getBw()
+          + getCloudletScheduler()
+          + getCurrentAllocatedBw()
+          + getCurrentAllocatedMips()
+          + getCurrentAllocatedRam()
+          + getCurrentAllocatedSize()
+          + getCurrentRequestedBw()
+          + getCurrentRequestedMaxMips()
+          + getCurrentRequestedMips()
+          + getCurrentRequestedRam()
+          + getCurrentRequestedTotalMips()
+          + getHost()
+          + getId()
+          + getMips()
+          + getNumberOfPes()
+          + getRam()
+          + getSize()
+          + getStateHistory()
+          + getTotalUtilizationOfCpu()
+          + getTotalUtilizationOfCpuMips()
+          + getUid()
+          {static} + getUid()
+          + getUserId()
+          + getVmm()
+          + isBeingInstantiated()
+          + isInMigration()
+          + saveStatus()
+          + setBeingInstantiated()
+          + setBw()
+          + setCurrentAllocatedBw()
+          + setCurrentAllocatedMips()
+          + setCurrentAllocatedRam()
+          + setHost()
+          + setInMigration()
+          + setRam()
+          + setSize()
+          + setUid()
+          + updateVmProcessing()
+          # setCloudletScheduler()
+          # setCurrentAllocatedSize()
+          # setId()
+          # setMips()
+          # setNumberOfPes()
+          # setUserId()
+          # setVmm()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      abstract class org.cloudbus.cloudsim.VmAllocationPolicy {
+          - hostList : List<? extends Host>
+          + VmAllocationPolicy()
+          {abstract} + allocateHostForVm()
+          {abstract} + allocateHostForVm()
+          {abstract} + deallocateHostForVm()
+          {abstract} + getHost()
+          {abstract} + getHost()
+          + getHostList()
+          {abstract} + optimizeAllocation()
+          # setHostList()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.VmAllocationPolicySimple {
+          - freePes : List<Integer>
+          - usedPes : Map<String, Integer>
+          - vmTable : Map<String, Host>
+          + VmAllocationPolicySimple()
+          + allocateHostForVm()
+          + allocateHostForVm()
+          + deallocateHostForVm()
+          + getHost()
+          + getHost()
+          + getVmTable()
+          + optimizeAllocation()
+          # getFreePes()
+          # getUsedPes()
+          # setFreePes()
+          # setUsedPes()
+          # setVmTable()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      abstract class org.cloudbus.cloudsim.VmScheduler {
+          - availableMips : double
+          - mipsMap : Map<String, List<Double>>
+          - peList : List<? extends Pe>
+          - peMap : Map<String, List<Pe>>
+          - vmsMigratingIn : List<String>
+          - vmsMigratingOut : List<String>
+          + VmScheduler()
+          {abstract} + allocatePesForVm()
+          + deallocatePesForAllVms()
+          {abstract} + deallocatePesForVm()
+          + getAllocatedMipsForVm()
+          + getAvailableMips()
+          + getMaxAvailableMips()
+          + getPeCapacity()
+          + getPeList()
+          + getPeMap()
+          + getPesAllocatedForVM()
+          + getTotalAllocatedMipsForVm()
+          + getVmsMigratingIn()
+          + getVmsMigratingOut()
+          # getMipsMap()
+          # setAvailableMips()
+          # setMipsMap()
+          # setPeList()
+          # setPeMap()
+          # setVmsMigratingIn()
+          # setVmsMigratingOut()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.VmSchedulerSpaceShared {
+          - freePes : List<Pe>
+          - peAllocationMap : Map<String, List<Pe>>
+          + VmSchedulerSpaceShared()
+          + allocatePesForVm()
+          + deallocatePesForVm()
+          # getFreePes()
+          # getPeAllocationMap()
+          # setFreePes()
+          # setPeAllocationMap()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.VmSchedulerTimeShared {
+          - mipsMapRequested : Map<String, List<Double>>
+          - pesInUse : int
+          + VmSchedulerTimeShared()
+          + allocatePesForVm()
+          + deallocatePesForAllVms()
+          + deallocatePesForVm()
+          + getMaxAvailableMips()
+          # allocatePesForVm()
+          # getMipsMapRequested()
+          # getPesInUse()
+          # setMipsMapRequested()
+          # setPesInUse()
+          # updatePeProvisioning()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.VmSchedulerTimeSharedOverSubscription {
+          + VmSchedulerTimeSharedOverSubscription()
+          # allocatePesForVm()
+          # redistributeMipsDueToOverSubscription()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      class org.cloudbus.cloudsim.VmStateHistoryEntry {
+          - allocatedMips : double
+          - isInMigration : boolean
+          - requestedMips : double
+          - time : double
+          + VmStateHistoryEntry()
+          + getAllocatedMips()
+          + getRequestedMips()
+          + getTime()
+          + isInMigration()
+          # setAllocatedMips()
+          # setInMigration()
+          # setRequestedMips()
+          # setTime()
+      }
+    }
+  }
+  
+
+  org.cloudbus.cloudsim.Cloudlet o-- org.cloudbus.cloudsim.UtilizationModel : utilizationModelBw
+  org.cloudbus.cloudsim.Cloudlet o-- org.cloudbus.cloudsim.UtilizationModel : utilizationModelCpu
+  org.cloudbus.cloudsim.Cloudlet o-- org.cloudbus.cloudsim.UtilizationModel : utilizationModelRam
+  org.cloudbus.cloudsim.Cloudlet +-down- org.cloudbus.cloudsim.Cloudlet.Resource
+  org.cloudbus.cloudsim.CloudletSchedulerDynamicWorkload -up-|> org.cloudbus.cloudsim.CloudletSchedulerTimeShared
+  org.cloudbus.cloudsim.CloudletSchedulerSpaceShared -up-|> org.cloudbus.cloudsim.CloudletScheduler
+  org.cloudbus.cloudsim.CloudletSchedulerTimeShared -up-|> org.cloudbus.cloudsim.CloudletScheduler
+  org.cloudbus.cloudsim.Datacenter -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.cloudbus.cloudsim.Datacenter o-- org.cloudbus.cloudsim.DatacenterCharacteristics : characteristics
+  org.cloudbus.cloudsim.Datacenter o-- org.cloudbus.cloudsim.VmAllocationPolicy : vmAllocationPolicy
+  org.cloudbus.cloudsim.DatacenterBroker -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.cloudbus.cloudsim.File o-- org.cloudbus.cloudsim.FileAttribute : attribute
+  org.cloudbus.cloudsim.HarddriveStorage .up.|> org.cloudbus.cloudsim.Storage
+  org.cloudbus.cloudsim.HarddriveStorage o-- org.cloudbus.cloudsim.distributions.ContinuousDistribution : gen
+  org.cloudbus.cloudsim.Host o-- org.cloudbus.cloudsim.provisioners.BwProvisioner : bwProvisioner
+  org.cloudbus.cloudsim.Host o-- org.cloudbus.cloudsim.Datacenter : datacenter
+  org.cloudbus.cloudsim.Host o-- org.cloudbus.cloudsim.provisioners.RamProvisioner : ramProvisioner
+  org.cloudbus.cloudsim.Host o-- org.cloudbus.cloudsim.VmScheduler : vmScheduler
+  org.cloudbus.cloudsim.HostDynamicWorkload -up-|> org.cloudbus.cloudsim.Host
+  org.cloudbus.cloudsim.InfoPacket .up.|> org.cloudbus.cloudsim.Packet
+  org.cloudbus.cloudsim.Pe o-- org.cloudbus.cloudsim.provisioners.PeProvisioner : peProvisioner
+  org.cloudbus.cloudsim.ResCloudlet o-- org.cloudbus.cloudsim.Cloudlet : cloudlet
+  org.cloudbus.cloudsim.SanStorage -up-|> org.cloudbus.cloudsim.HarddriveStorage
+  org.cloudbus.cloudsim.UtilizationModelFull .up.|> org.cloudbus.cloudsim.UtilizationModel
+  org.cloudbus.cloudsim.UtilizationModelNull .up.|> org.cloudbus.cloudsim.UtilizationModel
+  org.cloudbus.cloudsim.UtilizationModelPlanetLabInMemory .up.|> org.cloudbus.cloudsim.UtilizationModel
+  org.cloudbus.cloudsim.UtilizationModelStochastic .up.|> org.cloudbus.cloudsim.UtilizationModel
+  org.cloudbus.cloudsim.Vm o-- org.cloudbus.cloudsim.CloudletScheduler : cloudletScheduler
+  org.cloudbus.cloudsim.Vm o-- org.cloudbus.cloudsim.Host : host
+  org.cloudbus.cloudsim.VmAllocationPolicySimple -up-|> org.cloudbus.cloudsim.VmAllocationPolicy
+  org.cloudbus.cloudsim.VmSchedulerSpaceShared -up-|> org.cloudbus.cloudsim.VmScheduler
+  org.cloudbus.cloudsim.VmSchedulerTimeShared -up-|> org.cloudbus.cloudsim.VmScheduler
+  org.cloudbus.cloudsim.VmSchedulerTimeSharedOverSubscription -up-|> org.cloudbus.cloudsim.VmSchedulerTimeShared
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml
