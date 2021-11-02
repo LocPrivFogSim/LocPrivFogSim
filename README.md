@@ -8,7 +8,7 @@
   <h3 align="center">LocPrivFogSim</h3>
 
   <p align="center">
-    A simulator to analyse threats of computation offloading strategies to location privacy in fog computing.
+    A simulator to analyze threats of computation offloading strategies to location privacy in fog computing.
   </p>
 </div>
 
