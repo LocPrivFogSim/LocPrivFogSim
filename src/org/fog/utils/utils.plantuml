@@ -1,0 +1,357 @@
+@startuml
+
+title __UTILS's Class Diagram__\n
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.CanBeSentResult {
+          - canBeSent : boolean
+          - cpuLoad : double
+          - nwLoad : double
+          + CanBeSentResult()
+          + CanBeSentResult()
+          + getCpuLoad()
+          + getNwLoad()
+          + isCanBeSent()
+          + setCanBeSent()
+          + setCpuLoad()
+          + setNwLoad()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.Config {
+          {static} + FOG_DEVICE_ARCH : String
+          {static} + FOG_DEVICE_COST : double
+          {static} + FOG_DEVICE_COST_PER_BW : double
+          {static} + FOG_DEVICE_COST_PER_MEMORY : double
+          {static} + FOG_DEVICE_COST_PER_STORAGE : double
+          {static} + FOG_DEVICE_OS : String
+          {static} + FOG_DEVICE_TIMEZONE : double
+          {static} + FOG_DEVICE_VMM : String
+          {static} + MAX_SIMULATION_TIME : int
+          {static} + RESOURCE_MANAGE_INTERVAL : int
+          {static} + RESOURCE_MGMT_INTERVAL : double
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.FogEntityFactory {
+          {static} + createFogDevice()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.FogEvents {
+          {static} + ACTIVE_APP_UPDATE : int
+          {static} + ACTUATOR_JOINED : int
+          {static} + ADAPTIVE_OPERATOR_REPLACEMENT : int
+          {static} + APP_SUBMIT : int
+          {static} + CALCULATE_INPUT_RATE : int
+          {static} + CALCULATE_UTIL : int
+          {static} + CONTROLLER_RESOURCE_MANAGE : int
+          {static} + CONTROL_MSG_ARRIVAL : int
+          {static} + EMIT_TUPLE : int
+          {static} + GET_RESOURCE_USAGE : int
+          {static} + INITIALIZE_SENSOR : int
+          {static} + LAUNCH_MODULE : int
+          {static} + LAUNCH_MODULE_INSTANCE : int
+          {static} + RELEASE_OPERATOR : int
+          {static} + RESOURCE_MGMT : int
+          {static} + RESOURCE_USAGE : int
+          {static} + SEND_PERIODIC_TUPLE : int
+          {static} + SENSOR_JOINED : int
+          {static} + STOP_SIMULATION : int
+          {static} + TUPLE_ACK : int
+          {static} + TUPLE_ARRIVAL : int
+          {static} + TUPLE_FINISHED : int
+          {static} + UPDATE_NORTH_TUPLE_QUEUE : int
+          {static} + UPDATE_RESOURCE_USAGE : int
+          {static} + UPDATE_SOUTH_TUPLE_QUEUE : int
+          {static} - BASE : int
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.FogLinearPowerModel {
+          - constant : double
+          - maxPower : double
+          - staticPower : double
+          + FogLinearPowerModel()
+          + getPower()
+          + toString()
+          # getConstant()
+          # getMaxPower()
+          # getStaticPower()
+          # setConstant()
+          # setMaxPower()
+          # setStaticPower()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.FogUtils {
+          {static} + MAX : int
+          {static} + USER_ID : int
+          {static} + appIdToGeoCoverageMap : Map<String, GeoCoverage>
+          {static} - ACTUAL_TUPLE_ID : int
+          {static} - ENTITY_ID : int
+          {static} - TUPLE_ID : int
+          {static} + generateActualTupleId()
+          {static} + generateEntityId()
+          {static} + generateTupleId()
+          {static} + getSensorTypeFromSensorName()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.GeoCoverage {
+          - lat_l : double
+          - lat_u : double
+          - long_l : double
+          - long_u : double
+          + GeoCoverage()
+          + covers()
+          + getLat_l()
+          + getLat_u()
+          + getLong_l()
+          + getLong_u()
+          + setLat_l()
+          + setLat_u()
+          + setLong_l()
+          + setLong_u()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.GeoLocation {
+          - latitude : double
+          - longitude : double
+          + GeoLocation()
+          + getLatitude()
+          + getLongitude()
+          + setLatitude()
+          + setLongitude()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.JsonToTopology {
+          {static} - actuators : List<Actuator>
+          {static} - fogDevices : List<FogDevice>
+          {static} - sensors : List<Sensor>
+          {static} + getPhysicalTopology()
+          {static} - connectEntities()
+          {static} - createFogDevice()
+          {static} - getActuator()
+          {static} - getFogDevice()
+          {static} - getSensor()
+          {static} - isActuator()
+          {static} - isFogDevice()
+          {static} - isSensor()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.Logger {
+          {static} + DEBUG : int
+          {static} + ENABLED : boolean
+          {static} + ERROR : int
+          {static} + LOG_LEVEL : int
+          {static} - df : DecimalFormat
+          {static} + debug()
+          {static} + error()
+          {static} + setLogLevel()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.ModuleLaunchConfig {
+          - instanceCount : int
+          + ModuleLaunchConfig()
+          + getInstanceCount()
+          + getModule()
+          + setInstanceCount()
+          + setModule()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.NetworkUsageMonitor {
+          {static} - networkUsageCoudlets : double
+          {static} - networkUsageDevice : double
+          {static} + getNetWorkUsageInMigration()
+          {static} + getNetworkUsage()
+          {static} + migrationTrafficUsage()
+          {static} + sendingTuple()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.OperatorEdge {
+          - dst : String
+          - selectivity : double
+          - src : String
+          + OperatorEdge()
+          + getDst()
+          + getSelectivity()
+          + getSrc()
+          + setDst()
+          + setSelectivity()
+          + setSrc()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.OperatorSetComparator {
+          + compare()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.ResourceUsageDetails {
+          - cpuTrafficIntensity : double
+          - mips : double
+          - nwTrafficIntensity : double
+          - uplinkBandwidth : double
+          + ResourceUsageDetails()
+          + getCpuTrafficIntensity()
+          + getMips()
+          + getNwTrafficIntensity()
+          + getUplinkBandwidth()
+          + setCpuTrafficIntensity()
+          + setMips()
+          + setNwTrafficIntensity()
+          + setUplinkBandwidth()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.TimeKeeper {
+          - count : int
+          - emitTimes : Map<Integer, Double>
+          - endTimes : Map<Integer, Double>
+          {static} - instance : TimeKeeper
+          - loopIdToCurrentAverage : Map<Integer, Double>
+          - loopIdToCurrentNum : Map<Integer, Integer>
+          - loopIdToTupleIds : Map<Integer, List<Integer>>
+          - maxLoopExecutionTime : Map<Integer, Double>
+          - simulationStartTime : long
+          - tupleIdToCpuStartTime : Map<Integer, Double>
+          - tupleTypeToAverageCpuTime : Map<String, Double>
+          - tupleTypeToExecutedTupleCount : Map<String, Integer>
+          + getCount()
+          + getEmitTimes()
+          + getEndTimes()
+          {static} + getInstance()
+          + getLoopIdToCurrentAverage()
+          + getLoopIdToCurrentNum()
+          + getLoopIdToTupleIds()
+          + getMaxLoopExecutionTime()
+          + getSimulationStartTime()
+          + getTupleIdToCpuStartTime()
+          + getTupleTypeToAverageCpuTime()
+          + getTupleTypeToExecutedTupleCount()
+          + getUniqueId()
+          + loopIdToTupleIds()
+          + setCount()
+          + setEmitTimes()
+          + setEndTimes()
+          + setLoopIdToCurrentAverage()
+          + setLoopIdToCurrentNum()
+          + setLoopIdToTupleIds()
+          + setMaxLoopExecutionTime()
+          + setSimulationStartTime()
+          + setTupleIdToCpuStartTime()
+          + setTupleTypeToAverageCpuTime()
+          + setTupleTypeToExecutedTupleCount()
+          + tupleEndedExecution()
+          + tupleStartedExecution()
+          - TimeKeeper()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.utils {
+      class org.fog.utils.TupleFinishDetails {
+          - actualTupleId : int
+          - emitTime : double
+          - finishTime : double
+          - queryId : String
+          - sensorType : String
+          + TupleFinishDetails()
+          + getActualTupleId()
+          + getEmitTime()
+          + getFinishTime()
+          + getQueryId()
+          + getSensorType()
+          + setActualTupleId()
+          + setEmitTime()
+          + setFinishTime()
+          + setQueryId()
+          + setSensorType()
+      }
+    }
+  }
+  
+
+  org.fog.utils.FogLinearPowerModel .up.|> org.cloudbus.cloudsim.power.models.PowerModel
+  org.fog.utils.ModuleLaunchConfig o-- org.fog.application.AppModule : module
+  org.fog.utils.OperatorSetComparator .up.|> java.util.Comparator
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

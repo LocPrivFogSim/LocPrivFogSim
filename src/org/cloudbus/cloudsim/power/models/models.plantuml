@@ -1,0 +1,243 @@
+@startuml
+
+title __MODELS's Class Diagram__\n
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          interface org.cloudbus.cloudsim.power.models.PowerModel {
+              {abstract} + getPower()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          class org.cloudbus.cloudsim.power.models.PowerModelCubic {
+              - constant : double
+              - maxPower : double
+              - staticPower : double
+              + PowerModelCubic()
+              + getPower()
+              # getConstant()
+              # getMaxPower()
+              # getStaticPower()
+              # setConstant()
+              # setMaxPower()
+              # setStaticPower()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          class org.cloudbus.cloudsim.power.models.PowerModelLinear {
+              - constant : double
+              - maxPower : double
+              - staticPower : double
+              + PowerModelLinear()
+              + getPower()
+              # getConstant()
+              # getMaxPower()
+              # getStaticPower()
+              # setConstant()
+              # setMaxPower()
+              # setStaticPower()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          abstract class org.cloudbus.cloudsim.power.models.PowerModelSpecPower {
+              + getPower()
+              {abstract} # getPowerData()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          class org.cloudbus.cloudsim.power.models.PowerModelSpecPowerHpProLiantMl110G3PentiumD930 {
+              - power : double[]
+              # getPowerData()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          class org.cloudbus.cloudsim.power.models.PowerModelSpecPowerHpProLiantMl110G4Xeon3040 {
+              - power : double[]
+              # getPowerData()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          class org.cloudbus.cloudsim.power.models.PowerModelSpecPowerHpProLiantMl110G5Xeon3075 {
+              - power : double[]
+              # getPowerData()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          class org.cloudbus.cloudsim.power.models.PowerModelSpecPowerIbmX3250XeonX3470 {
+              - power : double[]
+              # getPowerData()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          class org.cloudbus.cloudsim.power.models.PowerModelSpecPowerIbmX3250XeonX3480 {
+              - power : double[]
+              # getPowerData()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          class org.cloudbus.cloudsim.power.models.PowerModelSpecPowerIbmX3550XeonX5670 {
+              - power : double[]
+              # getPowerData()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          class org.cloudbus.cloudsim.power.models.PowerModelSpecPowerIbmX3550XeonX5675 {
+              - power : double[]
+              # getPowerData()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          class org.cloudbus.cloudsim.power.models.PowerModelSqrt {
+              - constant : double
+              - maxPower : double
+              - staticPower : double
+              + PowerModelSqrt()
+              + getPower()
+              # getConstant()
+              # getMaxPower()
+              # getStaticPower()
+              # setConstant()
+              # setMaxPower()
+              # setStaticPower()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace power {
+        namespace models {
+          class org.cloudbus.cloudsim.power.models.PowerModelSquare {
+              - constant : double
+              - maxPower : double
+              - staticPower : double
+              + PowerModelSquare()
+              + getPower()
+              # getConstant()
+              # getMaxPower()
+              # getStaticPower()
+              # setConstant()
+              # setMaxPower()
+              # setStaticPower()
+          }
+        }
+      }
+    }
+  }
+  
+
+  org.cloudbus.cloudsim.power.models.PowerModelCubic .up.|> org.cloudbus.cloudsim.power.models.PowerModel
+  org.cloudbus.cloudsim.power.models.PowerModelLinear .up.|> org.cloudbus.cloudsim.power.models.PowerModel
+  org.cloudbus.cloudsim.power.models.PowerModelSpecPower .up.|> org.cloudbus.cloudsim.power.models.PowerModel
+  org.cloudbus.cloudsim.power.models.PowerModelSpecPowerHpProLiantMl110G3PentiumD930 -up-|> org.cloudbus.cloudsim.power.models.PowerModelSpecPower
+  org.cloudbus.cloudsim.power.models.PowerModelSpecPowerHpProLiantMl110G4Xeon3040 -up-|> org.cloudbus.cloudsim.power.models.PowerModelSpecPower
+  org.cloudbus.cloudsim.power.models.PowerModelSpecPowerHpProLiantMl110G5Xeon3075 -up-|> org.cloudbus.cloudsim.power.models.PowerModelSpecPower
+  org.cloudbus.cloudsim.power.models.PowerModelSpecPowerIbmX3250XeonX3470 -up-|> org.cloudbus.cloudsim.power.models.PowerModelSpecPower
+  org.cloudbus.cloudsim.power.models.PowerModelSpecPowerIbmX3250XeonX3480 -up-|> org.cloudbus.cloudsim.power.models.PowerModelSpecPower
+  org.cloudbus.cloudsim.power.models.PowerModelSpecPowerIbmX3550XeonX5670 -up-|> org.cloudbus.cloudsim.power.models.PowerModelSpecPower
+  org.cloudbus.cloudsim.power.models.PowerModelSpecPowerIbmX3550XeonX5675 -up-|> org.cloudbus.cloudsim.power.models.PowerModelSpecPower
+  org.cloudbus.cloudsim.power.models.PowerModelSqrt .up.|> org.cloudbus.cloudsim.power.models.PowerModel
+  org.cloudbus.cloudsim.power.models.PowerModelSquare .up.|> org.cloudbus.cloudsim.power.models.PowerModel
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

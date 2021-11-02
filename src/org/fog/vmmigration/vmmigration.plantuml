@@ -1,0 +1,572 @@
+@startuml
+
+title __VMMIGRATION's Class Diagram__\n
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      interface org.fog.vmmigration.AfterMigration {
+          {abstract} + closeConnection()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      interface org.fog.vmmigration.BeforeMigration {
+          {abstract} + dataprepare()
+          {abstract} + openConnection()
+          {abstract} + tryOpenConnection()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.CompleteVM {
+          - migPointPolicy : int
+          + CompleteVM()
+          + getMigPointPolicy()
+          + migPointPolicyFunction()
+          + migrationPointFunction()
+          + migrationPointFunction()
+          + migrationTimeFunction()
+          + migrationZoneFunction()
+          + setMigPointPolicy()
+          + verifyPoints()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.ContainerVM {
+          - migPointPolicy : int
+          + ContainerVM()
+          + getMigPointPolicy()
+          + migPointPolicyFunction()
+          + migrationPointFunction()
+          + migrationPointFunction()
+          + migrationTimeFunction()
+          + migrationZoneFunction()
+          + setMigPointPolicy()
+          + verifyPoints()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      interface org.fog.vmmigration.DecisionMigration {
+          {abstract} + shouldMigrate()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.DecisionMigration_OLD {
+          {static} - correntAP : ApDevice
+          {static} - migPoint : boolean
+          {static} - migZone : boolean
+          {static} - nextApId : int
+          {static} - nextServerClouletId : int
+          {static} - smartThingPosition : int
+          {static} + checkLinkStatus()
+          {static} + decisionMigration()
+          {static} + getCorrentAP()
+          {static} + getNextApId()
+          {static} + getNextServerClouletId()
+          {static} + getSmartThingPosition()
+          {static} + isMigPoint()
+          {static} + isMigZone()
+          {static} + migPointPolicyFunction()
+          {static} + setCorrentAP()
+          {static} + setMigPoint()
+          {static} + setMigZone()
+          {static} + setNextApId()
+          {static} + setNextServerClouletId()
+          {static} + setSmartThingPosition()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.DeliveryVirtualMachine {
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.DuringMigration {
+          + managermentBetweeServerCloudlets()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.LatencyByDistance {
+          {static} + latencyConnection()
+          {static} - latencyConnection()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.LiveMigration {
+          - migPointPolicy : int
+          + LiveMigration()
+          + getMigPointPolicy()
+          + migPointPolicyFunction()
+          + migrationPointFunction()
+          + migrationPointFunction()
+          + migrationTimeFunction()
+          + migrationZoneFunction()
+          + setMigPointPolicy()
+          + verifyPoints()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.LowestDistBwSmartThingAP {
+          - apDevices : List<ApDevice>
+          - migPoint : boolean
+          - migPointPolicy : int
+          - migZone : boolean
+          - nextApId : int
+          - nextServerClouletId : int
+          - policyReplicaVM : int
+          - serverCloudlets : List<FogDevice>
+          - smartThingPosition : int
+          + LowestDistBwSmartThingAP()
+          + getApDevices()
+          + getCorrentAP()
+          + getMigPointPolicy()
+          + getNextApId()
+          + getNextServerClouletId()
+          + getPolicyReplicaVM()
+          + getServerCloudlets()
+          + getSmartThingPosition()
+          + isMigPoint()
+          + isMigZone()
+          + setApDevices()
+          + setCorrentAP()
+          + setMigPoint()
+          + setMigPointPolicy()
+          + setMigZone()
+          + setNextApId()
+          + setNextServerClouletId()
+          + setPolicyReplicaVM()
+          + setServerCloudlets()
+          + setSmartThingPosition()
+          + shouldMigrate()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.LowestDistBwSmartThingServerCloudlet {
+          - apDevices : List<ApDevice>
+          - migPoint : boolean
+          - migPointPolicy : int
+          - migZone : boolean
+          - nextApId : int
+          - nextServerClouletId : int
+          - policyReplicaVM : int
+          - serverCloudlets : List<FogDevice>
+          - smartThingPosition : int
+          + LowestDistBwSmartThingServerCloudlet()
+          + getApDevices()
+          + getCorrentAP()
+          + getMigPointPolicy()
+          + getNextApId()
+          + getNextServerClouletId()
+          + getPolicyReplicaVM()
+          + getServerCloudlets()
+          + getSmartThingPosition()
+          + isMigPoint()
+          + isMigZone()
+          + setApDevices()
+          + setCorrentAP()
+          + setMigPoint()
+          + setMigPointPolicy()
+          + setMigZone()
+          + setNextApId()
+          + setNextServerClouletId()
+          + setPolicyReplicaVM()
+          + setServerCloudlets()
+          + setSmartThingPosition()
+          + shouldMigrate()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.LowestLatency {
+          - apDevices : List<ApDevice>
+          - migPoint : boolean
+          - migPointPolicy : int
+          - migZone : boolean
+          - nextApId : int
+          - nextServerClouletId : int
+          - policyReplicaVM : int
+          - serverCloudlets : List<FogDevice>
+          - smartThingPosition : int
+          + LowestLatency()
+          + getApDevices()
+          + getCorrentAP()
+          + getMigPointPolicy()
+          + getNextApId()
+          + getNextServerClouletId()
+          + getPolicyReplicaVM()
+          + getServerCloudlets()
+          + getSmartThingPosition()
+          + isMigPoint()
+          + isMigZone()
+          + setApDevices()
+          + setCorrentAP()
+          + setMigPoint()
+          + setMigPointPolicy()
+          + setMigZone()
+          + setNextApId()
+          + setNextServerClouletId()
+          + setPolicyReplicaVM()
+          + setServerCloudlets()
+          + setSmartThingPosition()
+          + shouldMigrate()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.Migration {
+          {static} - apsAvailable : List<ApDevice>
+          - flowDirection : int
+          - location : int
+          {static} - migrationPoint : boolean
+          {static} - migrationZone : boolean
+          {static} - policyReplicaVM : int
+          {static} - rand : Random
+          {static} - serverCloudletsAvailable : List<FogDevice>
+          {static} + apAvailableList()
+          + getApAvailable()
+          {static} + getApsAvailable()
+          + getCorrentAP()
+          + getCorrentServerCloudlet()
+          + getCorrentSmartThing()
+          + getFlowDirection()
+          + getLocation()
+          {static} + getPolicyReplicaVM()
+          {static} + getRand()
+          + getServerCloudletAvailable()
+          {static} + getServerCloudletsAvailable()
+          {static} + insideCone()
+          {static} + isEdgeAp()
+          {static} + isMigrationPoint()
+          {static} + isMigrationZone()
+          {static} + lowestLatencyCostServerCloudlet()
+          {static} + lowestLatencyCostServerCloudletILP()
+          {static} + nextAp()
+          + nextApFromCloudlet()
+          {static} + nextServerCloudlet()
+          {static} + serverClouletsAvailableList()
+          + setApAvailable()
+          {static} + setApsAvailable()
+          + setCorrentAP()
+          + setCorrentServerCloudlet()
+          + setCorrentSmartThing()
+          + setFlowDirection()
+          + setLocation()
+          {static} + setMigrationPoint()
+          {static} + setMigrationZone()
+          {static} + setPolicyReplicaVM()
+          + setServerCloudletAvailable()
+          {static} + setServerCloudletsAvailable()
+          {static} + sumCostFunction()
+          {static} ~ findCluster()
+          {static} ~ getCluster()
+          {static} ~ setLatencyMatrix()
+          {static} - getLatencyMatrix()
+          {static} - saveDistance()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.MyStatistics {
+          - DelayAfterNewConnection : Map<Integer, Double>
+          - averageDelayAfterNewConnection : double
+          - averageMigrationTime : double
+          - averageWithoutConnection : double
+          - averageWithoutVmTime : double
+          - energyHistory : Map<Integer, Double>
+          - fileLatency : FileWriter
+          - fileMap : Map<Integer, File>
+          - initialTimeDelayAfterNewConnection : Map<Integer, Double>
+          - initialTimeWithoutConnection : Map<Integer, Double>
+          - initialWithoutVmTime : Map<Integer, Double>
+          {static} - instance : MyStatistics
+          - maxDelayAfterNewConnection : Map<Integer, Double>
+          - maxMigrationTime : Map<Integer, Double>
+          - maxWithoutConnectionTime : Map<Integer, Double>
+          - maxWithoutVmTime : Map<Integer, Double>
+          - migrationTime : Map<Integer, Double>
+          - myCount : Map<Integer, Integer>
+          - myCountDelayAfterNewConnection : int
+          - myCountLostTuple : long
+          - myCountLowestLatency : int
+          - myCountMigrationTime : int
+          - myCountTotalTuple : long
+          - myCountTuple : int
+          - myCountWithoutConnection : int
+          - myCountWithoutVmTime : int
+          - powerHistory : Map<Integer, Double>
+          - printFile : BufferedWriter
+          - seed : int
+          - timeOutApplication : double
+          - toPrint : String
+          - totalHandoff : int
+          - totalMigTimes : double
+          - totalMigrations : int
+          - tupleLatency : Map<Integer, Double>
+          - withoutConnectionTime : Map<Integer, Double>
+          - withoutVmTime : Map<Integer, Double>
+          + MyStatistics()
+          + countMigration()
+          + finalDelayAfterNewConnection()
+          + finalWithoutConnection()
+          + finalWithoutVmTime()
+          + getAverageDelayAfterNewConnection()
+          + getAverageMigrationTime()
+          + getAverageWithoutConnection()
+          + getAverageWithoutVmTime()
+          + getDelayAfterNewConnection()
+          + getEnergyHistory()
+          + getFileLatency()
+          + getFileMap()
+          + getInitialTimeDelayAfterNewConnection()
+          + getInitialTimeWithoutConnection()
+          + getInitialWithoutVmTime()
+          {static} + getInstance()
+          + getMaxDelayAfterNewConnection()
+          + getMaxMigrationTime()
+          + getMaxWithoutConnectionTime()
+          + getMaxWithoutVmTime()
+          + getMigrationTime()
+          + getMyCount()
+          + getMyCountDelayAfterNewConnection()
+          + getMyCountLostTuple()
+          + getMyCountLowestLatency()
+          + getMyCountMigrationTime()
+          + getMyCountTotalTuple()
+          + getMyCountTuple()
+          + getMyCountWithoutConnection()
+          + getMyCountWithoutVmTime()
+          + getPowerHistory()
+          + getPrintFile()
+          + getSeed()
+          + getTimeOutApplication()
+          + getToPrint()
+          + getTotalHandoff()
+          + getTotalMigTimes()
+          + getTotalMigrations()
+          + getTupleLatency()
+          + getWithoutConnectionTime()
+          + getWithoutVmTime()
+          + historyMigrationTime()
+          + printResults()
+          + putLantencyFileName()
+          + putLatencyFileValue()
+          + setAverageDelayAfterNewConnection()
+          + setAverageMigrationTime()
+          + setAverageWithoutConnection()
+          + setAverageWithoutVmTime()
+          + setDelayAfterNewConnection()
+          + setEnergyHistory()
+          + setFileLatency()
+          + setFileMap()
+          + setInitialTimeDelayAfterNewConnection()
+          + setInitialTimeWithoutConnection()
+          + setInitialWithoutVmTime()
+          {static} + setInstance()
+          + setMaxDelayAfterNewConnection()
+          + setMaxMigrationTime()
+          + setMaxWithoutConnectionTime()
+          + setMaxWithoutVmTime()
+          + setMigrationTime()
+          + setMyCount()
+          + setMyCountDelayAfterNewConnection()
+          + setMyCountLostTuple()
+          + setMyCountLowestLatency()
+          + setMyCountMigrationTime()
+          + setMyCountTotalTuple()
+          + setMyCountTuple()
+          + setMyCountWithoutConnection()
+          + setMyCountWithoutVmTime()
+          + setPowerHistory()
+          + setPrintFile()
+          + setSeed()
+          + setTimeOutApplication()
+          + setToPrint()
+          + setTotalHandoff()
+          + setTotalMigTimes()
+          + setTotalMigrations()
+          + setTupleLatency()
+          + setWithoutConnectionTime()
+          + setWithoutVmTime()
+          + startDelayAfterNewConnection()
+          + startWithoutConnetion()
+          + startWithoutVmTime()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.NextStep {
+          {static} + nextStep()
+          {static} - saveMobility()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.PrepareCompleteVM {
+          - timeToOpenConnection : double
+          + dataprepare()
+          + getTimeToOpenConnection()
+          + openConnection()
+          + setTimeToOpenConnection()
+          + tryOpenConnection()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.PrepareContainerVM {
+          - timeToOpenConnection : double
+          + dataprepare()
+          + getTimeToOpenConnection()
+          + openConnection()
+          + setTimeToOpenConnection()
+          + tryOpenConnection()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.PrepareLiveMigration {
+          - timeToOpenConnection : double
+          + dataprepare()
+          + getTimeToOpenConnection()
+          + jaque()
+          + openConnection()
+          + setTimeToOpenConnection()
+          + tryOpenConnection()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.Service {
+          - type : int
+          - value : float
+          + Service()
+          + getType()
+          + getValue()
+          + setType()
+          + setValue()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      class org.fog.vmmigration.ServiceAgreement {
+          {static} - serviceType : int
+          {static} - serviceValue : float
+          {static} + checkLinkStatus()
+          {static} + getServiceType()
+          {static} + getServiceValue()
+          {static} + serviceAgreement()
+          {static} + setServiceType()
+          {static} + setServiceValue()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.vmmigration {
+      interface org.fog.vmmigration.VmMigrationTechnique {
+          {abstract} + migPointPolicyFunction()
+          {abstract} + migrationPointFunction()
+          {abstract} + migrationPointFunction()
+          {abstract} + migrationTimeFunction()
+          {abstract} + migrationZoneFunction()
+          {abstract} + verifyPoints()
+      }
+    }
+  }
+  
+
+  org.fog.vmmigration.CompleteVM .up.|> org.fog.vmmigration.VmMigrationTechnique
+  org.fog.vmmigration.ContainerVM .up.|> org.fog.vmmigration.VmMigrationTechnique
+  org.fog.vmmigration.LiveMigration .up.|> org.fog.vmmigration.VmMigrationTechnique
+  org.fog.vmmigration.LowestDistBwSmartThingAP .up.|> org.fog.vmmigration.DecisionMigration
+  org.fog.vmmigration.LowestDistBwSmartThingAP o-- org.fog.entities.ApDevice : correntAP
+  org.fog.vmmigration.LowestDistBwSmartThingServerCloudlet .up.|> org.fog.vmmigration.DecisionMigration
+  org.fog.vmmigration.LowestDistBwSmartThingServerCloudlet o-- org.fog.entities.ApDevice : correntAP
+  org.fog.vmmigration.LowestLatency .up.|> org.fog.vmmigration.DecisionMigration
+  org.fog.vmmigration.LowestLatency o-- org.fog.entities.ApDevice : correntAP
+  org.fog.vmmigration.Migration o-- org.fog.entities.ApDevice : apAvailable
+  org.fog.vmmigration.Migration o-- org.fog.entities.ApDevice : correntAP
+  org.fog.vmmigration.Migration o-- org.fog.entities.FogDevice : correntServerCloudlet
+  org.fog.vmmigration.Migration o-- org.fog.entities.MobileDevice : correntSmartThing
+  org.fog.vmmigration.Migration o-- org.fog.entities.FogDevice : serverCloudletAvailable
+  org.fog.vmmigration.PrepareCompleteVM .up.|> org.fog.vmmigration.BeforeMigration
+  org.fog.vmmigration.PrepareContainerVM .up.|> org.fog.vmmigration.BeforeMigration
+  org.fog.vmmigration.PrepareLiveMigration .up.|> org.fog.vmmigration.BeforeMigration
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml
