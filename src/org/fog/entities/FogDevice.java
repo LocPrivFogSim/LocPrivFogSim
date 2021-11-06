@@ -646,7 +646,7 @@ public class FogDevice extends PowerDatacenter {
             return;
 
         for (Attacker observer : observerList) {
-            observer.update(this, mobileDevice, timestamp,eventType, event);
+            observer.update(this, mobileDevice, timestamp, eventType, event);
         }
     }
 

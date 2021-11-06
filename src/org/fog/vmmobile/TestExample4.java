@@ -20,8 +20,14 @@ import org.fog.localization.Coordinate;
 import org.fog.localization.Distances;
 import org.fog.localization.Path;
 import org.fog.localization.SimField;
-import org.fog.offloading.BandwidthCpuResponseTimeCalculator;
+import org.fog.offloading.FixedOffloadingScheduler;
+import org.fog.offloading.IOffloadingResponseTimeCalculator;
+import org.fog.offloading.IOffloadingScheduler;
+import org.fog.offloading.IOffloadingStrategy;
 import org.fog.offloading.OffloadingTask;
+import org.fog.offloading.BandwidthCpuResponseTimeCalculator;
+import org.fog.offloading.BelowThresholdLowestResponseTimeOffloadingStrategy;
+import org.fog.offloading.BelowThresholdRandomDeviceOffloadingStrategy;
 import org.fog.placement.MobileController;
 import org.fog.placement.ModuleMapping;
 import org.fog.policy.AppModuleAllocationPolicy;
@@ -109,6 +115,13 @@ public class TestExample4 {
 
     private static double averagePathLength = 0;
 
+    private static final IOffloadingResponseTimeCalculator offloadingResponseTimeCalculator = new BandwidthCpuResponseTimeCalculator();
+
+    private static final IOffloadingScheduler offloadingScheduler = new FixedOffloadingScheduler(1000, 20, 2000, 2);
+
+    private static double OFFLOADING_THRESHOLD = 0.0462d;
+    private static IOffloadingStrategy offloadingStrategy;
+
 
     public static void main(String args[]) {
 
@@ -142,16 +155,30 @@ public class TestExample4 {
             SEED3 = Integer.parseInt(args[3]);
             NUM_OF_MOBILE_DEVICES = Integer.parseInt(args[4]);
 
+            OFFLOADING_THRESHOLD = Double.parseDouble(args[5]);
+            String OFFLOADING_STRATEGY = args[6];
+
+            if (OFFLOADING_STRATEGY.equalsIgnoreCase("BelowThresholdRandomDevice"))
+                offloadingStrategy = new BelowThresholdRandomDeviceOffloadingStrategy(SEED3, OFFLOADING_THRESHOLD);
+            else if (OFFLOADING_STRATEGY.equalsIgnoreCase("BelowThresholdLowestResponseTime"))
+                offloadingStrategy = new BelowThresholdLowestResponseTimeOffloadingStrategy(OFFLOADING_THRESHOLD);
+            else {
+                Log.printLine("Unknown offloading strategy...");
+                return;
+            }
+
             System.out.println("Scenario: "+SCENARIO);
             System.out.println("can be turned of: "+MOBILE_CAN_BE_TURNED_OFF);
             System.out.println("rate: "+RATE_OF_COMPROMISED_DEVICES);
             System.out.println("mobiles per run: "+NUM_OF_MOBILE_DEVICES);
+            System.out.println("Offloading Threshold:"  + OFFLOADING_THRESHOLD);
+            System.out.println("Offloading Strategy: " + OFFLOADING_STRATEGY);
 
             FileOutputStream stream = new FileOutputStream("privacy/output");
-            LogMobile.ENABLED = false;
+            LogMobile.ENABLED = true;
             LogMobile.setOutput(stream);
-            // Log.enable();
-            Log.disable();
+            Log.enable();
+            // Log.disable();
             Log.setOutput(stream);
             Log.printLine("Starting Test4...");
 
@@ -298,6 +325,7 @@ public class TestExample4 {
             Log.printLine("\n\n\n########  CONNECTIONS  ########\n");
 
             /* configure network of FogDevices */
+            // TODO: Offloading needs latencies, bandwidth and other device related data to calculate offloading target
            // createFogDevicesNetwork();
             Log.printLine();
 
@@ -445,20 +473,31 @@ public class TestExample4 {
 
             Log.printLine("\n########  STATISTIC DATA  ########\n");
 
+            // print response time matrix
+            BufferedWriter csvWriter = new BufferedWriter(new FileWriter("response_time_matrix_offloading.csv", false));
+
+            csvWriter.write("APs; ");
+            for (FogDevice current : fogDeviceList) {
+                csvWriter.write(current.getName() + "; ");
+            }
+            csvWriter.newLine();
+
             BandwidthCpuResponseTimeCalculator ctemp = new BandwidthCpuResponseTimeCalculator();
             MobileDevice m = mobileDeviceList.get(0);
             ApDevice beforeAp = m.getSourceAp();
-
             for (ApDevice current : accessPointList) {
                 m.setSourceAp(current);
+                csvWriter.write(current.getName() + "; ");
 
-                for (FogDevice target : relevantFogDevicesList) {
-                    double r = ctemp.calculateResponseTime(relevantFogDevicesList, accessPointList, m, target, new OffloadingTask(-1, -1, 20, 2000, 2));
+                for (FogDevice target : fogDeviceList) {
+                    double r = ctemp.calculateResponseTime(fogDeviceList, accessPointList, m, target, new OffloadingTask(-1, -1, 20, 2000, 2));
+                    csvWriter.write(String.format("%,.4f; ", r));
                 }
 
-
+                csvWriter.newLine();
             }
-
+            csvWriter.flush();
+            csvWriter.close();
 
             m.setSourceAp(beforeAp);
 
@@ -746,7 +785,7 @@ public class TestExample4 {
                 float maxServiceValue = getRand().nextFloat() * 100;
                 double ratePerMips = 0.01;
 
-                MobileDevice mobileDevice = new MobileDevice(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, upLinkBw, downLinkBw, upLinkLatency, ratePerMips, position, id, maxServiceValue, vmSize, migrationTechnique);
+                MobileDevice mobileDevice = new MobileDevice(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, upLinkBw, downLinkBw, upLinkLatency, ratePerMips, position, id, maxServiceValue, vmSize, migrationTechnique, offloadingScheduler, offloadingStrategy, offloadingResponseTimeCalculator);
                 //MobileDevice mobileDevice = new MobileDevice(name, coordX, coordY, id, direction, speed);
 
                 /* add Sensors and Actuators to the Device */
@@ -910,7 +949,7 @@ public class TestExample4 {
 
 
                 if(relevantPositions.keySet().contains(coord)){
-                    FogDevice fogDevice = new FogDevice(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, upLinkRandom, downLinkRandom, upLinkLatency, ratePerMips, coord, id, serviceOffer, migrationStrategy, policyReplicaVm, beforeMigration);
+                    FogDevice fogDevice = new FogDevice(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, upLinkRandom, downLinkRandom, upLinkLatency, ratePerMips, coord, id, serviceOffer, migrationStrategy, policyReplicaVm, beforeMigration, offloadingResponseTimeCalculator);
 //              FogDevice fogDevice = new FogDevice(name, coordX, coordY, id);
                     fogDevice.setParentId(parentId);
                     relevantFogDevicesList.add(fogDevice);
@@ -925,7 +964,7 @@ public class TestExample4 {
                     if (relevantPositions.get(coord) == true) {
                         relevantCompromisedDevices.add(fogDevice);
                     }
-                }else {
+                } else {
                     //dummy instance
                     FogDevice fogDevice = new FogDevice( coord, id);
                     allFogDevices.add(fogDevice);

@@ -21,7 +21,6 @@ import org.fog.privacy.User;
 import org.fog.utils.*;
 import org.fog.vmmigration.MyStatistics;
 import org.fog.vmmigration.VmMigrationTechnique;
-import org.fog.vmmobile.TestExample4;
 import org.fog.vmmobile.constants.Directions;
 import org.fog.vmmobile.constants.MaxAndMin;
 
@@ -213,7 +212,7 @@ public class MobileDevice extends FogDevice {
 			AppModuleAllocationPolicy vmAllocationPolicy,
 			LinkedList<Storage> storageList, double schedulingInterval, double uplinkBandwidth
 			, double downlinkBandwidth, double uplinkLatency,
-			double d, Coordinate coord, int id, int dir, int sp, float maxServiceValue, double vmSize
+			double d, Position position, int id, float maxServiceValue, double vmSize
 			, VmMigrationTechnique migrationTechnique,
 			IOffloadingScheduler offloadingScheduler,
 			IOffloadingStrategy offloadingStrategy,
@@ -223,11 +222,11 @@ public class MobileDevice extends FogDevice {
 				, storageList, schedulingInterval
 				, uplinkBandwidth
 				, downlinkBandwidth
-				, uplinkLatency, sp, coord, id);
+				, uplinkLatency, position.getSpeed(), position.getCoordinate(), id);
 
 		deviceUser = new User("userOf"+name);
-		position.setDirection(dir);
-		position.setSpeed(sp);
+		this.position = position;
+
 		//		setDistanceAp(0);
 		setSourceServerCloudlet(null);
 		setDestinationServerCloudlet(null);
@@ -689,7 +688,7 @@ Log.printLine(++numClients);
 				task);
 		
 		if (device == null) {
-			Log.printLine("No suitable offloading target found. Abord task offloading.");
+			Log.printLine("No suitable offloading target found. Abort task offloading.");
 			return;
 		}
 
