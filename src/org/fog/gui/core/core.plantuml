@@ -1,0 +1,408 @@
+@startuml
+
+title __CORE's Class Diagram__\n
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.ActuatorGui {
+          - actuatorType : String
+          - name : String
+          {static} - serialVersionUID : long
+          + ActuatorGui()
+          + getActuatorType()
+          + getName()
+          + setActuatorType()
+          + setName()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.ActuatorModule {
+          ~ actuatorType : String
+          {static} - serialVersionUID : long
+          + ActuatorModule()
+          + ActuatorModule()
+          + getActuatorType()
+          + setActuatorType()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.AppModule {
+          {static} - serialVersionUID : long
+          + AppModule()
+          + AppModule()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.Bridge {
+          {static} + graphToJson()
+          {static} + jsonToGraph()
+          {static} - getNode()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.Coordinates {
+          - x : int
+          - y : int
+          + Coordinates()
+          + Coordinates()
+          + getX()
+          + getY()
+          + setX()
+          + setY()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.Edge {
+          - bandwidth : long
+          - latency : double
+          - name : String
+          {static} - serialVersionUID : long
+          + Edge()
+          + Edge()
+          + Edge()
+          + Edge()
+          + getBandwidth()
+          + getInfo()
+          + getLatency()
+          + getNode()
+          + setInfo()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.FogDeviceGui {
+          - downBw : long
+          - level : int
+          - mips : long
+          - name : String
+          - ram : int
+          - ratePerMips : double
+          {static} - serialVersionUID : long
+          - upBw : long
+          + FogDeviceGui()
+          + FogDeviceGui()
+          + getDownBw()
+          + getLevel()
+          + getMips()
+          + getName()
+          + getRam()
+          + getRatePerMips()
+          + getUpBw()
+          + setDownBw()
+          + setLevel()
+          + setMips()
+          + setName()
+          + setRam()
+          + setRatePerMips()
+          + setUpBw()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.Graph {
+          - adjacencyList : Map<Node, List<Edge>>
+          {static} - serialVersionUID : long
+          + Graph()
+          + Graph()
+          + addEdge()
+          + addNode()
+          + clearGraph()
+          + getAdjacencyList()
+          + removeEdge()
+          + removeNode()
+          + setAdjacencyList()
+          + toJsonString()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.GraphView {
+          - canvas : JPanel
+          - imgActuator : Image
+          - imgActuatorModule : Image
+          - imgAppModule : Image
+          - imgHost : Image
+          - imgSensor : Image
+          - imgSensorModule : Image
+          - imgSwitch : Image
+          {static} - serialVersionUID : long
+          + GraphView()
+          + setGraph()
+          # getCoordForNodes()
+          - createChildrenMap()
+          - initComponents()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.HostNode {
+          - bw : long
+          - mips : long
+          - pes : long
+          - ram : int
+          {static} - serialVersionUID : long
+          - storage : long
+          + HostNode()
+          + HostNode()
+          + getBw()
+          + getMips()
+          + getPes()
+          + getRam()
+          + getStorage()
+          + setBw()
+          + setMips()
+          + setPes()
+          + setRam()
+          + setStorage()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.Link {
+          - bandwidth : long
+          - latency : double
+          - name : String
+          {static} - serialVersionUID : long
+          + Link()
+          + Link()
+          + Link()
+          + Link()
+          + getBandwidth()
+          + getInfo()
+          + getLatency()
+          + getNode()
+          + setInfo()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.Node {
+          - isPlaced : boolean
+          - name : String
+          {static} - serialVersionUID : long
+          - type : String
+          + Node()
+          + Node()
+          + equals()
+          + getCoordinate()
+          + getName()
+          + getType()
+          + hashCode()
+          + isPlaced()
+          + setCoordinate()
+          + setName()
+          + setPlaced()
+          + setType()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.NodeCellRenderer {
+          {static} - serialVersionUID : long
+          + getListCellRendererComponent()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.PlaceHolder {
+          # isOccupied : boolean
+          + PlaceHolder()
+          + PlaceHolder()
+          + PlaceHolder()
+          + getCoordinates()
+          + getNode()
+          + isOccupied()
+          + setCoordinates()
+          + setNode()
+          + setOccupied()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.SensorGui {
+          - name : String
+          - sensorType : String
+          {static} - serialVersionUID : long
+          + SensorGui()
+          + SensorGui()
+          + getDistribution()
+          + getDistributionType()
+          + getName()
+          + getSensorType()
+          + setDistribution()
+          + setName()
+          + setSensorType()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.SensorModule {
+          ~ sensorType : String
+          {static} - serialVersionUID : long
+          + SensorModule()
+          + SensorModule()
+          + getSensorType()
+          + setSensorType()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.SpringUtilities {
+          {static} + makeCompactGrid()
+          {static} + makeGrid()
+          {static} + printSizes()
+          {static} - getConstraintsForCell()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.SwitchNode {
+          - bw : long
+          - downports : int
+          - iops : long
+          {static} - serialVersionUID : long
+          - upports : int
+          + SwitchNode()
+          + SwitchNode()
+          + getBw()
+          + getDownports()
+          + getIops()
+          + getUpports()
+          + setBw()
+          + setDownports()
+          + setIops()
+          + setUpports()
+          + toString()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.gui.core {
+      class org.fog.gui.core.VmNode {
+          - mips : long
+          - pes : int
+          - ram : int
+          {static} - serialVersionUID : long
+          - size : long
+          + VmNode()
+          + VmNode()
+          + getMips()
+          + getPes()
+          + getRam()
+          + getSize()
+          + setMips()
+          + setPes()
+          + setRam()
+          + setSize()
+          + toString()
+      }
+    }
+  }
+  
+
+  org.fog.gui.core.ActuatorGui .up.|> java.io.Serializable
+  org.fog.gui.core.ActuatorGui -up-|> org.fog.gui.core.Node
+  org.fog.gui.core.ActuatorModule -up-|> org.fog.gui.core.Node
+  org.fog.gui.core.AppModule -up-|> org.fog.gui.core.Node
+  org.fog.gui.core.Edge .up.|> java.io.Serializable
+  org.fog.gui.core.Edge o-- org.fog.gui.core.Node : dest
+  org.fog.gui.core.FogDeviceGui -up-|> org.fog.gui.core.Node
+  org.fog.gui.core.Graph .up.|> java.io.Serializable
+  org.fog.gui.core.GraphView -up-|> javax.swing.JPanel
+  org.fog.gui.core.GraphView o-- org.fog.gui.core.Graph : graph
+  org.fog.gui.core.HostNode -up-|> org.fog.gui.core.Node
+  org.fog.gui.core.Link .up.|> java.io.Serializable
+  org.fog.gui.core.Link -up-|> org.fog.gui.core.Edge
+  org.fog.gui.core.Link o-- org.fog.gui.core.Node : dest
+  org.fog.gui.core.Node .up.|> java.io.Serializable
+  org.fog.gui.core.Node o-- org.fog.gui.core.Coordinates : coord
+  org.fog.gui.core.NodeCellRenderer .up.|> javax.swing.ListCellRenderer
+  org.fog.gui.core.NodeCellRenderer -up-|> javax.swing.JLabel
+  org.fog.gui.core.PlaceHolder o-- org.fog.gui.core.Coordinates : coordinates
+  org.fog.gui.core.PlaceHolder o-- org.fog.gui.core.Node : node
+  org.fog.gui.core.SensorGui .up.|> java.io.Serializable
+  org.fog.gui.core.SensorGui -up-|> org.fog.gui.core.Node
+  org.fog.gui.core.SensorGui o-- org.fog.utils.distribution.Distribution : distribution
+  org.fog.gui.core.SensorModule -up-|> org.fog.gui.core.Node
+  org.fog.gui.core.SwitchNode -up-|> org.fog.gui.core.Node
+  org.fog.gui.core.VmNode -up-|> org.fog.gui.core.Node
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

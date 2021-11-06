@@ -1,0 +1,282 @@
+@startuml
+
+title __PLACEMENT's Class Diagram__\n
+
+  namespace  {
+    namespace rg.fog.placement {
+      class org.fog.placement.Controller {
+          {static} + ONLY_CLOUD : boolean
+          - actuators : List<Actuator>
+          - appLaunchDelays : Map<String, Integer>
+          - applications : Map<String, Application>
+          - fogDevices : List<FogDevice>
+          - globalCurrentCpuLoad : Map<Integer, Double>
+          - sensors : List<Sensor>
+          + Controller()
+          + getActuators()
+          + getAppLaunchDelays()
+          + getApplications()
+          + getFogDevices()
+          + getGlobalCurrentCpuLoad()
+          + getModuleMapping()
+          + getSensors()
+          + processEvent()
+          + setActuators()
+          + setAppLaunchDelays()
+          + setApplications()
+          + setFogDevices()
+          + setGlobalCurrentCpuLoad()
+          + setModuleMapping()
+          + setSensors()
+          + shutdownEntity()
+          + startEntity()
+          + submitApplication()
+          # manageResources()
+          - connectWithLatencies()
+          - getCloud()
+          - getFogDeviceById()
+          - getStringForLoopId()
+          - printCostDetails()
+          - printNetworkUsageDetails()
+          - printPowerDetails()
+          - printTimeDetails()
+          - processAppSubmit()
+          - processAppSubmit()
+          - processTupleFinished()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.placement {
+      class org.fog.placement.MobileController {
+          {static} ~ numOfDepts : int
+          {static} ~ numOfMobilesPerDept : int
+          {static} - apDevices : List<ApDevice>
+          - appLaunchDelays : Map<String, Integer>
+          - applications : Map<String, Application>
+          {static} - brokerList : List<FogBroker>
+          {static} - coordDevices : Coordinate
+          - globalCurrentCpuLoad : Map<Integer, Double>
+          {static} - migPointPolicy : int
+          {static} - migStrategyPolicy : int
+          {static} - migrationAble : boolean
+          {static} - rand : Random
+          {static} - seed : int
+          {static} - serverCloudlets : List<FogDevice>
+          {static} - smartThings : List<MobileDevice>
+          {static} - stepPolicy : int
+          + MobileController()
+          + MobileController()
+          + MobileController()
+          {static} + getApDevices()
+          + getAppLaunchDelays()
+          + getApplications()
+          + getBrokerList()
+          {static} + getCoordDevices()
+          + getGlobalCurrentCpuLoad()
+          {static} + getMigPointPolicy()
+          {static} + getMigStrategyPolicy()
+          + getModuleMapping()
+          {static} + getRand()
+          {static} + getSeed()
+          {static} + getServerCloudlets()
+          {static} + getSmartThings()
+          {static} + getStepPolicy()
+          {static} + isMigrationAble()
+          + printResults()
+          + processEvent()
+          {static} + setApDevices()
+          + setAppLaunchDelays()
+          + setApplications()
+          + setBrokerList()
+          {static} + setCoordDevices()
+          + setGlobalCPULoad()
+          + setGlobalCurrentCpuLoad()
+          {static} + setMigPointPolicy()
+          {static} + setMigStrategyPolicy()
+          {static} + setMigrationAble()
+          + setModuleMapping()
+          {static} + setRand()
+          {static} + setSeed()
+          {static} + setServerCloudlets()
+          {static} + setSmartThings()
+          {static} + setStepPolicy()
+          + shutdownEntity()
+          + startEntity()
+          + submitApplication()
+          + submitApplicationMigration()
+          # manageResources()
+          - checkNewStep()
+          - connectWithLatencies()
+          - createNewSmartThing()
+          - getCloud()
+          - getFogDeviceById()
+          - getStringForLoopId()
+          - initializeCPULoads()
+          - migrationTimeToLiveMigration()
+          - printCostDetails()
+          - printMigrationsDetalis()
+          - printNetworkUsageDetails()
+          - printPowerDetails()
+          - printTimeDetails()
+          - processAppSubmit()
+          - processAppSubmit()
+          - processAppSubmitMigration()
+          - processTupleFinished()
+          {static} - saveHandOff()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.placement {
+      class org.fog.placement.ModuleMapping {
+          # moduleMapping : Map<String, Map<String, Integer>>
+          + addModuleToDevice()
+          + addModuleToDevice()
+          {static} + createModuleMapping()
+          + getModuleMapping()
+          + setModuleMapping()
+          # ModuleMapping()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.placement {
+      abstract class org.fog.placement.ModulePlacement {
+          {static} + EDGEWARDS : int
+          {static} + ONLY_CLOUD : int
+          {static} + USER_MAPPING : int
+          - deviceToModuleMap : Map<Integer, List<AppModule>>
+          - fogDevices : List<FogDevice>
+          - mobileDevices : List<MobileDevice>
+          - moduleInstanceCountMap : Map<Integer, Map<String, Integer>>
+          - moduleToDeviceMap : Map<String, List<Integer>>
+          + getApplication()
+          + getDeviceToModuleMap()
+          + getFogDevices()
+          + getMobileDevices()
+          + getModuleInstanceCountMap()
+          + getModuleToDeviceMap()
+          + setApplication()
+          + setDeviceToModuleMap()
+          + setFogDevices()
+          + setMobileDevices()
+          + setModuleInstanceCountMap()
+          + setModuleToDeviceMap()
+          # canBeCreated()
+          # createModuleInstanceOnDevice()
+          # createModuleInstanceOnDevice()
+          # getDeviceById()
+          # getDeviceByName()
+          # getFogDeviceById()
+          # getParentDevice()
+          {abstract} # mapModules()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.placement {
+      class org.fog.placement.ModulePlacementEdgewards {
+          # actuators : List<Actuator>
+          # currentCpuLoad : Map<Integer, Double>
+          # currentModuleInstanceNum : Map<Integer, Map<String, Integer>>
+          # currentModuleLoadMap : Map<Integer, Map<String, Double>>
+          # currentModuleMap : Map<Integer, List<String>>
+          # sensors : List<Sensor>
+          + ModulePlacementEdgewards()
+          + getActuators()
+          + getCurrentCpuLoad()
+          + getCurrentModuleInstanceNum()
+          + getCurrentModuleLoadMap()
+          + getCurrentModuleMap()
+          + getModuleMapping()
+          + getSensors()
+          + setActuators()
+          + setCurrentCpuLoad()
+          + setCurrentModuleInstanceNum()
+          + setCurrentModuleLoadMap()
+          + setCurrentModuleMap()
+          + setModuleMapping()
+          + setSensors()
+          # getLeafToRootPaths()
+          # getPaths()
+          # getRateOfSensor()
+          # mapModules()
+          - findModulesToShift()
+          - findModulesToShift()
+          - getAssociatedActuators()
+          - getAssociatedSensors()
+          - getModulesToPlace()
+          - isPlacedUpstream()
+          - placeModulesInPath()
+          - shiftModuleNorth()
+          - updateCurrentCpuLoad()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.placement {
+      class org.fog.placement.ModulePlacementMapping {
+          # currentCpuLoad : Map<Integer, Double>
+          + ModulePlacementMapping()
+          + ModulePlacementMapping()
+          + getCurrentCpuLoad()
+          + getModuleMapping()
+          + setCurrentCpuLoad()
+          + setModuleMapping()
+          # mapModules()
+          # mapModulesMigrate()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.fog.placement {
+      class org.fog.placement.ModulePlacementOnlyCloud {
+          - actuators : List<Actuator>
+          - cloudId : int
+          - sensors : List<Sensor>
+          + ModulePlacementOnlyCloud()
+          + getActuators()
+          + getSensors()
+          + setActuators()
+          + setSensors()
+          # mapModules()
+          - computeModuleInstanceCounts()
+          - isModuleInstanceCalculationComplete()
+      }
+    }
+  }
+  
+
+  org.fog.placement.Controller -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.fog.placement.Controller o-- org.fog.placement.ModuleMapping : moduleMapping
+  org.fog.placement.MobileController -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.fog.placement.MobileController o-- org.fog.placement.ModuleMapping : moduleMapping
+  org.fog.placement.ModulePlacement o-- org.fog.application.Application : application
+  org.fog.placement.ModulePlacementEdgewards -up-|> org.fog.placement.ModulePlacement
+  org.fog.placement.ModulePlacementEdgewards o-- org.fog.placement.ModuleMapping : moduleMapping
+  org.fog.placement.ModulePlacementMapping -up-|> org.fog.placement.ModulePlacement
+  org.fog.placement.ModulePlacementMapping o-- org.fog.placement.ModuleMapping : moduleMapping
+  org.fog.placement.ModulePlacementOnlyCloud -up-|> org.fog.placement.ModulePlacement
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

@@ -1,0 +1,351 @@
+@startuml
+
+title __CORE's Class Diagram__\n
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace core {
+        class org.cloudbus.cloudsim.core.CloudInformationService {
+            - arList : List<Integer>
+            - gisList : List<Integer>
+            - resList : List<Integer>
+            + CloudInformationService()
+            + getAdvReservList()
+            + getList()
+            + processEvent()
+            + resourceExist()
+            + resourceExist()
+            + resourceSupportAR()
+            + resourceSupportAR()
+            + shutdownEntity()
+            + startEntity()
+            # processEndSimulation()
+            # processOtherEvent()
+            # signalShutdown()
+            - checkResource()
+            - notifyAllEntity()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace core {
+        class org.cloudbus.cloudsim.core.CloudSim {
+            {static} + SIM_ANY : PredicateAny
+            {static} + SIM_NONE : PredicateNone
+            {static} # deferred : DeferredQueue
+            {static} # future : FutureQueue
+            {static} - CLOUDSIM_VERSION_STRING : String
+            {static} - NOT_FOUND : int
+            {static} - abruptTerminate : boolean
+            {static} - calendar : Calendar
+            {static} - cis : CloudInformationService
+            {static} - cisId : int
+            {static} - clock : double
+            {static} - countador : double
+            {static} - entities : List<SimEntity>
+            {static} - entitiesByName : Map<String, SimEntity>
+            {static} - minTimeBetweenEvents : double
+            {static} - pauseAt : long
+            {static} - paused : boolean
+            {static} - running : boolean
+            {static} - shutdownId : int
+            {static} - terminateAt : double
+            {static} - traceFlag : boolean
+            {static} - waitPredicates : Map<Integer, Predicate>
+            {static} + abruptallyTerminate()
+            {static} + addEntity()
+            {static} + cancel()
+            {static} + cancelAll()
+            {static} + cancelAll()
+            {static} + clock()
+            {static} + findFirstDeferred()
+            {static} + finishSimulation()
+            {static} + getCloudInfoServiceEntityId()
+            {static} + getCloudResourceList()
+            {static} + getEntity()
+            {static} + getEntity()
+            {static} + getEntityId()
+            {static} + getEntityList()
+            {static} + getEntityName()
+            {static} + getEntityName()
+            {static} + getMinTimeBetweenEvents()
+            {static} + getNumEntities()
+            {static} + getSimulationCalendar()
+            {static} + hold()
+            {static} + init()
+            {static} + init()
+            {static} + isPaused()
+            {static} + pause()
+            {static} + pauseSimulation()
+            {static} + pauseSimulation()
+            {static} + resumeSimulation()
+            {static} + run()
+            {static} + runClockTick()
+            {static} + runStart()
+            {static} + runStop()
+            {static} + running()
+            {static} + select()
+            {static} + send()
+            {static} + sendDCEvent()
+            {static} + sendFirst()
+            {static} + startSimulation()
+            {static} + stopSimulation()
+            {static} + terminateSimulation()
+            {static} + terminateSimulation()
+            {static} + wait()
+            {static} + waiting()
+            {static} # addEntityDynamically()
+            {static} # initialize()
+            {static} - initCommonVariable()
+            {static} - printMessage()
+            {static} - processEvent()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace core {
+        class org.cloudbus.cloudsim.core.CloudSimShutdown {
+            - numUser : int
+            + CloudSimShutdown()
+            + processEvent()
+            + shutdownEntity()
+            + startEntity()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace core {
+        class org.cloudbus.cloudsim.core.CloudSimTags {
+            {static} + ABRUPT_END_OF_SIMULATION : int
+            {static} + CLOUDLET_CANCEL : int
+            {static} + CLOUDLET_MOVE : int
+            {static} + CLOUDLET_MOVE_ACK : int
+            {static} + CLOUDLET_PAUSE : int
+            {static} + CLOUDLET_PAUSE_ACK : int
+            {static} + CLOUDLET_RESUME : int
+            {static} + CLOUDLET_RESUME_ACK : int
+            {static} + CLOUDLET_RETURN : int
+            {static} + CLOUDLET_STATUS : int
+            {static} + CLOUDLET_SUBMIT : int
+            {static} + CLOUDLET_SUBMIT_ACK : int
+            {static} + DEFAULT_BAUD_RATE : int
+            {static} + END_OF_SIMULATION : int
+            {static} + EXPERIMENT : int
+            {static} + FALSE : int
+            {static} + INFOPKT_RETURN : int
+            {static} + INFOPKT_SUBMIT : int
+            {static} + INSIGNIFICANT : int
+            {static} + Network_Event_DOWN : int
+            {static} + Network_Event_Host : int
+            {static} + Network_Event_UP : int
+            {static} + Network_Event_send : int
+            {static} + NextCycle : int
+            {static} + RECORD_STATISTICS : int
+            {static} + REGISTER_REGIONAL_GIS : int
+            {static} + REGISTER_RESOURCE : int
+            {static} + REGISTER_RESOURCE_AR : int
+            {static} + REQUEST_REGIONAL_GIS : int
+            {static} + RESOURCE_AR_LIST : int
+            {static} + RESOURCE_CHARACTERISTICS : int
+            {static} + RESOURCE_CHARACTERISTICS_REQUEST : int
+            {static} + RESOURCE_DYNAMICS : int
+            {static} + RESOURCE_LIST : int
+            {static} + RESOURCE_NUM_FREE_PE : int
+            {static} + RESOURCE_NUM_PE : int
+            {static} + RESOURCE_Register : int
+            {static} + RETURN_ACC_STATISTICS_BY_CATEGORY : int
+            {static} + RETURN_STAT_LIST : int
+            {static} + SCHEDULE_NOW : double
+            {static} + TRUE : int
+            {static} + VM_BROKER_EVENT : int
+            {static} + VM_CREATE : int
+            {static} + VM_CREATE_ACK : int
+            {static} + VM_DATACENTER_EVENT : int
+            {static} + VM_DATA_ADD : int
+            {static} + VM_DATA_ADD_ACK : int
+            {static} + VM_DATA_DEL : int
+            {static} + VM_DATA_DEL_ACK : int
+            {static} + VM_DESTROY : int
+            {static} + VM_DESTROY_ACK : int
+            {static} + VM_MIGRATE : int
+            {static} + VM_MIGRATE_ACK : int
+            {static} - BASE : int
+            {static} - NETBASE : int
+            - CloudSimTags()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace core {
+        class org.cloudbus.cloudsim.core.DeferredQueue {
+            - list : List<SimEvent>
+            - maxTime : double
+            + addEvent()
+            + clear()
+            + iterator()
+            + size()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace core {
+        class org.cloudbus.cloudsim.core.FutureQueue {
+            - serial : long
+            - sortedSet : SortedSet<SimEvent>
+            + addEvent()
+            + addEventFirst()
+            + clear()
+            + iterator()
+            + remove()
+            + removeAll()
+            + size()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace core {
+        abstract class org.cloudbus.cloudsim.core.SimEntity {
+            {static} + FINISHED : int
+            {static} + HOLDING : int
+            {static} + RUNNABLE : int
+            {static} + WAITING : int
+            {static} # myFutureQ : FutureQueue
+            - id : int
+            - name : String
+            - state : int
+            + SimEntity()
+            + SimEntity()
+            + cancelEvent()
+            + getFutureQueue()
+            + getId()
+            + getName()
+            + getNextEvent()
+            + getNextEvent()
+            + numEventsWaiting()
+            + numEventsWaiting()
+            + pause()
+            {abstract} + processEvent()
+            + run()
+            + schedule()
+            + schedule()
+            + schedule()
+            + schedule()
+            + scheduleFirst()
+            + scheduleFirst()
+            + scheduleFirst()
+            + scheduleFirst()
+            + scheduleFirstNow()
+            + scheduleFirstNow()
+            + scheduleFirstNow()
+            + scheduleFirstNow()
+            + scheduleNow()
+            + scheduleNow()
+            + scheduleNow()
+            + scheduleNow()
+            + selectEvent()
+            {abstract} + shutdownEntity()
+            {abstract} + startEntity()
+            + waitForEvent()
+            # clone()
+            # getEventBuffer()
+            # getNetworkDelay()
+            # getState()
+            # send()
+            # send()
+            # send()
+            # send()
+            # sendNow()
+            # sendNow()
+            # sendNow()
+            # sendNow()
+            # setEventBuffer()
+            # setId()
+            # setState()
+            - setName()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace core {
+        class org.cloudbus.cloudsim.core.SimEvent {
+            {static} + CREATE : int
+            {static} + ENULL : int
+            {static} + HOLD_DONE : int
+            {static} + SEND : int
+            - data : Object
+            - endWaitingTime : double
+            - entDst : int
+            - entSrc : int
+            - etype : int
+            - serial : long
+            - tag : int
+            - time : double
+            + SimEvent()
+            + clone()
+            + compareTo()
+            + endWaitingTime()
+            + eventTime()
+            + getData()
+            + getDestination()
+            + getSource()
+            + getTag()
+            + getType()
+            + scheduledBy()
+            + setDestination()
+            + setSource()
+            + toString()
+            + type()
+            # setEndWaitingTime()
+            # setSerial()
+            ~ SimEvent()
+            ~ SimEvent()
+        }
+      }
+    }
+  }
+  
+
+  org.cloudbus.cloudsim.core.CloudInformationService -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.cloudbus.cloudsim.core.CloudSimShutdown -up-|> org.cloudbus.cloudsim.core.SimEntity
+  org.cloudbus.cloudsim.core.SimEntity .up.|> java.lang.Cloneable
+  org.cloudbus.cloudsim.core.SimEntity o-- org.cloudbus.cloudsim.core.SimEvent : evbuf
+  org.cloudbus.cloudsim.core.SimEvent .up.|> java.lang.Cloneable
+  org.cloudbus.cloudsim.core.SimEvent .up.|> java.lang.Comparable
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

@@ -1,0 +1,158 @@
+@startuml
+
+title __OVERBOOKING's Class Diagram__\n
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace overbooking {
+          class org.cloudbus.cloudsim.sdn.overbooking.BwProvisionerOverbooking {
+              {static} + overbookingRatioBw : double
+              - bwTable : Map<String, Long>
+              + BwProvisionerOverbooking()
+              + allocateBwForVm()
+              + deallocateBwForAllVms()
+              + deallocateBwForVm()
+              + getAllocatedBwForVm()
+              {static} + getOverbookedBw()
+              + isSuitableForVm()
+              # getBwTable()
+              # setBwTable()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace overbooking {
+          class org.cloudbus.cloudsim.sdn.overbooking.OverbookingNetworkOperatingSystem {
+              + OverbookingNetworkOperatingSystem()
+              + deployApplication()
+              + deployFlow()
+              + processVmCreateAck()
+              # createHost()
+              # deployMiddlebox()
+              - buildRoutingTables()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace overbooking {
+          class org.cloudbus.cloudsim.sdn.overbooking.PeProvisionerOverbooking {
+              {static} + overbookingRatioMips : double
+              - peTable : Map<String, List<Double>>
+              + PeProvisionerOverbooking()
+              + allocateMipsForVm()
+              + allocateMipsForVm()
+              + allocateMipsForVm()
+              + deallocateMipsForAllVms()
+              + deallocateMipsForVm()
+              + getAllocatedMipsForVm()
+              + getAllocatedMipsForVmByVirtualPeId()
+              {static} + getOverbookedMips()
+              + getTotalAllocatedMipsForVm()
+              # getPeTable()
+              # setPeTable()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace overbooking {
+          class org.cloudbus.cloudsim.sdn.overbooking.VmAllocationPolicyOverbooking {
+              # hostTotalBw : double
+              # hostTotalMips : double
+              # hostTotalPes : int
+              # maxNumHostsUsed : int
+              - freeBw : List<Long>
+              - freeMips : List<Long>
+              - freePes : List<Integer>
+              - usedBw : Map<String, Long>
+              - usedMips : Map<String, Long>
+              - usedPes : Map<String, Integer>
+              - vmTable : Map<String, Host>
+              + VmAllocationPolicyOverbooking()
+              + allocateHostForVm()
+              + allocateHostForVm()
+              + deallocateHostForVm()
+              + getHost()
+              + getHost()
+              + getMaxNumHostsUsed()
+              + getVmTable()
+              + logMaxNumHostsUsed()
+              + optimizeAllocation()
+              # convertWeightedMetric()
+              # getFreeBw()
+              # getFreeMips()
+              # getFreePes()
+              # getUsedBw()
+              # getUsedMips()
+              # getUsedPes()
+              # setFreeBw()
+              # setFreeMips()
+              # setFreePes()
+              # setUsedBw()
+              # setUsedMips()
+              # setUsedPes()
+              # setVmTable()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace rg.cloudbus.cloudsim {
+      namespace sdn {
+        namespace overbooking {
+          class org.cloudbus.cloudsim.sdn.overbooking.VmSchedulerTimeSharedOverbookingEnergy {
+              {static} - powerOffDuration : double
+              - utilizationHistories : List<PowerUtilizationHistoryEntry>
+              + VmSchedulerTimeSharedOverbookingEnergy()
+              + addUtilizationEntryTermination()
+              + getUtilizationEnergyConsumption()
+              + getUtilizationHisotry()
+              # setAvailableMips()
+              - addUtilizationEntry()
+              - calculatePower()
+              - getTotalMips()
+          }
+        }
+      }
+    }
+  }
+  
+
+  org.cloudbus.cloudsim.sdn.overbooking.BwProvisionerOverbooking -up-|> org.cloudbus.cloudsim.provisioners.BwProvisioner
+  org.cloudbus.cloudsim.sdn.overbooking.OverbookingNetworkOperatingSystem -up-|> org.cloudbus.cloudsim.sdn.NetworkOperatingSystem
+  org.cloudbus.cloudsim.sdn.overbooking.PeProvisionerOverbooking -up-|> org.cloudbus.cloudsim.provisioners.PeProvisioner
+  org.cloudbus.cloudsim.sdn.overbooking.VmAllocationPolicyOverbooking .up.|> org.cloudbus.cloudsim.sdn.power.PowerUtilizationMaxHostInterface
+  org.cloudbus.cloudsim.sdn.overbooking.VmAllocationPolicyOverbooking -up-|> org.cloudbus.cloudsim.VmAllocationPolicy
+  org.cloudbus.cloudsim.sdn.overbooking.VmSchedulerTimeSharedOverbookingEnergy .up.|> org.cloudbus.cloudsim.sdn.power.PowerUtilizationInterface
+  org.cloudbus.cloudsim.sdn.overbooking.VmSchedulerTimeSharedOverbookingEnergy -up-|> org.cloudbus.cloudsim.VmSchedulerTimeSharedOverSubscription
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml
