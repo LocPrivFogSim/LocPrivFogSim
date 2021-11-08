@@ -21,6 +21,10 @@ import java.util.stream.Collectors;
  */
 public class Attacker {
 
+
+    //
+    //TODO clean unnecessary lists/maps  
+    //
     private static final int SCENARIO = TestExample4.getSCENARIO();
     private static final int MOBILE_CAN_BE_TURNED_OFF = TestExample4.getMobileCanBeTurnedOff();
     private List<MobileDevice> mobileDeviceList = new ArrayList<>();
@@ -45,6 +49,9 @@ public class Attacker {
 
     private HashMap<Integer, Integer> endTimesForPaths = new HashMap<>();
 
+
+
+
     public Attacker(String name, List<FogDevice> controlledDevices, ArrayList<FogDevice> allFogDevicesList, ArrayList<Path> allPaths) {
         this.name = name;
         this.controlledDeviceList = controlledDevices;
@@ -65,6 +72,9 @@ public class Attacker {
         controlledArea = computeControlledArea();
     }
 
+
+
+
     /* Observer */
     public void observe() {
         for (FogDevice device : TestExample4.getRelevantCompromisedDevices()) {
@@ -72,6 +82,9 @@ public class Attacker {
         }
     }
 
+    //
+    //TODO debug update() 
+    //
     public void update(FogDevice source, MobileDevice mobileDevice, int timestamp,int eventType, String event) {
 
         LinkedList<Integer> trace = trackedTracesForPathIds.get(mobileDevice.getPath().getPathId());
@@ -165,24 +178,9 @@ public class Attacker {
 
     }
 
-
-    public double getAreaOfFogDevice(FogDevice fogDevice) {
-
-        if (controlledArea == 0) {
-            computeControlledArea();
-        }
-
-        return areaOfFogNode.get(fogDevice.getMyId());
-    }
-
-
-    public double computeControlledArea() {
-        if (controlledArea < 0) {
-            calcControlledArea();
-        }
-        return controlledArea;
-    }
-
+    //
+    //TODO Debug
+    //
     public double calcControlledArea() {
         if (controlledDeviceList.size() == 0) {
             return 0;
@@ -334,6 +332,9 @@ public class Attacker {
     }
 
 
+    //
+    //TODO Debug
+    //
     public ArrayList<Double> calcSizeOfUncertaintyRegion() {
 
         ArrayList<Double> sizeOfUncertaintyList = new ArrayList<>();
@@ -432,11 +433,7 @@ public class Attacker {
     }
 
 
-    /**
-     *
-     * returns the traces for each Path
-     *
-     */
+    
     private HashMap<LinkedList<Integer>, Integer> getAttackersTracesForAllPaths(ArrayList<Path> paths, List<FogDevice> fogNodes) {
 
       //  System.out.println("begin setting Traces!!!");
@@ -552,6 +549,24 @@ public class Attacker {
         Log.printLine("\n\n*************************************************\n\n");
     }
 
+
+
+    public double computeControlledArea() {
+        if (controlledArea < 0) {
+            calcControlledArea();
+        }
+        return controlledArea;
+    }
+
+
+     public double getAreaOfFogDevice(FogDevice fogDevice) {
+
+        if (controlledArea == 0) {
+            computeControlledArea();
+        }
+
+        return areaOfFogNode.get(fogDevice.getMyId());
+    }
 
 
     public void initMaps(List<MobileDevice> mobileDeviceList) {
