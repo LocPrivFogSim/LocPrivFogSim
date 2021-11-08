@@ -87,6 +87,8 @@ public class TestExample4 {
 
     private  static DBConnector dbConnector = new DBConnector();
 
+
+    //TODO cleanup members if necessary
     private static ArrayList<FogDevice> allFogDevices = new ArrayList<>(); // all fog nodes
     private static List<FogDevice> allCompromisedFogDevices = new ArrayList<>(); //all compromised fog nodes
     private static ArrayList<FogDevice> relevantFogDevicesList = new ArrayList<>(); //all fog node instances in proximity to a selected path
@@ -202,9 +204,6 @@ public class TestExample4 {
             allPaths = dbConnector.getAllPaths();
 
             List<Path> selectedPaths = getRandomPaths(NUM_OF_MOBILE_DEVICES);
-
-            //Path path = dbConnector.getPathById(72);
-           //List<Path> selectedPaths = List.of(path);
 
             /* create FogDevice(s) */
             createFogDevices(cloud.getId(), selectedPaths);
@@ -330,6 +329,8 @@ public class TestExample4 {
             Log.printLine();
 
 
+
+            //TODO delete following lines once initial testing is done
             int aksd = 0;
             /* connect MobileDevices and the closest AccessPoint */
             for (MobileDevice mobileDevice : mobileDeviceList) {
@@ -356,8 +357,6 @@ public class TestExample4 {
             }
 
             /* connect AccessPoint to closest FogDevice */
-            int i = 0;
-
 
             for (ApDevice accessPoint : accessPointList) {
                 FogDevice closest = Distances.theClosestServerCloudletToAp(relevantFogDevicesList, accessPoint);
@@ -384,7 +383,7 @@ public class TestExample4 {
             Log.printLine();
 
             /* connect broker and VMs */
-            i = 0;
+            int i = 0;
             for (FogBroker broker : brokerList) {
                 List<Vm> tempVmList = new ArrayList<>();
                 tempVmList.add(mobileDeviceList.get(i++).getVmMobileDevice());
@@ -476,6 +475,10 @@ public class TestExample4 {
             // print response time matrix
             BufferedWriter csvWriter = new BufferedWriter(new FileWriter("response_time_matrix_offloading.csv", false));
 
+
+            //
+            //TODO determine which fogDevices have to be iterated
+            //
             csvWriter.write("APs; ");
             for (FogDevice current : fogDeviceList) {
                 csvWriter.write(current.getName() + "; ");
@@ -501,8 +504,6 @@ public class TestExample4 {
 
             m.setSourceAp(beforeAp);
 
-            int count = 0;
-
             long time2 = System.currentTimeMillis();
 
             System.out.println("start sim.  Init took: "+ (time2 - time1)/1000);
@@ -522,31 +523,26 @@ public class TestExample4 {
             File csvFile = new File(filename);
             boolean csvFileExists = csvFile.exists();
 
-            PrintWriter csvWriter = new PrintWriter(new FileWriter(filename, true));
+            PrintWriter resultsWriter = new PrintWriter(new FileWriter(filename, true));
 
             if(!csvFileExists)csvWriter.write("traceCompVal;sizeOfUncertainty;scenario;canBeTurnedOff;rate\n");
 
             //attacker.cleanupPositionMap();
-            attacker.printKnowledge();
-
 
             long time3 = System.currentTimeMillis();
 
             System.out.println("sim finished, took: "+ (time3 - time2)/1000);
 
+
             /* results */
-
-
             ArrayList<Integer> traceCompVal  = attacker.calcTraceCompVal();
             ArrayList<Double> sizeOfUncertainty = attacker.calcSizeOfUncertaintyRegion();
 
-            System.out.println(traceCompVal);
-
             for(int it = 0 ; it < traceCompVal.size() ; it++ ){
-                csvWriter.write(traceCompVal.get(it)+ ";" );
-                csvWriter.printf(Locale.US, "%.9f", sizeOfUncertainty.get(it));
+                resultsWriter.write(traceCompVal.get(it)+ ";" );
+                resultsWriter.printf(Locale.US, "%.9f", sizeOfUncertainty.get(it));
 
-            csvWriter.write(";"+SCENARIO+";"+MOBILE_CAN_BE_TURNED_OFF+";"+RATE_OF_COMPROMISED_DEVICES+"\n");    // path information
+                resultsWriter.write(";"+SCENARIO+";"+MOBILE_CAN_BE_TURNED_OFF+";"+RATE_OF_COMPROMISED_DEVICES+"\n");    // path information
 
             }
 
@@ -564,26 +560,14 @@ public class TestExample4 {
 
             double avgTraceVal = (double) total2/ (double) sizeOfUncertainty.size();
 
-
-
-            Log.printLine("Accuracy value = " + sizeOfUncertainty);
-
-
-//            System.out.println("size of uncertainty: "+sizeOfUncertainty);
             System.out.println("size of uncertainty avg: "+total1 );
-
-  //          System.out.println("traceCompVal: "+traceCompVal);
             System.out.println("traceCompVal avg: "+avgTraceVal);
-
             csvWriter.close();
-
             Log.printLine("\nTest4 finished");
 
             long time4 = System.currentTimeMillis();
 
             System.out.println("results finished, took: "+ (time4 - time3)/1000+  "     total time: "+(time3-time1)/1000);
-
-
             System.out.println("\n####################################################\n");
 
         } catch (Exception e) {
@@ -718,7 +702,6 @@ public class TestExample4 {
                 int upLinkLatency = 2;
 
 
-
                 /* set migration policy */
                 VmMigrationTechnique migrationTechnique = null;
                 if (policyReplicaVm == Policies.MIGRATION_COMPLETE_VM) {
@@ -728,8 +711,6 @@ public class TestExample4 {
                 } else if (policyReplicaVm == Policies.LIVE_MIGRATION) {
                     migrationTechnique = new LiveMigration(migrationPointPolicy);
                 }
-
-
 
 
                 /* create Sensors and Actuators */
@@ -748,7 +729,6 @@ public class TestExample4 {
                     MobileActuator actuator = new MobileActuator("AACTUATOR", i, appId, "ACTUATOR");
                     actuatorSet.add(actuator);
                 }
-
 
 
                 /* create mobile Device */
@@ -792,13 +772,10 @@ public class TestExample4 {
                 mobileDevice.setSensors(sensorSet);
                 mobileDevice.setActuators(actuatorSet);
 
-
                 /* more setup */
                 mobileDevice.setTempSimulation(0);
                 mobileDevice.setTimeFinishDeliveryVm(-1);
                 mobileDevice.setTimeFinishHandoff(0);
-//            st.setTravelPredicTime(getTravelPredicTimeForST());
-//            st.setMobilityPredictionError(getMobilityPrecitionError());
 
                 mobileDeviceList.add(mobileDevice);
 
@@ -816,12 +793,15 @@ public class TestExample4 {
 
     /**
      * @param parentId
-     * @param path     only initializes fogNode in proximity to selected path to improve perfomance
+     * @param path     only initializes fogNodes in proximity to selected path to improve perfomance
      */
     private static void createFogDevices(int parentId, List<Path> selectedPaths) {
 
-        long t1 = System.currentTimeMillis();
+        //
+        //TODO refactor this method
+        //
 
+        long t1 = System.currentTimeMillis();
 
         List<Position> selectedPositions = new ArrayList<>();
 
@@ -843,8 +823,6 @@ public class TestExample4 {
         ArrayList<Coordinate> allCoords = new ArrayList<>(fogNodePositions.values());
         Collections.shuffle(allCoords);
          List<Coordinate> compromisedCoords = allCoords.subList(0, n);
-
-
 
         HashMap<Coordinate, Boolean> allPositions = new HashMap<>();
         HashMap<Coordinate, Boolean> relevantPositions = new HashMap<>();
@@ -872,7 +850,6 @@ public class TestExample4 {
         }
 
         try {
-
 
             for (Integer i : fogNodePositions.keySet()) {
                 Coordinate coord = fogNodePositions.get(i);
@@ -949,6 +926,11 @@ public class TestExample4 {
 
 
                 if(relevantPositions.keySet().contains(coord)){
+
+                    //
+                    //TODO update FogDevice Constructors
+                    //
+
                     FogDevice fogDevice = new FogDevice(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, upLinkRandom, downLinkRandom, upLinkLatency, ratePerMips, coord, id, serviceOffer, migrationStrategy, policyReplicaVm, beforeMigration, offloadingResponseTimeCalculator);
 //              FogDevice fogDevice = new FogDevice(name, coordX, coordY, id);
                     fogDevice.setParentId(parentId);
@@ -995,6 +977,9 @@ public class TestExample4 {
 
         CloudletScheduler scheduler = new TupleScheduler(500, 1);
 
+        //
+        //TODO update AppModule Constructor
+        //
         AppModule testVm = new AppModule(mobileDevice.getMyId(), appModuleName, appId, mobileDevice.getMyId(), mips, ram, bw, size, "VmOf" + mobileDevice.getName(), scheduler, new HashMap<Pair<String, String>, SelectivityModel>());
 
 
@@ -1016,8 +1001,6 @@ public class TestExample4 {
 
         //vmList.add(vm);
         //broker.submitVmList(vmList);
-
-        //Log.printLine("VM " + vm.getId() + " for " + broker.getName() + " created");
     }
 
     private static Application createApplication(String appId, int userId, int myId, AppModule userVm) {
@@ -1059,7 +1042,6 @@ public class TestExample4 {
 
         return application;
     }
-
 
     private static Datacenter createDatacenter(String name) {
 
@@ -1137,7 +1119,6 @@ public class TestExample4 {
         return broker;
     }
 
-
     public static Random getRand() {
         return rand;
     }
@@ -1189,7 +1170,6 @@ public class TestExample4 {
     public static void setAveragePathLength(double averagePathLength) {
         TestExample4.averagePathLength = averagePathLength;
     }
-
 
     public static int getMobileCanBeTurnedOff() {
         return MOBILE_CAN_BE_TURNED_OFF;
