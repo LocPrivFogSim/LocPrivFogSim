@@ -197,6 +197,10 @@ public class NextStep {
 		}
 	}
 
+	//
+	//TODO probably needs to be debugged (compare to equivalent in mobilitydata project)
+	//
+
 	public static  void nextStep(List<FogDevice> serverCloudlets, List<ApDevice> apDevices, List<MobileDevice> smartThings,
 								 Coordinate coordDevices, int stepPolicy, int seed, MobileController controller) {
 

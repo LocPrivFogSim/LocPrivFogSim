@@ -5,7 +5,9 @@ import org.fog.vmmobile.constants.MaxAndMin;
 
 import java.util.Objects;
 
-
+//
+//TODO remove euclidien coords 
+//
 public class Coordinate {
 
 	private double coordX;

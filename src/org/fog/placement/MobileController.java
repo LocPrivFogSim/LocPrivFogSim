@@ -261,8 +261,10 @@ public class MobileController extends SimEntity {
 //			}
         }
 
-
-
+        
+        //
+        //TODO check if intervall = 1 is reasonable
+        //
         for (int i = 0; i < MaxAndMin.MAX_SIMULATION_TIME; i += 1) {
             send(getId()//Application
                     , i //delay -> When the event will occur

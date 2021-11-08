@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-
+//
+//TODO check if necessary (probably not)
+//
 public class SimField {
 
     ArrayList<Coordinate> corners;  //typically square or rectangle = 4 corners
