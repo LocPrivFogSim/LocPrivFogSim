@@ -480,7 +480,7 @@ public class TestExample4 {
             //TODO determine which fogDevices have to be iterated
             //
             csvWriter.write("APs; ");
-            for (FogDevice current : fogDeviceList) {
+            for (FogDevice current : allFogDevices) {
                 csvWriter.write(current.getName() + "; ");
             }
             csvWriter.newLine();
@@ -492,8 +492,8 @@ public class TestExample4 {
                 m.setSourceAp(current);
                 csvWriter.write(current.getName() + "; ");
 
-                for (FogDevice target : fogDeviceList) {
-                    double r = ctemp.calculateResponseTime(fogDeviceList, accessPointList, m, target, new OffloadingTask(-1, -1, 20, 2000, 2));
+                for (FogDevice target : allFogDevices) {
+                    double r = ctemp.calculateResponseTime(allFogDevices, accessPointList, m, target, new OffloadingTask(-1, -1, 20, 2000, 2));
                     csvWriter.write(String.format("%,.4f; ", r));
                 }
 
