@@ -330,8 +330,7 @@ public class TestExample4 {
 
 
 
-            //TODO delete following lines once initial testing is done
-            int aksd = 0;
+
             /* connect MobileDevices and the closest AccessPoint */
             for (MobileDevice mobileDevice : mobileDeviceList) {
                 if (ApDevice.connectApSmartThing(accessPointList, mobileDevice, getRand().nextDouble())) {
@@ -339,7 +338,6 @@ public class TestExample4 {
                 } else {
                     Log.printLine(mobileDevice.getName() + " not connected");
                 }
-                aksd++;
             }
 
 
@@ -367,7 +365,7 @@ public class TestExample4 {
                 accessPoint.setParentId(closest.getMyId());
                 closest.setApDevices(accessPoint, Policies.ADD);
 
-               // NetworkTopology.addLink(closest.getMyId(), accessPoint.getMyId(), accessPoint.getDownlinkBandwidth(), getRand().nextDouble());
+                NetworkTopology.addLink(closest.getMyId(), accessPoint.getMyId(), accessPoint.getDownlinkBandwidth(), getRand().nextDouble());
             }
 
 
@@ -610,6 +608,69 @@ public class TestExample4 {
     }
 
 
+    private static void createFogDevicesStarTopologyNetwork() {
+
+        //get square-fields of size fieldEdgeLen x fieldEdgeLen
+
+        List<Coordinate> corners = field.sortCornersClockwise(field.getCorners());
+        double x = Coordinate.calcDistance(corners.get(0), corners.get(1));
+        double y = Coordinate.calcDistance(corners.get(1), corners.get(2));
+
+        double bearingX = Coordinate.calcBearingAngle(corners.get(0), corners.get(1), false);
+        double bearingY = Coordinate.calcBearingAngle(corners.get(1), corners.get(2), false);
+
+        Coordinate initialCorner = corners.get(0);
+
+        double fieldEdgeLen = 10000; // 10km x 10km fields
+
+        for (double i = 0.0; i <= x; i += fieldEdgeLen) {
+            for (double j = 0.0; j <= y; j += fieldEdgeLen) {
+                Coordinate moveDirectionX = Coordinate.findCoordinateForBearingAndDistance(initialCorner, bearingX, i);
+                Coordinate bottomLeft = Coordinate.findCoordinateForBearingAndDistance(moveDirectionX, bearingY, j);
+
+                moveDirectionX = Coordinate.findCoordinateForBearingAndDistance(bottomLeft, bearingX, fieldEdgeLen);
+                Coordinate topRight = Coordinate.findCoordinateForBearingAndDistance(moveDirectionX, bearingY, fieldEdgeLen);
+
+                //bounding-box
+                double minLat = bottomLeft.getLat();
+                double maxLat = topRight.getLat();
+                double minLon = bottomLeft.getLon();
+                double maxLon = topRight.getLon();
+
+                //TODO test if this runs in reasonable time.
+                ArrayList<FogDevice> devicesInField = (ArrayList<FogDevice>) allFogDevices.stream()
+                        .filter(device -> device.getPosition().getCoordinate().isInBoundingBox(minLat,maxLat,minLon, maxLon))
+                        .collect(Collectors.toList());
+
+                FogDevice centralFogNode = devicesInField.get(0); //might want to create a seperate "router-node" instead of using an existing one
+                HashMap<Integer, Double> network = new HashMap<>();
+
+                //connect all fogNodes to centralFogNode
+                devicesInField.forEach(device -> {
+                    if (!device.equals(centralFogNode)) {
+                        double latency =  LATENCY_BETWEEN_FOG_DEVICES; //TODO Latency richtig berechnen (vorher wurde da irgendwas mit Column/Line berechnet siehe alte Funktion)
+
+                        if (centralFogNode.getUplinkBandwidth() < device.getDownlinkBandwidth()) {
+                            network.put(device.getMyId(), centralFogNode.getUplinkBandwidth());
+                            NetworkTopology.addLink(centralFogNode.getMyId(), device.getMyId(), centralFogNode.getUplinkBandwidth(), latency + getRand().nextDouble());
+
+                            Log.printLine("Bandwidth between " + centralFogNode.getName() + " and " + device.getName() + ": " + centralFogNode.getUplinkBandwidth());
+                        } else {
+                            network.put(device.getMyId(), device.getDownlinkBandwidth());
+                            NetworkTopology.addLink(centralFogNode.getMyId(), device.getMyId(), device.getDownlinkBandwidth(), latency + getRand().nextDouble());
+
+                            Log.printLine("Bandwidth between " + centralFogNode.getName() + " and " + device.getName() + ": " + centralFogNode.getDownlinkBandwidth());
+                        }
+                    }});
+
+                centralFogNode.setNetServerCloudlets(network);
+            }
+        }
+    }
+
+    //
+    //TODO remove once createFogDevicesStarTopologyNetwork() is working
+    //
     private static void createFogDevicesNetwork() {
 
         HashMap<Integer, Double> network = new HashMap<>();
@@ -617,9 +678,9 @@ public class TestExample4 {
         long start = System.currentTimeMillis();
 
         int i = 1, j = 1, line, column;
-        for (FogDevice fogDeviceX : relevantFogDevicesList) {
+        for (FogDevice fogDeviceX : allFogDevices) {
             j = 1;
-            for (FogDevice fogDeviceY : relevantFogDevicesList) {
+            for (FogDevice fogDeviceY : allFogDevices) {
 
                 if (fogDeviceX.equals(fogDeviceY)) {
                     continue; // NOTE(markus): previously break; now continue as I think this was the intended behavior.
@@ -657,6 +718,8 @@ public class TestExample4 {
     }
 
     private static void createAccessPoints() {
+
+        //TODO adjust to start-topology
 
         for (int i = 0; i < relevantFogDevicesList.size(); i++) {
 

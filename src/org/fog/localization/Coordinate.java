@@ -186,6 +186,10 @@ public class Coordinate {
 		return  coord.getLon()+ (distance /  (earthRad * Math.cos(Math.PI * coord.getLat() /  180 )) ) * (180/Math.PI);
 	}
 
+	public boolean isInBoundingBox (double minLat, double maxLat, double minLon, double maxLon){
+		return this.lat > minLat && this.lat < maxLat && this.lon > minLon && this.lon < maxLon;
+	}
+
 
 	public double getCoordX() {
 		return coordX;

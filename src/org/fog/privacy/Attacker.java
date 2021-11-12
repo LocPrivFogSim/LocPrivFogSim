@@ -203,15 +203,12 @@ public class Attacker {
 
         long start = System.currentTimeMillis();
 
-        controlledDeviceList.sort(new Comparator<FogDevice>() {
-            @Override
-            public int compare(FogDevice o1, FogDevice o2) {
-                double d1 = Coordinate.calcDistance(o1.getPosition().getCoordinate(), corner);
-                double d2 = Coordinate.calcDistance(o2.getPosition().getCoordinate(), corner);
-                if (d1 < d2) return -1;
-                if (d1 > d2) return 1;
-                else return 0;
-            }
+        controlledDeviceList.sort((o1, o2) -> {
+            double d1 = Coordinate.calcDistance(o1.getPosition().getCoordinate(), corner);
+            double d2 = Coordinate.calcDistance(o2.getPosition().getCoordinate(), corner);
+            if (d1 < d2) return -1;
+            if (d1 > d2) return 1;
+            else return 0;
         });
         allFogDevicesList.sort((o1, o2) -> {
             double d1 = Coordinate.calcDistance(o1.getPosition().getCoordinate(), corner);
