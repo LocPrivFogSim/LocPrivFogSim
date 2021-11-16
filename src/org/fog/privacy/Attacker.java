@@ -85,7 +85,12 @@ public class Attacker {
     //
     //TODO debug update() 
     //
-    public void update(FogDevice source, MobileDevice mobileDevice, int timestamp,int eventType, String event) {
+    public void update(FogDevice source, MobileDevice mobileDevice, int timestamp, int eventType, String event) {
+        Log.formatLine("Attacker was notified: MobileDevice '%s' was %sed to '%s' due to a %s event.", mobileDevice.getName(),
+                event, source.getName(), EventType.eventTypeToString(eventType));
+
+        if (eventType != EventType.OFFLOADING)
+            return;
 
         LinkedList<Integer> trace = trackedTracesForPathIds.get(mobileDevice.getPath().getPathId());
         ArrayList<Position> trackedPositions = trackedPositionsForPathIds.get(mobileDevice.getPath().getPathId());
