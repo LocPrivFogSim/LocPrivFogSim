@@ -450,7 +450,6 @@ public class TestExample4 {
                 }
             }
 
-
             /* create controller */
             MobileController mobileController = new MobileController("MobileController", relevantFogDevicesList, accessPointList, mobileDeviceList, brokerList, moduleMapping, migrationPointPolicy, migrationStrategyPolicy, stepPolicy, map, SEED, migrationable);
 
@@ -994,6 +993,7 @@ public class TestExample4 {
 
                     FogDevice fogDevice = new FogDevice(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, upLinkRandom, downLinkRandom, upLinkLatency, ratePerMips, coord, id, serviceOffer, migrationStrategy, policyReplicaVm, beforeMigration, offloadingResponseTimeCalculator);
 //              FogDevice fogDevice = new FogDevice(name, coordX, coordY, id);
+                    // TODO(): setzen von cloudserver/datacenter
                     fogDevice.setParentId(parentId);
                     relevantFogDevicesList.add(fogDevice);
                     allFogDevices.add(fogDevice);
