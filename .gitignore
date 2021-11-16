@@ -224,3 +224,6 @@ hs_err_pid*
 # Ignore content of results folder
 /results/*
 !/results/.gitkeep
+
+# Ignore log output file
+/privacy/output
