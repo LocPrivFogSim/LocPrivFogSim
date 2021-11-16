@@ -193,7 +193,7 @@ public class Host {
 	}
 	
 	public void printHost(String a){
-		try(FileWriter fw1 = new FileWriter("creating_modules.txt", true);
+		try(FileWriter fw1 = new FileWriter("results/creating_modules.txt", true);
 			    BufferedWriter bw1 = new BufferedWriter(fw1);
 			    PrintWriter out1 = new PrintWriter(bw1))
 		{

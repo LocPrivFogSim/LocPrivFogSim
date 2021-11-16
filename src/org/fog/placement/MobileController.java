@@ -109,7 +109,7 @@ public class MobileController extends SimEntity {
 
     private static void saveHandOff(MobileDevice st) {
         Log.printLine("HANDOFF " + st.getMyId() + " Position: " + st.getPosition().getCoordinate().getCoordX() + ", " + st.getPosition().getCoordinate().getCoordY() + " Direction: " + st.getPosition().getDirection() + " Speed: " + st.getPosition().getSpeed());
-        try (FileWriter fw = new FileWriter(st.getMyId() + "handoff.txt", true);
+        try (FileWriter fw = new FileWriter("results/"+st.getMyId() + "handoff.txt", true);
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
             out.println(st.getMyId() + "\t" + CloudSim.clock() + "\t" + st.getPosition().getCoordinate().getCoordX() + "\t" + st.getPosition().getCoordinate().getCoordY() + "\t" + st.getPosition().getDirection() + "\t" + st.getPosition().getSpeed() + "\t" + st.getSourceAp().getName() + "\t" + st.getDestinationAp().getName());
@@ -902,7 +902,7 @@ public class MobileController extends SimEntity {
     }
 
     public void printResults(String a, String filename) {
-        try (FileWriter fw1 = new FileWriter(filename, true);
+        try (FileWriter fw1 = new FileWriter("results/"+filename, true);
              BufferedWriter bw1 = new BufferedWriter(fw1);
              PrintWriter out1 = new PrintWriter(bw1)) {
             out1.println(a);

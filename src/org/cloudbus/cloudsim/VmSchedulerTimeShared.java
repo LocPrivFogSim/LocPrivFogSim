@@ -69,7 +69,7 @@ public class VmSchedulerTimeShared extends VmScheduler {
 		/*if(totalRequestedMips == 0){
 			Log.printLine("____");
 		}
-		try(FileWriter fw1 = new FileWriter("creating_modules.txt", true);
+		try(FileWriter fw1 = new FileWriter("results/creating_modules.txt", true);
 			    BufferedWriter bw1 = new BufferedWriter(fw1);
 			    PrintWriter out1 = new PrintWriter(bw1))
 		{

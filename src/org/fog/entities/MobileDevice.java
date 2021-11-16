@@ -520,7 +520,7 @@ Log.printLine(++numClients);
 //			if(!tuple.getTupleType().contains("EEG")){
 
 			MyStatistics.getInstance().setMyCountLostTuple(1);
-			saveLostTupple(String.valueOf(CloudSim.clock()), tuple.getUserId()+"mdlostTupple.txt");
+			saveLostTupple(String.valueOf(CloudSim.clock()), "results/"+tuple.getUserId()+"mdlostTupple.txt");
 
 				if(isMigStatus()){//send again
 //					if(MyStatistics.getInstance().getInitialWithoutVmTime().get(getMyId())==null){

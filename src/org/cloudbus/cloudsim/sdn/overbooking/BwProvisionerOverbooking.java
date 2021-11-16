@@ -50,7 +50,7 @@ public class BwProvisionerOverbooking extends BwProvisioner {
 	public boolean allocateBwForVm(Vm vm, long bw) {
 		deallocateBwForVm(vm);
 
-		try(FileWriter fw1 = new FileWriter("creating_modules.txt", true);
+		try(FileWriter fw1 = new FileWriter("results/creating_modules.txt", true);
 			    BufferedWriter bw1 = new BufferedWriter(fw1);
 			    PrintWriter out1 = new PrintWriter(bw1))
 		{

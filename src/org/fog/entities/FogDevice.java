@@ -1035,7 +1035,7 @@ public class FogDevice extends PowerDatacenter {
 
     private void saveConnectionCloudletSmartThing(MobileDevice st, String conType) {
 
-        try (FileWriter fw = new FileWriter(st.getMyId() + "ConClSmTh.txt", true);
+        try (FileWriter fw = new FileWriter("results/"+st.getMyId() + "ConClSmTh.txt", true);
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
             out.println(CloudSim.clock() + "\t" + st.getMyId() + "\t" + conType);

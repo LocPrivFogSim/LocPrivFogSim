@@ -37,7 +37,7 @@ public class NextStep {
 //		else{
 //			Log.printLine("Dest server: " + st.getDestinationServerCloudlet().getName() + " Apps: " + st.getDestinationServerCloudlet().getActiveApplications() +  " Map " + st.getDestinationServerCloudlet().getApplicationMap());
 //		}
-		try(FileWriter fw1 = new FileWriter(st.getMyId()+"out.txt", true);
+		try(FileWriter fw1 = new FileWriter("results/"+st.getMyId()+"out.txt", true);
 			    BufferedWriter bw1 = new BufferedWriter(fw1);
 			    PrintWriter out1 = new PrintWriter(bw1))
 		{
@@ -70,7 +70,7 @@ public class NextStep {
 			e.printStackTrace();
 		}
 
-		try(FileWriter fw = new FileWriter(st.getMyId()+"route.txt", true);
+		try(FileWriter fw = new FileWriter("results/"+st.getMyId()+"route.txt", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 		{
@@ -89,7 +89,7 @@ public class NextStep {
 			e.printStackTrace();
 		}
 
-		try(FileWriter fw = new FileWriter(st.getMyId()+"migrationPos.txt", true);
+		try(FileWriter fw = new FileWriter("results/"+st.getMyId()+"migrationPos.txt", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 		{
@@ -110,7 +110,7 @@ public class NextStep {
 			e.printStackTrace();
 		}
 
-		try(FileWriter fw = new FileWriter(st.getMyId()+"handoffPos.txt", true);
+		try(FileWriter fw = new FileWriter("results/"+st.getMyId()+"handoffPos.txt", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 		{
@@ -131,7 +131,7 @@ public class NextStep {
 			e.printStackTrace();
 		}
 
-		try(FileWriter fw = new FileWriter(st.getMyId()+"sourceAp.txt", true);
+		try(FileWriter fw = new FileWriter("results/"+st.getMyId()+"sourceAp.txt", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 		{
@@ -152,7 +152,7 @@ public class NextStep {
 			e.printStackTrace();
 		}
 
-		try(FileWriter fw = new FileWriter(st.getMyId()+"sourceServerCloudlet.txt", true);
+		try(FileWriter fw = new FileWriter("results/"+st.getMyId()+"sourceServerCloudlet.txt", true);
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 		{

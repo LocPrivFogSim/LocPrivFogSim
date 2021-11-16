@@ -471,7 +471,7 @@ public class TestExample4 {
             Log.printLine("\n########  STATISTIC DATA  ########\n");
 
             // print response time matrix
-            BufferedWriter csvWriter = new BufferedWriter(new FileWriter("response_time_matrix_offloading.csv", false));
+            BufferedWriter csvWriter = new BufferedWriter(new FileWriter("results/response_time_matrix_offloading.csv", false));
 
 
             //
