@@ -478,7 +478,8 @@ public class TestExample4 {
             //TODO determine which fogDevices have to be iterated
             //
             csvWriter.write("APs; ");
-            for (FogDevice current : allFogDevices) {
+            // TODO(markus): Check whether we need relevantFogDevicesList or allFogDevices
+            for (FogDevice current : relevantFogDevicesList) {
                 csvWriter.write(current.getName() + "; ");
             }
             csvWriter.newLine();
@@ -490,7 +491,8 @@ public class TestExample4 {
                 m.setSourceAp(current);
                 csvWriter.write(current.getName() + "; ");
 
-                for (FogDevice target : allFogDevices) {
+                // TODO(markus): Check whether we need relevantFogDevicesList or allFogDevices
+                for (FogDevice target : relevantFogDevicesList) {
                     double r = ctemp.calculateResponseTime(allFogDevices, accessPointList, m, target, new OffloadingTask(-1, -1, 20, 2000, 2));
                     csvWriter.write(String.format("%,.4f; ", r));
                 }
@@ -518,12 +520,8 @@ public class TestExample4 {
 
             Log.printLine();
 
-            File csvFile = new File(filename);
-            boolean csvFileExists = csvFile.exists();
-
             PrintWriter resultsWriter = new PrintWriter(new FileWriter(filename, true));
-
-            if(!csvFileExists)csvWriter.write("traceCompVal;sizeOfUncertainty;scenario;canBeTurnedOff;rate\n");
+            resultsWriter.write("traceCompVal;sizeOfUncertainty;scenario;canBeTurnedOff;rate\n");
 
             //attacker.cleanupPositionMap();
 
@@ -560,7 +558,7 @@ public class TestExample4 {
 
             System.out.println("size of uncertainty avg: "+total1 );
             System.out.println("traceCompVal avg: "+avgTraceVal);
-            csvWriter.close();
+            resultsWriter.close();
             Log.printLine("\nTest4 finished");
 
             long time4 = System.currentTimeMillis();
