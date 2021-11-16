@@ -317,7 +317,7 @@ public class FogDevice extends PowerDatacenter {
                       List<Storage> storageList,
                       double schedulingInterval,
                       double uplinkBandwidth, double downlinkBandwidth, double uplinkLatency, double ratePerMips
-            , float coordX, float coordY, int id, Service service
+            , Coordinate coord, int id, Service service
             , DecisionMigration migrationStrategy
             , int policyReplicaVM
             , BeforeMigration beforeMigration
@@ -329,7 +329,7 @@ public class FogDevice extends PowerDatacenter {
         this.position = new Position();
         //	this.setName(name);
         //	coord.setPositions(this.getName(),coordX, coordY);
-        position.setCoordinate(Coordinate.createCartesianCoordinate(coordX,coordY));
+        this.position.setCoordinate(coord);
         this.setMyId(id);
         smartThings = new HashSet<>();
         smartThingsWithVm = new HashSet<>();
