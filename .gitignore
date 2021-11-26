@@ -94,6 +94,9 @@ local.properties
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
+#db
+geoLifePaths.db
+
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
