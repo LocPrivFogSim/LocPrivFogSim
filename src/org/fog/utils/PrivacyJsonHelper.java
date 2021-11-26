@@ -28,8 +28,8 @@ public class PrivacyJsonHelper {
         this.compromisedFogNodes = compromisedFogNodes;
     }
 
-    public void addEvent(String eventName,int eventId, int eventType, int timestamp){
-        Event e =  new Event(eventName,eventType,eventId, timestamp);
+    public void addEvent(int fogNodeId,String eventName,int eventId, int eventType, int timestamp){
+        Event e =  new Event(fogNodeId,eventName,eventType,eventId, timestamp);
         events.add(e);
     }
 
@@ -90,16 +90,26 @@ public class PrivacyJsonHelper {
 /for easier Json-parsing
 */
 class Event {
+    int fog_device_id;
     String event_name;
     int event_type;
     int event_id;
     int timestamp;
 
-    public Event(String event_name, int event_type, int event_id, int timestamp) {
+    public Event(int fog_device_id, String event_name, int event_type, int event_id, int timestamp) {
+        this.fog_device_id = fog_device_id;
         this.event_name = event_name;
         this.event_type = event_type;
         this.event_id = event_id;
         this.timestamp = timestamp;
+    }
+
+    public int getFog_device_id() {
+        return fog_device_id;
+    }
+
+    public void setFog_device_id(int fog_device_id) {
+        this.fog_device_id = fog_device_id;
     }
 
     public String getEvent_name() {

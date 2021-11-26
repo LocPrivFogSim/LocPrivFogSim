@@ -42,6 +42,6 @@ public class Attacker {
 
         // TODO(markus): Überprüfe ob source device is controlled device
 
-          TestExample4.jsonHelper.addEvent(event,eventId, eventType, timestamp);
+          TestExample4.jsonHelper.addEvent(source.getMyId(),event,eventId, eventType, timestamp);
     }
 }
