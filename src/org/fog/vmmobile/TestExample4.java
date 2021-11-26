@@ -225,7 +225,7 @@ public class TestExample4 {
             long before = System.currentTimeMillis();
 
             /* create Attacker */
-            Attacker attacker = new Attacker("attacker", allCompromisedFogDevices, allFogDevices, allPaths);
+            Attacker attacker = new Attacker("attacker", allFogDevices, allCompromisedFogDevices);
             attackerList.add(attacker);
 
             System.out.println("all paths loaded in : "+((System.currentTimeMillis() - before)/1000) + " sekunden");
@@ -294,16 +294,6 @@ public class TestExample4 {
             Log.print("\nCompromisedDevices: ");
             for (FogDevice fogDevice1 : relevantCompromisedDevices) {
                 fogDevice1.addAttacker(attacker);
-            }
-
-            switch (SCENARIO) {
-                case 1:
-                    attacker.setHasDeviceMap(false);
-                    break;
-
-                case 2:
-                    attacker.setHasDeviceMap(true);
-                    break;
             }
 
             setRand(new Random(SEED2 * Integer.MAX_VALUE));
@@ -459,8 +449,6 @@ public class TestExample4 {
                 Log.printLine(mobileDeviceList.get(j).getName() + " path: " + mobileDeviceList.get(j));
             }
 
-            attacker.initMaps(mobileDeviceList);
-
             i = 0;
 
             for (Application application : applicationList) {
@@ -530,34 +518,6 @@ public class TestExample4 {
 
 
             /* results */
-            ArrayList<Integer> traceCompVal  = attacker.calcTraceCompVal();
-            ArrayList<Double> sizeOfUncertainty = attacker.calcSizeOfUncertaintyRegion();
-
-            for(int it = 0 ; it < traceCompVal.size() ; it++ ){
-                resultsWriter.write(traceCompVal.get(it)+ ";" );
-                resultsWriter.printf(Locale.US, "%.9f", sizeOfUncertainty.get(it));
-
-                resultsWriter.write(";"+SCENARIO+";"+MOBILE_CAN_BE_TURNED_OFF+";"+RATE_OF_COMPROMISED_DEVICES+"\n");    // path information
-
-            }
-
-            double total1 = 0;
-            for(Double jk : sizeOfUncertainty){
-                total1 = total1 + jk;
-            }
-
-            total1 = total1/sizeOfUncertainty.size();
-
-            int total2 = 0;
-            for(Integer integer : traceCompVal){
-                total2 = total2 + integer;
-            }
-
-            double avgTraceVal = (double) total2/ (double) sizeOfUncertainty.size();
-
-            System.out.println("size of uncertainty avg: "+total1 );
-            System.out.println("traceCompVal avg: "+avgTraceVal);
-            resultsWriter.close();
             Log.printLine("\nTest4 finished");
 
             long time4 = System.currentTimeMillis();
