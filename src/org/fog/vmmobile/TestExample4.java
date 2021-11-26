@@ -36,6 +36,7 @@ import org.fog.scheduler.StreamOperatorScheduler;
 import org.fog.scheduler.TupleScheduler;
 import org.fog.utils.FogLinearPowerModel;
 import org.fog.utils.DBConnector;
+import org.fog.utils.PrivacyJsonHelper;
 import org.fog.utils.TimeKeeper;
 import org.fog.utils.distribution.DeterministicDistribution;
 import org.fog.vmmigration.*;
@@ -57,7 +58,6 @@ public class TestExample4 {
 
     /* Settings for the simulation setup */
     private static final int SEED = 5; // Cloud, FogDevice, AP
-    private static  int NUM_OF_MOBILE_DEVICES = 1;
     private static final int NUM_OF_SENSORS_PER_DEVICE = 1;
     private static final int NUM_OF_ACTUATORS_PER_DEVICE = 1;
     private static final int MIN_DOWN_BANDWITH = 500; // Min Down Bandwidth 500 MB/s
@@ -84,6 +84,7 @@ public class TestExample4 {
     private static int SEED2 = 28; // MobileDevice, connections, and more
     private static int SEED3 = 5; // Attacker
     private static String filename = "results/results.csv";
+    private static int NUM_OF_MOBILE_DEVICES = 1;
 
     private  static DBConnector dbConnector = new DBConnector();
 
@@ -155,10 +156,8 @@ public class TestExample4 {
             RATE_OF_COMPROMISED_DEVICES = Double.parseDouble(args[1])/100;
             SEED2 = Integer.parseInt(args[2]);
             SEED3 = Integer.parseInt(args[3]);
-            NUM_OF_MOBILE_DEVICES = Integer.parseInt(args[4]);
-
-            OFFLOADING_THRESHOLD = Double.parseDouble(args[5]);
-            String OFFLOADING_STRATEGY = args[6];
+            OFFLOADING_THRESHOLD = Double.parseDouble(args[4]);
+            String OFFLOADING_STRATEGY = args[5];
 
             if (OFFLOADING_STRATEGY.equalsIgnoreCase("BelowThresholdRandomDevice"))
                 offloadingStrategy = new BelowThresholdRandomDeviceOffloadingStrategy(SEED3, OFFLOADING_THRESHOLD);
@@ -172,7 +171,6 @@ public class TestExample4 {
             System.out.println("Scenario: "+SCENARIO);
             System.out.println("can be turned of: "+MOBILE_CAN_BE_TURNED_OFF);
             System.out.println("rate: "+RATE_OF_COMPROMISED_DEVICES);
-            System.out.println("mobiles per run: "+NUM_OF_MOBILE_DEVICES);
             System.out.println("Offloading Threshold:"  + OFFLOADING_THRESHOLD);
             System.out.println("Offloading Strategy: " + OFFLOADING_STRATEGY);
 
@@ -203,7 +201,8 @@ public class TestExample4 {
 
             allPaths = dbConnector.getAllPaths();
 
-            List<Path> selectedPaths = getRandomPaths(NUM_OF_MOBILE_DEVICES);
+            List<Path> selectedPaths = getRandomPaths(1);
+            Path selectedPath = selectedPaths.get(0);
 
             /* create FogDevice(s) */
             createFogDevices(cloud.getId(), selectedPaths);
@@ -230,66 +229,6 @@ public class TestExample4 {
 
             System.out.println("all paths loaded in : "+((System.currentTimeMillis() - before)/1000) + " sekunden");
 
-        /*
-            var allPreProcessedPaths = attacker.getKnownPaths();
-
-            for (Integer i : allPreProcessedPaths.keySet()){
-                String result = "";
-
-                String s = "D:/BA/theresasPaths/pfad_"+i+".csv";
-
-                File f = new File(s);
-                FileWriter writer = new FileWriter(f);
-
-                for(Integer j : allPreProcessedPaths.get(i)){
-                    FogDevice device = deviceMap.getFogDeviceList().get(j);
-                    result += "\n" + (int)device.getCoord().getCoordX() + ","+(int)device.getCoord().getCoordY() ;
-                }
-                result = result.substring(0, result.length()-1);
-
-                writer.write(result);
-                writer.close();
-            }
-
-
-
-            int minDist = -1;
-            int maxDist = 0;
-            int totalDist = 0;
-
-            var allPreProcessedPaths = attacker.getKnownPaths();
-
-
-            for (Integer i : allPreProcessedPaths.keySet()){
-                LinkedList<Integer> integers = allPreProcessedPaths.get(i);
-                double localDist = 0;
-
-                System.out.println("size: "+ allPreProcessedPaths.get(i).size() + "   " +allPreProcessedPaths.get(i));
-
-                for (int j=1 ; j<integers.size(); j++){
-                    int first = integers.get(j-1);
-                    int second = integers.get(j);
-
-                    Coordinate prev = deviceMap.getFogDeviceList().get(first).getCoord();
-                    Coordinate curr = deviceMap.getFogDeviceList().get(second).getCoord();
-
-                    localDist += Coordinate.calcEuclidDist(prev, curr);
-                }
-                if (localDist > maxDist){
-                    maxDist = (int)localDist;
-                }else if(minDist == -1 || localDist < minDist){
-                    minDist = (int)localDist;
-                }
-                System.out.println("localDist: "+localDist);
-                totalDist += (int) localDist;
-            }
-
-            System.out.println("total: "+totalDist);
-            System.out.println("min: "+ minDist);
-            System.out.println("max:" +maxDist);
-            System.out.println("avg:"+(totalDist/50));
-
-            */
 
             Log.print("\nCompromisedDevices: ");
             for (FogDevice fogDevice1 : relevantCompromisedDevices) {
@@ -495,6 +434,11 @@ public class TestExample4 {
 
             System.out.println("start sim.  Init took: "+ (time2 - time1)/1000);
 
+            /*init Jsonhelper */
+            List<Integer> compromisedIds = allCompromisedFogDevices.stream().map(x -> {
+                return x.getMyId();
+            }).collect(Collectors.toList());
+            PrivacyJsonHelper jsonHelper = new PrivacyJsonHelper(selectedPath.getPathId(), SCENARIO, compromisedIds);
 
             /* Simulation */
             TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());

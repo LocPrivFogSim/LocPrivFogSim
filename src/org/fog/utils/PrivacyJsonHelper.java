@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /*
@@ -16,11 +18,11 @@ public class PrivacyJsonHelper {
 
     int simulatedPath;
     int simulatedScenario;
-    ArrayList<Integer> compromisedFogNodes;
+    List<Integer> compromisedFogNodes;
     LinkedList<Event> events = new LinkedList<>();
 
 
-    public PrivacyJsonHelper(int simulatedPath, int simulatedScenario, ArrayList<Integer> compromisedFogNodes) {
+    public PrivacyJsonHelper(int simulatedPath, int simulatedScenario, List<Integer> compromisedFogNodes) {
         this.simulatedPath = simulatedPath;
         this.simulatedScenario = simulatedScenario;
         this.compromisedFogNodes = compromisedFogNodes;
@@ -48,13 +50,6 @@ public class PrivacyJsonHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
-
-
-
-
     }
 
 
