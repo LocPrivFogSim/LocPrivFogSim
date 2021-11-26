@@ -98,6 +98,7 @@ local.properties
 .idea/**/gradle.xml
 .idea/**/libraries
 .idea
+.idea/misc.xml
 
 # Gradle and Maven with auto-import
 # When using Gradle or Maven with auto-import, you should exclude module files,
