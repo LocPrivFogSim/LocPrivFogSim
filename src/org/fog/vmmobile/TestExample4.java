@@ -87,6 +87,7 @@ public class TestExample4 {
     private static int NUM_OF_MOBILE_DEVICES = 1;
 
     private  static DBConnector dbConnector = new DBConnector();
+    public static PrivacyJsonHelper jsonHelper;
 
 
     //TODO cleanup members if necessary
@@ -438,7 +439,7 @@ public class TestExample4 {
             List<Integer> compromisedIds = allCompromisedFogDevices.stream().map(x -> {
                 return x.getMyId();
             }).collect(Collectors.toList());
-            PrivacyJsonHelper jsonHelper = new PrivacyJsonHelper(selectedPath.getPathId(), SCENARIO, compromisedIds);
+            jsonHelper = new PrivacyJsonHelper(selectedPath.getPathId(), SCENARIO, compromisedIds);
 
             /* Simulation */
             TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());
