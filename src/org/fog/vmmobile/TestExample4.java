@@ -458,9 +458,10 @@ public class TestExample4 {
 
             System.out.println("sim finished, took: "+ (time3 - time2)/1000);
 
-
             /* results */
             Log.printLine("\nTest4 finished");
+
+            jsonHelper.writeJsonToFile("privacy/output.json");
 
             long time4 = System.currentTimeMillis();
 
