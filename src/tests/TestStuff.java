@@ -23,11 +23,8 @@ public class TestStuff {
 
         PrivacyJsonHelper helper = new PrivacyJsonHelper(simulatedPath, simulatedScenario, compromisedFogNodes);
 
-        helper.addEvent(22, "TestEvent1", 101);
-        helper.addEvent(23, "TestEvent2", 110);
-        helper.addEvent(24, "TestEvent3", 120);
-        helper.addEvent(25, "TestEvent4", 130);
-        helper.addEvent(26, "TestEvent5", 140);
+        helper.addEvent("hi",22, 32, 101);
+        helper.addEvent("test",23, 32, 110);
 
 
         helper.writeJsonToFile("./TESTJSON.json");

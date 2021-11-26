@@ -640,12 +640,12 @@ public class FogDevice extends PowerDatacenter {
         }
     }
 
-    private void notifyObservers(MobileDevice mobileDevice, int timestamp, int eventType, String event) {
+    private void notifyObservers(MobileDevice mobileDevice, int timestamp, int eventId,int eventType, String event) {
         if (!CloudSim.running())
             return;
 
         for (Attacker observer : observerList) {
-            observer.update(this, mobileDevice, timestamp, eventType, event);
+            observer.update(this, mobileDevice, timestamp, eventId,eventType, event);
         }
     }
 
@@ -660,10 +660,10 @@ public class FogDevice extends PowerDatacenter {
     public void setSmartThings(MobileDevice st, int timestamp, int eventType, int action) {//myiFogSim
         if (action == Policies.ADD) {
             this.smartThings.add(st);
-            notifyObservers(st, timestamp,eventType, "add");
+            notifyObservers(st, timestamp,action,eventType, "add");
         } else if (action == Policies.REMOVE) {
             this.smartThings.remove(st);
-            notifyObservers(st, timestamp, eventType, "remove");
+            notifyObservers(st, timestamp, action,eventType, "remove");
 
         }
     }
@@ -714,7 +714,7 @@ public class FogDevice extends PowerDatacenter {
 
         // The first task of the mobile device was added. Notify Observers
         if (count == 1)
-            notifyObservers(mobileDevice, mobileDevice.getPosition().getTimestamp(), EventType.OFFLOADING, "add");
+            notifyObservers(mobileDevice, mobileDevice.getPosition().getTimestamp(), 6001,EventType.OFFLOADING, "add");
     }
 
     public void removeOffloadingTask(MobileDevice mobileDevice, OffloadingTask task) {
@@ -733,7 +733,7 @@ public class FogDevice extends PowerDatacenter {
 
         // Last task for the mobile device was removed. Notify Observers
         if (count == 0)
-            notifyObservers(mobileDevice, mobileDevice.getPosition().getTimestamp(), EventType.OFFLOADING, "remove");
+            notifyObservers(mobileDevice, mobileDevice.getPosition().getTimestamp(), 6004,EventType.OFFLOADING, "remove");
     }
 
     public int getMyId() {

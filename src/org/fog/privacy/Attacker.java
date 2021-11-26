@@ -3,6 +3,7 @@ package org.fog.privacy;
 import org.cloudbus.cloudsim.Log;
 import org.fog.entities.FogDevice;
 import org.fog.entities.MobileDevice;
+import org.fog.vmmobile.TestExample4;
 
 import java.util.*;
 
@@ -32,7 +33,7 @@ public class Attacker {
         }
     }
 
-    public void update(FogDevice source, MobileDevice mobileDevice, int timestamp, int eventType, String event) {
+    public void update(FogDevice source, MobileDevice mobileDevice, int timestamp, int eventId, int eventType, String event) {
         Log.formatLine("Attacker was notified: MobileDevice '%s' was %sed to '%s' due to a %s event.", mobileDevice.getName(),
                 event, source.getName(), EventType.eventTypeToString(eventType));
 
@@ -41,6 +42,6 @@ public class Attacker {
 
         // TODO(markus): Überprüfe ob source device is controlled device
 
-        // TODO(markus): Log event to json output file
+          TestExample4.jsonHelper.addEvent(event,eventId, eventType, timestamp);
     }
 }

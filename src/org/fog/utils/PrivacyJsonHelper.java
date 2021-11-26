@@ -28,9 +28,8 @@ public class PrivacyJsonHelper {
         this.compromisedFogNodes = compromisedFogNodes;
     }
 
-    public void addEvent(int eventId, String eventType, int timestamp){
-        Event e =  new Event(eventType,eventId, timestamp);
-        events.add(e);
+    public void addEvent(String eventName,int eventId, int eventType, int timestamp){
+        Event e =  new Event(eventName,eventType,eventId, timestamp);
         events.add(e);
     }
 
@@ -91,21 +90,31 @@ public class PrivacyJsonHelper {
 /for easier Json-parsing
 */
 class Event {
-    String event_type;  //for some?!
+    String event_name;
+    int event_type;
     int event_id;
     int timestamp;
 
-    public Event(String event_type, int event_id, int timestamp) {
+    public Event(String event_name, int event_type, int event_id, int timestamp) {
+        this.event_name = event_name;
         this.event_type = event_type;
         this.event_id = event_id;
         this.timestamp = timestamp;
     }
 
-    public String getEvent_type() {
+    public String getEvent_name() {
+        return event_name;
+    }
+
+    public void setEvent_name(String event_name) {
+        this.event_name = event_name;
+    }
+
+    public int getEvent_type() {
         return event_type;
     }
 
-    public void setEvent_type(String event_type) {
+    public void setEvent_type(int event_type) {
         this.event_type = event_type;
     }
 
