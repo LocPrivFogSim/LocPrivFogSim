@@ -69,7 +69,7 @@ public class PrivacyJsonHelper {
         this.simulatedScenario = simulatedScenario;
     }
 
-    public ArrayList<Integer> getCompromisedFogNodes() {
+    public List<Integer> getCompromisedFogNodes() {
         return compromisedFogNodes;
     }
 
