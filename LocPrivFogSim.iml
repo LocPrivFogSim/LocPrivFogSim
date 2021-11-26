@@ -130,5 +130,6 @@
     <orderEntry type="library" name="commons-math3-3.5" level="project" />
     <orderEntry type="library" name="jars" level="project" />
     <orderEntry type="library" name="jackson-databind-2.12.3" level="project" />
+    <orderEntry type="library" name="jackson-annotations-2.12.3" level="project" />
   </component>
 </module>

@@ -199,13 +199,10 @@ public class TestExample4 {
 
             field = SimField.getFieldForBeijing();
 
-            allPaths = dbConnector.getAllPaths();
-
-            List<Path> selectedPaths = getRandomPaths(1);
-            Path selectedPath = selectedPaths.get(0);
+            Path selectedPath = getRandomPath();
 
             /* create FogDevice(s) */
-            createFogDevices(cloud.getId(), selectedPaths);
+            createFogDevices(cloud.getId(), selectedPath);
 
             System.out.println("relevante nodes: "+relevantFogDevicesList.size() + " davon komp: "+relevantCompromisedDevices.size());
 
@@ -384,7 +381,7 @@ public class TestExample4 {
 
             for(int j = 0; j < mobileDeviceList.size() ; j++){
                 deviceMap.addDevice(mobileDeviceList.get(j));
-                setMobilityData(mobileDeviceList.get(j), mobileController,selectedPaths.get(j));
+                setMobilityData(mobileDeviceList.get(j), mobileController, selectedPath);
                 Log.printLine(mobileDeviceList.get(j).getName() + " path: " + mobileDeviceList.get(j));
             }
 
@@ -475,32 +472,13 @@ public class TestExample4 {
         }
     }
 
-    private static List<Path> getRandomPaths(int numOfMobileDevices) {
-
-        List<Path> randomPaths = new ArrayList<>();
-
-        List<Integer> pathIdsWithDuplicates = new LinkedList<>() ;
-        allPaths.stream().forEach(path -> {
-
-            int k = path.getNrOfDuplicates() +1;
-
-            for(int i = 0; i<k ; i++){
-                pathIdsWithDuplicates.add(path.getPathId());
-            }
-        });
-
-        Collections.shuffle(pathIdsWithDuplicates);
-        int x = pathIdsWithDuplicates.size();
-
-
-        for(int i = 0 ; i < numOfMobileDevices ; i++){
-
-            int rand = new Random().nextInt(x);
-            Path toAdd = allPaths.get(pathIdsWithDuplicates.get(rand));
-            randomPaths.add(toAdd);
-        }
-
-        return randomPaths;
+    private static Path getRandomPath() {
+        Random random = new Random(SEED2 * Integer.MAX_VALUE);
+        // TODO(markus): Load max path_id from db and add +1 to it as random nextInt bounds are exclusive...
+        int index = random.nextInt(56000);
+        Log.printLine("Loaded path with id: " + index);
+        System.out.println("Loaded path with id: " + index); // TODO(markus): remove
+        return dbConnector.getPathById(index);
     }
 
     private static void setMobilityData(MobileDevice mobileDevice, MobileController controller, Path loadedPath) {
@@ -759,20 +737,13 @@ public class TestExample4 {
      * @param parentId
      * @param path     only initializes fogNodes in proximity to selected path to improve perfomance
      */
-    private static void createFogDevices(int parentId, List<Path> selectedPaths) {
+    private static void createFogDevices(int parentId, Path path) {
 
         //
         //TODO refactor this method
         //
 
         long t1 = System.currentTimeMillis();
-
-        List<Position> selectedPositions = new ArrayList<>();
-
-        for(Path path : selectedPaths){
-            selectedPositions.addAll(path.getPositions());
-        }
-        selectedPositions = selectedPositions.stream().distinct().collect(Collectors.toList()); //remove duplicates
 
         HashMap<Integer,Coordinate> fogNodePositions = dbConnector.getAllFogNodePositions();
 
@@ -800,7 +771,7 @@ public class TestExample4 {
                 allPositions.put(coord,false);
             }
 
-            for (Position position : selectedPositions) {
+            for (Position position : path.getPositions()) {
                 double distance = Coordinate.calcDistance(coord, position.getCoordinate());
                 if (distance < 1500) { //only add nodes in proximity of 3 km
                     if (compromisedCoords.contains(coord)) {
