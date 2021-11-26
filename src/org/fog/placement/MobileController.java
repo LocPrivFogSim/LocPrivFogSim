@@ -262,18 +262,14 @@ public class MobileController extends SimEntity {
         }
 
         
-        //
-        //TODO check if intervall = 1 is reasonable
-        //
-        for (int i = 0; i < MaxAndMin.MAX_SIMULATION_TIME; i += 1) {
-            send(getId()//Application
-                    , i //delay -> When the event will occur
-                    , MobileEvents.NEXT_STEP
-            );//, getSmartThings());
-            send(getId()
-                    , i
-                    , MobileEvents.CHECK_NEW_STEP);
-        }
+        // Initial setting and checking of path and mobile device position for handoff or migration
+        send(getId()//Application
+                , 0
+                , MobileEvents.NEXT_STEP
+        );//, getSmartThings());
+        send(getId()
+                , 0
+                , MobileEvents.CHECK_NEW_STEP);
 
 
         if (isMigrationAble()) {
@@ -324,6 +320,14 @@ public class MobileController extends SimEntity {
             mobileDevice.setTravelTimeId(mobileDevice.getTravelTimeId()+1);
             mobileDevice.setPosition(position);
 
+            int delay = (position.getTimestamp() - old.getTimestamp()) * 100;
+            send(getId()//Application
+                , delay
+                , MobileEvents.NEXT_STEP
+            );
+            send(getId()
+                    , delay
+                    , MobileEvents.CHECK_NEW_STEP);
         }
         else{
             mobileDevice.disableSelf();

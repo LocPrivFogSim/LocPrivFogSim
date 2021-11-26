@@ -74,7 +74,7 @@ public class NextStep {
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 		{
-			out.println(st.getMyId() + "\t" + st.getPosition().getCoordinate().getCoordX() + "\t" + st.getPosition().getCoordinate().getCoordY() + "\t" + st.getPosition().getDirection() + "\t" + st.getPosition().getSpeed() + "\t" + CloudSim.clock());
+			out.println(st.getMyId() + "\t" + st.getPosition().getCoordinate().getLat() + "\t" + st.getPosition().getCoordinate().getLon() + "\t" + st.getPosition().getDirection() + "\t" + st.getPosition().getSpeed() + "\t" + CloudSim.clock());
 		}
 		catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
@@ -280,7 +280,7 @@ public class NextStep {
 				}
 			}
 			else{
-				Log.printLine("MobileDevice - Move: " + st.getName() + "\t" + st.getPosition().getCoordinate().getCoordX() + "\t" + st.getPosition().getCoordinate().getCoordY() + "\t" + CloudSim.clock() + "\t" + Calendar.getInstance().getTime());
+				Log.printLine("MobileDevice - Move: " + st.getName() + "\t" + st.getPosition().getCoordinate().getLat() + "\t" + st.getPosition().getCoordinate().getLon() + "\t" + CloudSim.clock() + "\t" + Calendar.getInstance().getTime());
 				saveMobility(st);
 			}
 		}
