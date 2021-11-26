@@ -247,9 +247,6 @@ public class MobileController extends SimEntity {
 
     @Override
     public void startEntity() {
-
-
-
         // TODO Auto-generated method stub
         for (String appId : applications.keySet()) {
             LogMobile.debug("MobileController.java", appId + " - " + getAppLaunchDelays().get(appId));
@@ -261,7 +258,6 @@ public class MobileController extends SimEntity {
 //			}
         }
 
-        
         // Initial setting and checking of path and mobile device position for handoff or migration
         send(getId()//Application
                 , 0
