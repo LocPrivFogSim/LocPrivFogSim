@@ -127,7 +127,7 @@ public class TestExample4 {
     private static double OFFLOADING_THRESHOLD = 0.0462d;
     private static IOffloadingStrategy offloadingStrategy;
 
-    private static HashMap<List<Coordinate>, List<FogDevice>> fogDevicesInField = new HashMap<>();
+    public static HashMap<List<Coordinate>, List<FogDevice>> fogDevicesInField = new HashMap<>();
 
 
     public static void main(String args[]) {
@@ -297,7 +297,7 @@ public class TestExample4 {
                 accessPoint.setParentId(closest.getMyId());
                 closest.setApDevices(accessPoint, Policies.ADD);
 
-                NetworkTopology.addLinkWithoutGeneratingMatrices(closest.getMyId(), accessPoint.getMyId(), accessPoint.getDownlinkBandwidth(), getRand().nextDouble());
+                NetworkTopology.addLink(closest.getMyId(), accessPoint.getMyId(), accessPoint.getDownlinkBandwidth(), getRand().nextDouble());
             }
 
 
