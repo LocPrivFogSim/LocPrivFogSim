@@ -1,8 +1,12 @@
 package org.fog.localization;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.fog.vmmobile.constants.Directions;
 import org.fog.vmmobile.constants.MaxAndMin;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 //
@@ -187,7 +191,7 @@ public class Coordinate {
 	}
 
 	public boolean isInBoundingBox (double minLat, double maxLat, double minLon, double maxLon){
-		return this.lat > minLat && this.lat < maxLat && this.lon > minLon && this.lon < maxLon;
+		return this.lat >= minLat && this.lat <= maxLat && this.lon >= minLon && this.lon <= maxLon;
 	}
 
 
@@ -254,4 +258,52 @@ public class Coordinate {
 	public void setGPSCoordinate(boolean GPSCoordinate) {
 		isGPSCoordinate = GPSCoordinate;
 	}
+
+	/**
+	 * @return negative if v1 is counterclockwise to v2, positive if v1 is clockwise to v2
+	 */
+	public static double cross2D(Vector2D v1, Vector2D v2) {
+		double c2D = v1.getX() * v2.getY() - v1.getY() * v2.getX();
+		return c2D;
+	}
+
+	/**
+	 *
+	 * @param corners  <- clockwise sorted corners
+	 */
+	public static boolean coordIsInField(List<Coordinate> corners, Coordinate coordToCompare) {
+
+		HashMap<Coordinate, Vector2D> vectorMap = new HashMap<>();
+
+		//System.out.println("corners: "+corners);
+
+		//add vectors (n -> n+1)
+		for (int i = 0; i < corners.size(); i++) {
+			Coordinate current = corners.get(i);
+			Coordinate next;
+			if (i + 1 == corners.size()) {
+				next = corners.get(0);
+			} else {
+				next = corners.get(i + 1);
+			}
+			Vector2D v = new Vector2D(next.getLon() - current.getLon(), next.getLat() - current.getLat());
+			vectorMap.put(current, v);
+		}
+
+		//if point is in, it has to be to the right of each vector in map -> cross has to be > 0 for each
+		boolean isAlwaysToTheRight = true;
+
+		for (Coordinate coordinate : vectorMap.keySet()) {
+			Vector2D tmp = new Vector2D(coordToCompare.getLon() - coordinate.getLon(), coordToCompare.getLat() - coordinate.getLat());
+			double cross = cross2D(tmp, vectorMap.get(coordinate));
+
+			//System.out.println("hi");
+			if (cross < 0) {
+				isAlwaysToTheRight = false;
+				break;
+			}
+		}
+		return isAlwaysToTheRight;
+	}
 }
+

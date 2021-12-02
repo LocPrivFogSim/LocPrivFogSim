@@ -43,6 +43,7 @@ import org.fog.vmmigration.*;
 import org.fog.vmmobile.constants.MaxAndMin;
 import org.fog.vmmobile.constants.Policies;
 import org.fog.vmmobile.constants.Services;
+import org.junit.experimental.theories.Theories;
 
 import java.io.*;
 import java.io.File;
@@ -125,6 +126,8 @@ public class TestExample4 {
 
     private static double OFFLOADING_THRESHOLD = 0.0462d;
     private static IOffloadingStrategy offloadingStrategy;
+
+    private static HashMap<List<Coordinate>, List<FogDevice>> fogDevicesInField = new HashMap<>();
 
 
     public static void main(String args[]) {
@@ -252,7 +255,9 @@ public class TestExample4 {
 
             /* configure network of FogDevices */
             // TODO: Offloading needs latencies, bandwidth and other device related data to calculate offloading target
-           // createFogDevicesNetwork();
+
+            //createFogDevicesNetwork();
+            createFogDevicesStarTopologyNetwork();
             Log.printLine();
 
 
@@ -292,7 +297,7 @@ public class TestExample4 {
                 accessPoint.setParentId(closest.getMyId());
                 closest.setApDevices(accessPoint, Policies.ADD);
 
-                NetworkTopology.addLink(closest.getMyId(), accessPoint.getMyId(), accessPoint.getDownlinkBandwidth(), getRand().nextDouble());
+                NetworkTopology.addLinkWithoutGeneratingMatrices(closest.getMyId(), accessPoint.getMyId(), accessPoint.getDownlinkBandwidth(), getRand().nextDouble());
             }
 
 
@@ -491,6 +496,8 @@ public class TestExample4 {
 
     private static void createFogDevicesStarTopologyNetwork() {
 
+        int consideredNodes = 0;
+
         //get square-fields of size fieldEdgeLen x fieldEdgeLen
 
         List<Coordinate> corners = field.sortCornersClockwise(field.getCorners());
@@ -500,53 +507,68 @@ public class TestExample4 {
         double bearingX = Coordinate.calcBearingAngle(corners.get(0), corners.get(1), false);
         double bearingY = Coordinate.calcBearingAngle(corners.get(1), corners.get(2), false);
 
-        Coordinate initialCorner = corners.get(0);
-
         double fieldEdgeLen = 10000; // 10km x 10km fields
 
-        for (double i = 0.0; i <= x; i += fieldEdgeLen) {
-            for (double j = 0.0; j <= y; j += fieldEdgeLen) {
-                Coordinate moveDirectionX = Coordinate.findCoordinateForBearingAndDistance(initialCorner, bearingX, i);
-                Coordinate bottomLeft = Coordinate.findCoordinateForBearingAndDistance(moveDirectionX, bearingY, j);
+        Coordinate initialTopLeft = corners.get(0);
 
-                moveDirectionX = Coordinate.findCoordinateForBearingAndDistance(bottomLeft, bearingX, fieldEdgeLen);
-                Coordinate topRight = Coordinate.findCoordinateForBearingAndDistance(moveDirectionX, bearingY, fieldEdgeLen);
+        //add some padding
+        initialTopLeft = Coordinate.findCoordinateForBearingAndDistance(initialTopLeft, (bearingX + Math.PI)%(2*Math.PI) , fieldEdgeLen/2);
+        initialTopLeft = Coordinate.findCoordinateForBearingAndDistance(initialTopLeft, (bearingY + Math.PI)%(2*Math.PI) , fieldEdgeLen/2);
 
-                //bounding-box
-                double minLat = bottomLeft.getLat();
-                double maxLat = topRight.getLat();
-                double minLon = bottomLeft.getLon();
-                double maxLon = topRight.getLon();
 
-                //TODO test if this runs in reasonable time.
-                ArrayList<FogDevice> devicesInField = (ArrayList<FogDevice>) allFogDevices.stream()
-                        .filter(device -> device.getPosition().getCoordinate().isInBoundingBox(minLat,maxLat,minLon, maxLon))
+        Coordinate topLeft = null;
+        Coordinate topRight = null;
+        Coordinate botLeft = null;
+        Coordinate botRight = null;
+
+
+        for (double i = 0.0; i <= y+fieldEdgeLen; i += fieldEdgeLen) {
+   //         System.out.println("\n\n =================================\n\n");
+            topLeft = Coordinate.findCoordinateForBearingAndDistance(initialTopLeft, bearingY, i);
+            botLeft = Coordinate.findCoordinateForBearingAndDistance(initialTopLeft, bearingY, i + fieldEdgeLen);
+
+            for (double j = 0.0; j <= x+fieldEdgeLen; j += fieldEdgeLen) {
+
+                /*
+                        topLeft ---- bearingX ------> topRight
+                            |                           |
+                            |                           |
+                            |                           |
+                            |                        bearingY
+                            |                           |
+                            |                           |
+                            v                           v
+                         botLeft -----------------> botRight
+                 */
+                 topRight = Coordinate.findCoordinateForBearingAndDistance(topLeft, bearingX, fieldEdgeLen);
+                 botRight = Coordinate.findCoordinateForBearingAndDistance(botLeft, bearingX, fieldEdgeLen);
+
+               //System.out.println("topLeft: "+topLeft.getLat()+","+topLeft.getLon() +"    topRight: "+topRight.getLat()+","+topRight.getLon() +"   botLeft: "+botLeft.getLat()+","+botLeft.getLon() +"       botRight: "+botRight.getLat()+","+botRight.getLon());
+
+                //System.out.println("bounding-box: " + minLat + "  "+ maxLat + "   "+ minLon + "   "+ maxLon);
+
+                List<Coordinate> cornersSortedClockwise =  List.of(topLeft,topRight,botRight, botLeft);
+
+                List<FogDevice> devicesInField = allFogDevices.stream()
+                        .filter(device ->
+                               Coordinate.coordIsInField(cornersSortedClockwise, device.getPosition().getCoordinate()))
                         .collect(Collectors.toList());
 
-                FogDevice centralFogNode = devicesInField.get(0); //might want to create a seperate "router-node" instead of using an existing one
-                HashMap<Integer, Double> network = new HashMap<>();
+                consideredNodes = consideredNodes + devicesInField.size();
 
-                //connect all fogNodes to centralFogNode
-                devicesInField.forEach(device -> {
-                    if (!device.equals(centralFogNode)) {
-                        double latency =  LATENCY_BETWEEN_FOG_DEVICES; //TODO Latency richtig berechnen (vorher wurde da irgendwas mit Column/Line berechnet siehe alte Funktion)
+                if (devicesInField.size() == 0) continue;
 
-                        if (centralFogNode.getUplinkBandwidth() < device.getDownlinkBandwidth()) {
-                            network.put(device.getMyId(), centralFogNode.getUplinkBandwidth());
-                            NetworkTopology.addLink(centralFogNode.getMyId(), device.getMyId(), centralFogNode.getUplinkBandwidth(), latency + getRand().nextDouble());
+                FogDevice centralFogNode = devicesInField.get(0);
 
-                            Log.printLine("Bandwidth between " + centralFogNode.getName() + " and " + device.getName() + ": " + centralFogNode.getUplinkBandwidth());
-                        } else {
-                            network.put(device.getMyId(), device.getDownlinkBandwidth());
-                            NetworkTopology.addLink(centralFogNode.getMyId(), device.getMyId(), device.getDownlinkBandwidth(), latency + getRand().nextDouble());
+                 fogDevicesInField.put(cornersSortedClockwise, devicesInField);
 
-                            Log.printLine("Bandwidth between " + centralFogNode.getName() + " and " + device.getName() + ": " + centralFogNode.getDownlinkBandwidth());
-                        }
-                    }});
 
-                centralFogNode.setNetServerCloudlets(network);
+                topLeft = topRight;
+                botLeft = botRight;
             }
         }
+        //System.out.println("all nodes "+allFogDevices.size());
+        //System.out.println("consideredSize:  "+consideredNodes);
     }
 
     //
@@ -1135,5 +1157,9 @@ public class TestExample4 {
 
     public static void setAllCompromisedFogDevices(List<FogDevice> allCompromisedFogDevices) {
         TestExample4.allCompromisedFogDevices = allCompromisedFogDevices;
+    }
+
+    public static HashMap<List<Coordinate>, List<FogDevice>> getFogDevicesInField() {
+        return fogDevicesInField;
     }
 }
