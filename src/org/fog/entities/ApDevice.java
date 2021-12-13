@@ -62,12 +62,12 @@ public class ApDevice extends FogDevice {
 
 			//smartThing.getSourceAp().setSmartThings(smartThing, Policies.REMOVE);//it'll remove the smartThing from ap-smartThing's set
 			smartThing.getSourceAp().setUplinkLatency(getUplinkLatency()-delay);
-			NetworkTopology.addLink(smartThing.getSourceAp().getId(), smartThing.getId(), 0.0, 0.0);//remove link
+			//NetworkTopology.addLink(smartThing.getSourceAp().getId(), smartThing.getId(), 0.0, 0.0);//remove link
 			smartThing.setSourceAp(smartThing.getDestinationAp());
 
 			//smartThing.getSourceAp().setSmartThings(smartThing, Policies.ADD);
 			smartThing.getSourceAp().setUplinkLatency(getUplinkLatency()+delay);
-			NetworkTopology.addLink(smartThing.getSourceAp().getId(), smartThing.getId(), smartThing.getUplinkBandwidth(), delay);
+			//NetworkTopology.addLink(smartThing.getSourceAp().getId(), smartThing.getId(), smartThing.getUplinkBandwidth(), delay);
 
 			smartThing.setDestinationAp(null);
 			smartThing.setHandoffStatus(false);
@@ -123,7 +123,7 @@ public class ApDevice extends FogDevice {
 		st.setSourceAp(null);
 		setUplinkLatency(getUplinkLatency()-0.002);
 		LogMobile.debug("ApDevice.java", st.getName()+" was desconnected to "+getName());
-		NetworkTopology.addLink(this.getId(), st.getId(), 0.0, 0.0);//remove link
+		// NetworkTopology.addLink(this.getId(), st.getId(), 0.0, 0.0);//remove link
 		saveConnectionAPSmartThing(st, "desconnectApSmartThing");
 	}
 
@@ -141,7 +141,7 @@ public class ApDevice extends FogDevice {
 //				st.setParentId(apDevices.get(index).getId());//The FogDevice attribute
 
 				closest.setSmartThings(st, st.getPosition().getTimestamp(),EventType.HANDOFF, Policies.ADD);
-				NetworkTopology.addLink(closest.getId(), st.getId(), st.getUplinkBandwidth(), delay);
+				//NetworkTopology.addLink(closest.getId(), st.getId(), st.getUplinkBandwidth(), delay);
 				LogMobile.debug("ApDevice.java", st.getName()+" was connected to "+st.getSourceAp().getName());
 				closest.setUplinkLatency(closest.getUplinkLatency()+delay);
 				saveConnectionAPSmartThing(st, "connectApSmartThing T");

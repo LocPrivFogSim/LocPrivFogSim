@@ -158,7 +158,7 @@ public class TestExample4 {
                 MOBILE_CAN_BE_TURNED_OFF = 1;
             }
 
-            RATE_OF_COMPROMISED_DEVICES = Double.parseDouble(args[1])/100;
+            RATE_OF_COMPROMISED_DEVICES = Double.parseDouble(args[1]);
             SEED2 = Integer.parseInt(args[2]);
             SEED3 = Integer.parseInt(args[3]);
             OFFLOADING_THRESHOLD = Double.parseDouble(args[4]);
@@ -183,7 +183,7 @@ public class TestExample4 {
             LogMobile.ENABLED = true;
             LogMobile.setOutput(stream);
             Log.enable();
-            // Log.disable();
+            //Log.disable();
             Log.setOutput(stream);
             Log.printLine("Starting Test4...");
 
@@ -251,7 +251,7 @@ public class TestExample4 {
 
             Log.printLine("\n\n\n########  CONNECTIONS  ########\n");
 
-            NetworkTopology.generateMatrices();
+            //NetworkTopology.generateMatrices();
 
             /* configure network of FogDevices */
             createFogDevicesStarTopologyNetwork();
@@ -424,6 +424,7 @@ public class TestExample4 {
         int maxCount = dbConnector.getMaxPathCount();
         int index = random.nextInt(maxCount);
         Log.printLine("Loaded path with id: " + index + " from " + maxCount + " available paths");
+        System.out.println("Loaded path with id: " + index + " from " + maxCount + " available paths");
         return dbConnector.getPathById(index);
     }
 
@@ -749,7 +750,7 @@ public class TestExample4 {
             }
 
             long t2 = System.currentTimeMillis();
-            System.out.println("dauer Pfade setzten: "+(t2-t1));
+            System.out.println("dauer createFogDevices: "+(t2-t1));
         } catch (Exception e) {
             e.printStackTrace();
             Log.printLine("Errors happen...");

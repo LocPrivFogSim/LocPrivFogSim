@@ -33,6 +33,7 @@ import org.fog.vmmigration.DecisionMigration;
 import org.fog.vmmigration.MyStatistics;
 import org.fog.vmmigration.Service;
 import org.fog.vmmobile.LogMobile;
+import org.fog.vmmobile.TestExample4;
 import org.fog.vmmobile.constants.MobileEvents;
 import org.fog.vmmobile.constants.Policies;
 
@@ -708,6 +709,8 @@ public class FogDevice extends PowerDatacenter {
         // The first task of the mobile device was added. Notify Observers
         if (count == 1)
             notifyObservers(mobileDevice, mobileDevice.getPosition().getTimestamp(), 6001,EventType.OFFLOADING, "add");
+
+        TestExample4.jsonHelper.addEvent(getMyId(), "add",6001, EventType.OFFLOADING, mobileDevice.getPosition().getTimestamp());
     }
 
     public void removeOffloadingTask(MobileDevice mobileDevice, OffloadingTask task) {
@@ -727,6 +730,8 @@ public class FogDevice extends PowerDatacenter {
         // Last task for the mobile device was removed. Notify Observers
         if (count == 0)
             notifyObservers(mobileDevice, mobileDevice.getPosition().getTimestamp(), 6004,EventType.OFFLOADING, "remove");
+
+        TestExample4.jsonHelper.addEvent(getMyId(), "remove",6004, EventType.OFFLOADING, mobileDevice.getPosition().getTimestamp());
     }
 
     public int getMyId() {
