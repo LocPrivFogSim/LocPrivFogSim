@@ -122,13 +122,6 @@ public class FogDevice extends PowerDatacenter {
 
     }
 
-    //dummy
-    public FogDevice (Coordinate coordinate, int id){
-        Position position = new Position(coordinate, 0, 2, 0);
-        this.position = position;
-        this.myId = id;
-    }
-
     public FogDevice(String name, Position position, int id) { //myiFogSim
         //	public FogDevice(String name, Coordinate coord, int coordX, int coordY, int id) { //myiFogSim
         // TODO Auto-generated constructor stub
