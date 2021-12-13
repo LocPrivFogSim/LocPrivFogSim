@@ -421,9 +421,9 @@ public class TestExample4 {
 
     private static Path getRandomPath() {
         Random random = new Random(SEED2 * Integer.MAX_VALUE);
-        // TODO(markus): Load max path_id from db and add +1 to it as random nextInt bounds are exclusive...
-        int index = random.nextInt(56000);
-        Log.printLine("Loaded path with id: " + index);
+        int maxCount = dbConnector.getMaxPathCount();
+        int index = random.nextInt(maxCount);
+        Log.printLine("Loaded path with id: " + index + " from " + maxCount + " available paths");
         return dbConnector.getPathById(index);
     }
 
