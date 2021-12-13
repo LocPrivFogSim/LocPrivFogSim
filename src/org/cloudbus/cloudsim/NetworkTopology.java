@@ -73,7 +73,7 @@ public class NetworkTopology {
 	/**
 	 * Generates the matrices used internally to set latency and bandwidth between elements
 	 */
-	private static void generateMatrices() {
+	public static void generateMatrices() {
 		// creates the delay matrix
 		delayMatrix = new DelayMatrix_Float(graph, false);
 
@@ -81,6 +81,44 @@ public class NetworkTopology {
 		bwMatrix = createBwMatrix(graph, false);
 
 		networkEnabled = true;
+	}
+
+	/**
+	 * Adds a new link in the network topology
+	 *
+	 * @param srcId ID of the link's source
+	 * @param destId ID of the link's destination
+	 * @param bw Link's bandwidth
+	 * @param lat link's latency
+	 * @pre srcId > 0
+	 * @pre destId > 0
+	 * @post $none
+	 */
+	public static void addLinkWithoutGeneratingMatrices(int srcId, int destId, double bw, double lat) {
+
+		if (graph == null) {
+			graph = new TopologicalGraph();
+		}
+
+		if (map == null) {
+			map = new HashMap<Integer, Integer>();
+		}
+
+		// maybe add the nodes
+		if (!map.containsKey(srcId)) {
+			graph.addNode(new TopologicalNode(nextIdx));
+			map.put(srcId, nextIdx);
+			nextIdx++;
+		}
+
+		if (!map.containsKey(destId)) {
+			graph.addNode(new TopologicalNode(nextIdx));
+			map.put(destId, nextIdx);
+			nextIdx++;
+		}
+
+		// generate a new link
+		graph.addLink(new TopologicalLink(map.get(srcId), map.get(destId), (float) lat, (float) bw));
 	}
 
 	/**
@@ -121,7 +159,6 @@ public class NetworkTopology {
 		graph.addLink(new TopologicalLink(map.get(srcId), map.get(destId), (float) lat, (float) bw));
 
 		generateMatrices();
-
 	}
 
 	/**

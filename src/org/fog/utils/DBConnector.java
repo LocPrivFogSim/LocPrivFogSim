@@ -25,6 +25,23 @@ public class DBConnector {
         return null;
     }
 
+    public int getMaxPathCount() {
+        int count = -1;
+        try {
+            Connection conn = connect();
+            String query = "SELECT COUNT(*) FROM paths";
+
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            count = resultSet.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+
     public Path getPathById(int pathId) {
         Path path = null;
         try {

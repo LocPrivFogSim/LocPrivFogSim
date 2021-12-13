@@ -69,6 +69,8 @@ public class TestExample4 {
     private static final int LATENCY_BETWEEN_FOG_DEVICES = 1;
     private static int NUM_OF_ACCESS_POINTS;      // NUM_OF_ACCESS_POINTS <= NUM_OF_FOG_DEVICES!! (for this simulation only...)
     private static int NUM_OF_FOG_DEVICES;
+
+    // TODO(markus): Which scenarios do we need?
     /* Settings for the experiment (or parse them from cmd args):
      * - Scenario - what does the adversary know about the fog nodes locations
      * - Rate of fog nodes controlled by the adversary
@@ -80,7 +82,9 @@ public class TestExample4 {
     private static int SCENARIO = 1;  // Scenario 1 or 2 -> differ in the adversary's knowledge about the locations of all fog nodes
     // 1 => knows location of compromised fog nodes only
     // 2 => knows location of all fog nodes
-    private static double RATE_OF_COMPROMISED_DEVICES = 0.05; // controls the persentage of compromised devices => numCompromised = NUM_OF_FOG_DEVICES * RATE_OF_COMPROMISED_DEVICES
+
+    private static double RATE_OF_COMPROMISED_DEVICES = 0.05; // Controls the persentage of compromised devices => numCompromised = NUM_OF_FOG_DEVICES * RATE_OF_COMPROMISED_DEVICES
+    // TODO(markus): Do we need this static field?
     private static int MOBILE_CAN_BE_TURNED_OFF = 1;    // boolean
     private static int SEED2 = 28; // MobileDevice, connections, and more
     private static int SEED3 = 5; // Attacker
@@ -90,13 +94,10 @@ public class TestExample4 {
     private  static DBConnector dbConnector = new DBConnector();
     public static PrivacyJsonHelper jsonHelper;
 
+    private static ArrayList<FogDevice> allFogDevices = new ArrayList<>(); // all fog nodes
+    private static List<FogDevice> compromisedFogDevices = new ArrayList<>(); // all compromised fog nodes
 
     //TODO cleanup members if necessary
-    private static ArrayList<FogDevice> allFogDevices = new ArrayList<>(); // all fog nodes
-    private static List<FogDevice> allCompromisedFogDevices = new ArrayList<>(); //all compromised fog nodes
-    private static ArrayList<FogDevice> relevantFogDevicesList = new ArrayList<>(); //all fog node instances in proximity to a selected path
-    private static List<FogDevice> relevantCompromisedDevices = new ArrayList<>(); //all compromised device instances in proximity to a selected path
-    private static ArrayList<Path> allPaths;
     private static List<Vm> vmList = new ArrayList<>();
     private static List<MobileDevice> mobileDeviceList = new ArrayList<>();
     private static List<ApDevice> accessPointList = new ArrayList<>();
@@ -157,7 +158,7 @@ public class TestExample4 {
                 MOBILE_CAN_BE_TURNED_OFF = 1;
             }
 
-            RATE_OF_COMPROMISED_DEVICES = Double.parseDouble(args[1])/100;
+            RATE_OF_COMPROMISED_DEVICES = Double.parseDouble(args[1]);
             SEED2 = Integer.parseInt(args[2]);
             SEED3 = Integer.parseInt(args[3]);
             OFFLOADING_THRESHOLD = Double.parseDouble(args[4]);
@@ -182,7 +183,7 @@ public class TestExample4 {
             LogMobile.ENABLED = true;
             LogMobile.setOutput(stream);
             Log.enable();
-            // Log.disable();
+            //Log.disable();
             Log.setOutput(stream);
             Log.printLine("Starting Test4...");
 
@@ -206,11 +207,11 @@ public class TestExample4 {
             Path selectedPath = getRandomPath();
 
             /* create FogDevice(s) */
-            createFogDevices(cloud.getId(), selectedPath);
+            createFogDevices(cloud.getId());
 
-            System.out.println("relevante nodes: "+relevantFogDevicesList.size() + " davon komp: "+relevantCompromisedDevices.size());
+            System.out.println("Kompromitierte fog nodes: "+ compromisedFogDevices.size());
 
-            for (FogDevice fogDevice : relevantFogDevicesList) {
+            for (FogDevice fogDevice : allFogDevices) {
                 deviceMap.addDevice(fogDevice);
             }
 
@@ -225,23 +226,21 @@ public class TestExample4 {
             long before = System.currentTimeMillis();
 
             /* create Attacker */
-            Attacker attacker = new Attacker("attacker", allFogDevices, allCompromisedFogDevices);
+            Attacker attacker = new Attacker("attacker", allFogDevices, compromisedFogDevices);
             attackerList.add(attacker);
 
             System.out.println("all paths loaded in : "+((System.currentTimeMillis() - before)/1000) + " sekunden");
 
 
             Log.print("\nCompromisedDevices: ");
-            for (FogDevice fogDevice1 : relevantCompromisedDevices) {
+            for (FogDevice fogDevice1 : compromisedFogDevices) {
                 fogDevice1.addAttacker(attacker);
             }
 
             setRand(new Random(SEED2 * Integer.MAX_VALUE));
 
-
             /* create MobileDevice(s) */
             createMobileDevices(appId);
-
 
             /* create Broker*/
             for (MobileDevice mobileDevice : mobileDeviceList) {
@@ -250,18 +249,13 @@ public class TestExample4 {
                 Log.printLine(broker.getName() + " created");
             }
 
-
             Log.printLine("\n\n\n########  CONNECTIONS  ########\n");
 
-            /* configure network of FogDevices */
-            // TODO: Offloading needs latencies, bandwidth and other device related data to calculate offloading target
+            //NetworkTopology.generateMatrices();
 
-            //createFogDevicesNetwork();
+            /* configure network of FogDevices */
             createFogDevicesStarTopologyNetwork();
             Log.printLine();
-
-
-
 
             /* connect MobileDevices and the closest AccessPoint */
             for (MobileDevice mobileDevice : mobileDeviceList) {
@@ -275,7 +269,7 @@ public class TestExample4 {
 
             /* connect MobileDevices and the closest FogDevice */
             for (MobileDevice mobileDevice : mobileDeviceList) {
-                FogDevice closest = Distances.theClosestServerCloudlet(relevantFogDevicesList, mobileDevice);
+                FogDevice closest = Distances.theClosestServerCloudlet(allFogDevices, mobileDevice);
                 mobileDevice.setSourceServerCloudlet(closest);
 
 
@@ -285,21 +279,6 @@ public class TestExample4 {
 
                 Log.printLine(mobileDevice.getName() + " connected to closest Fog Device: " + closest.getName());
             }
-
-            /* connect AccessPoint to closest FogDevice */
-
-            for (ApDevice accessPoint : accessPointList) {
-                FogDevice closest = Distances.theClosestServerCloudletToAp(relevantFogDevicesList, accessPoint);
-
-
-                Log.printLine("closest Fog Device of " + accessPoint.getName() + " is " + closest.getName());
-                accessPoint.setServerCloudlet(closest);
-                accessPoint.setParentId(closest.getMyId());
-                closest.setApDevices(accessPoint, Policies.ADD);
-
-                NetworkTopology.addLink(closest.getMyId(), accessPoint.getMyId(), accessPoint.getDownlinkBandwidth(), getRand().nextDouble());
-            }
-
 
             Log.printLine();
 
@@ -359,7 +338,6 @@ public class TestExample4 {
                 }
             }
 
-
             Log.printLine("\n########  MODULE MAPPING AND CONTROLLING  ########\n");
 
             /* create ModuleMapping */
@@ -369,7 +347,7 @@ public class TestExample4 {
                 application.setPlacementStrategy("Mapping");
             }
 
-            for (FogDevice fogDevice2 : relevantFogDevicesList) {
+            for (FogDevice fogDevice2 : allFogDevices) {
                 i = 0;
                 for (MobileDevice mobileDevice : mobileDeviceList) {
                     if (mobileDevice.getApDevices() != null) {
@@ -383,7 +361,7 @@ public class TestExample4 {
             }
 
             /* create controller */
-            MobileController mobileController = new MobileController("MobileController", relevantFogDevicesList, accessPointList, mobileDeviceList, brokerList, moduleMapping, migrationPointPolicy, migrationStrategyPolicy, stepPolicy, map, SEED, migrationable);
+            MobileController mobileController = new MobileController("MobileController", allFogDevices, accessPointList, mobileDeviceList, brokerList, moduleMapping, migrationPointPolicy, migrationStrategyPolicy, stepPolicy, map, SEED, migrationable);
 
             for(int j = 0; j < mobileDeviceList.size() ; j++){
                 deviceMap.addDevice(mobileDeviceList.get(j));
@@ -397,48 +375,12 @@ public class TestExample4 {
                 mobileController.submitApplication(application, 1);
             }
 
-            Log.printLine("\n########  STATISTIC DATA  ########\n");
-
-            // print response time matrix
-            BufferedWriter csvWriter = new BufferedWriter(new FileWriter("results/response_time_matrix_offloading.csv", false));
-
-
-            //
-            //TODO determine which fogDevices have to be iterated
-            //
-            csvWriter.write("APs; ");
-            // TODO(markus): Check whether we need relevantFogDevicesList or allFogDevices
-            for (FogDevice current : relevantFogDevicesList) {
-                csvWriter.write(current.getName() + "; ");
-            }
-            csvWriter.newLine();
-
-            BandwidthCpuResponseTimeCalculator ctemp = new BandwidthCpuResponseTimeCalculator();
-            MobileDevice m = mobileDeviceList.get(0);
-            ApDevice beforeAp = m.getSourceAp();
-            for (ApDevice current : accessPointList) {
-                m.setSourceAp(current);
-                csvWriter.write(current.getName() + "; ");
-
-                // TODO(markus): Check whether we need relevantFogDevicesList or allFogDevices
-                for (FogDevice target : relevantFogDevicesList) {
-                    double r = ctemp.calculateResponseTime(allFogDevices, accessPointList, m, target, new OffloadingTask(-1, -1, 20, 2000, 2));
-                    csvWriter.write(String.format("%,.4f; ", r));
-                }
-
-                csvWriter.newLine();
-            }
-            csvWriter.flush();
-            csvWriter.close();
-
-            m.setSourceAp(beforeAp);
-
             long time2 = System.currentTimeMillis();
 
             System.out.println("start sim.  Init took: "+ (time2 - time1)/1000);
 
             /*init Jsonhelper */
-            List<Integer> compromisedIds = allCompromisedFogDevices.stream().map(x -> {
+            List<Integer> compromisedIds = compromisedFogDevices.stream().map(x -> {
                 return x.getMyId();
             }).collect(Collectors.toList());
             jsonHelper = new PrivacyJsonHelper(selectedPath.getPathId(), SCENARIO, compromisedIds);
@@ -456,8 +398,6 @@ public class TestExample4 {
 
             PrintWriter resultsWriter = new PrintWriter(new FileWriter(filename, true));
             resultsWriter.write("traceCompVal;sizeOfUncertainty;scenario;canBeTurnedOff;rate\n");
-
-            //attacker.cleanupPositionMap();
 
             long time3 = System.currentTimeMillis();
 
@@ -481,10 +421,10 @@ public class TestExample4 {
 
     private static Path getRandomPath() {
         Random random = new Random(SEED2 * Integer.MAX_VALUE);
-        // TODO(markus): Load max path_id from db and add +1 to it as random nextInt bounds are exclusive...
-        int index = random.nextInt(56000);
-        Log.printLine("Loaded path with id: " + index);
-        System.out.println("Loaded path with id: " + index); // TODO(markus): remove
+        int maxCount = dbConnector.getMaxPathCount();
+        int index = random.nextInt(maxCount);
+        Log.printLine("Loaded path with id: " + index + " from " + maxCount + " available paths");
+        System.out.println("Loaded path with id: " + index + " from " + maxCount + " available paths");
         return dbConnector.getPathById(index);
     }
 
@@ -492,7 +432,6 @@ public class TestExample4 {
         mobileDevice.setPath( loadedPath);
         controller.setInitialCoordinate(mobileDevice);
     }
-
 
     private static void createFogDevicesStarTopologyNetwork() {
 
@@ -523,7 +462,6 @@ public class TestExample4 {
 
 
         for (double i = 0.0; i <= y+fieldEdgeLen; i += fieldEdgeLen) {
-   //         System.out.println("\n\n =================================\n\n");
             topLeft = Coordinate.findCoordinateForBearingAndDistance(initialTopLeft, bearingY, i);
             botLeft = Coordinate.findCoordinateForBearingAndDistance(initialTopLeft, bearingY, i + fieldEdgeLen);
 
@@ -542,10 +480,6 @@ public class TestExample4 {
                  */
                  topRight = Coordinate.findCoordinateForBearingAndDistance(topLeft, bearingX, fieldEdgeLen);
                  botRight = Coordinate.findCoordinateForBearingAndDistance(botLeft, bearingX, fieldEdgeLen);
-
-               //System.out.println("topLeft: "+topLeft.getLat()+","+topLeft.getLon() +"    topRight: "+topRight.getLat()+","+topRight.getLon() +"   botLeft: "+botLeft.getLat()+","+botLeft.getLon() +"       botRight: "+botRight.getLat()+","+botRight.getLon());
-
-                //System.out.println("bounding-box: " + minLat + "  "+ maxLat + "   "+ minLon + "   "+ maxLon);
 
                 List<Coordinate> cornersSortedClockwise =  List.of(topLeft,topRight,botRight, botLeft);
 
@@ -567,66 +501,13 @@ public class TestExample4 {
                 botLeft = botRight;
             }
         }
-        //System.out.println("all nodes "+allFogDevices.size());
-        //System.out.println("consideredSize:  "+consideredNodes);
-    }
-
-    //
-    //TODO remove once createFogDevicesStarTopologyNetwork() is working
-    //
-    private static void createFogDevicesNetwork() {
-
-        HashMap<Integer, Double> network = new HashMap<>();
-
-        long start = System.currentTimeMillis();
-
-        int i = 1, j = 1, line, column;
-        for (FogDevice fogDeviceX : allFogDevices) {
-            j = 1;
-            for (FogDevice fogDeviceY : allFogDevices) {
-
-                if (fogDeviceX.equals(fogDeviceY)) {
-                    continue; // NOTE(markus): previously break; now continue as I think this was the intended behavior.
-                }
-
-                line = (int) (j / 12) - (int) (i / 12);
-                if (line < 0) {
-                    line *= -1;
-                }
-                column = (int) (j / 12) - (int) (i / 12);
-                if (column < 0) {
-                    column *= -1;
-                }
-
-                if (fogDeviceX.getUplinkBandwidth() < fogDeviceY.getDownlinkBandwidth()) {
-                    network.put(fogDeviceY.getMyId(), fogDeviceX.getUplinkBandwidth());
-                    NetworkTopology.addLink(fogDeviceX.getMyId(), fogDeviceY.getMyId(), fogDeviceX.getUplinkBandwidth(), (line + column) * LATENCY_BETWEEN_FOG_DEVICES + getRand().nextDouble());
-
-                    Log.printLine("Bandwidth between " + fogDeviceX.getName() + " and " + fogDeviceY.getName() + ": " + fogDeviceX.getUplinkBandwidth());
-                } else {
-                    network.put(fogDeviceY.getMyId(), fogDeviceY.getDownlinkBandwidth());
-                    NetworkTopology.addLink(fogDeviceX.getMyId(), fogDeviceY.getMyId(), fogDeviceY.getDownlinkBandwidth(), (line + column) * LATENCY_BETWEEN_FOG_DEVICES + getRand().nextDouble());
-
-                    Log.printLine("Bandwidth between " + fogDeviceX.getName() + " and " + fogDeviceY.getName() + ": " + fogDeviceX.getDownlinkBandwidth());
-                }
-                j++;
-
-                Log.printLine("Delay between " + fogDeviceX.getName() + " and " + fogDeviceY.getName() + ": " + NetworkTopology.getDelay(fogDeviceX.getMyId(), fogDeviceY.getMyId()));
-            }
-            i++;
-            Log.printLine("Downlink Bandwith of " + fogDeviceX.getName() + ": " + fogDeviceX.getDownlinkBandwidth());
-
-            fogDeviceX.setNetServerCloudlets(network);
-        }
     }
 
     private static void createAccessPoints() {
+        for (int i = 0; i < allFogDevices.size(); i++) {
+            FogDevice fogDevice = allFogDevices.get(i);
 
-        //TODO adjust to start-topology
-
-        for (int i = 0; i < relevantFogDevicesList.size(); i++) {
-
-            Position position = relevantFogDevicesList.get(i).getPosition();
+            Position position = fogDevice.getPosition();
 
             int id = i;
 
@@ -640,6 +521,15 @@ public class TestExample4 {
             accessPointList.add(accessPoint);
 
             Log.printLine(accessPoint.getName() + " created at " + accessPoint.getPosition().getCoordinate().toString());
+
+            /* connect AccessPoint to closest FogDevice */
+            accessPoint.setServerCloudlet(fogDevice);
+            accessPoint.setParentId(fogDevice.getMyId());
+            fogDevice.setApDevices(accessPoint, Policies.ADD);
+
+            NetworkTopology.addLinkWithoutGeneratingMatrices(fogDevice.getMyId(), accessPoint.getMyId(), accessPoint.getDownlinkBandwidth(), getRand().nextDouble());
+
+            Log.printLine("Fog Device of " + accessPoint.getName() + " is " + fogDevice.getName());
         }
     }
 
@@ -759,14 +649,8 @@ public class TestExample4 {
 
     /**
      * @param parentId
-     * @param path     only initializes fogNodes in proximity to selected path to improve perfomance
      */
-    private static void createFogDevices(int parentId, Path path) {
-
-        //
-        //TODO refactor this method
-        //
-
+    private static void createFogDevices(int parentId) {
         long t1 = System.currentTimeMillis();
 
         HashMap<Integer,Coordinate> fogNodePositions = dbConnector.getAllFogNodePositions();
@@ -775,41 +659,13 @@ public class TestExample4 {
         NUM_OF_ACCESS_POINTS = NUM_OF_FOG_DEVICES;
 
         /* make random devices compromised */
-        relevantCompromisedDevices = new ArrayList<>();
-
         int n = (int) (fogNodePositions.size() * RATE_OF_COMPROMISED_DEVICES);
 
         ArrayList<Coordinate> allCoords = new ArrayList<>(fogNodePositions.values());
         Collections.shuffle(allCoords);
-         List<Coordinate> compromisedCoords = allCoords.subList(0, n);
-
-        HashMap<Coordinate, Boolean> allPositions = new HashMap<>();
-        HashMap<Coordinate, Boolean> relevantPositions = new HashMap<>();
-
-
-        for ( Integer i : fogNodePositions.keySet()) {
-            Coordinate coord = fogNodePositions.get(i);
-            if(compromisedCoords.contains(coord)){
-                allPositions.put(coord, true);
-            }else{
-                allPositions.put(coord,false);
-            }
-
-            for (Position position : path.getPositions()) {
-                double distance = Coordinate.calcDistance(coord, position.getCoordinate());
-                if (distance < 1500) { //only add nodes in proximity of 3 km
-                    if (compromisedCoords.contains(coord)) {
-                        relevantPositions.put(coord, true);
-                    } else {
-                        relevantPositions.put(coord, false);
-                    }
-                   break;
-                }
-            }
-        }
+        List<Coordinate> compromisedCoords = allCoords.subList(0, n);
 
         try {
-
             for (Integer i : fogNodePositions.keySet()) {
                 Coordinate coord = fogNodePositions.get(i);
                 int id = i;
@@ -821,15 +677,14 @@ public class TestExample4 {
                 int schedulingInterval = 10;
                 FogLinearPowerModel powerModel = new FogLinearPowerModel(107.339d, 83.433d);
 
-
                 /* set migration strategy */
                 DecisionMigration migrationStrategy = null;
                 if (migrationStrategyPolicy == Policies.LOWEST_DIST_BW_SMARTTING_SERVERCLOUDLET) {
-                    migrationStrategy = new LowestDistBwSmartThingServerCloudlet(relevantFogDevicesList, accessPointList, migrationPointPolicy, policyReplicaVm);
+                    migrationStrategy = new LowestDistBwSmartThingServerCloudlet(allFogDevices, accessPointList, migrationPointPolicy, policyReplicaVm);
                 } else if (migrationStrategyPolicy == Policies.LOWEST_LATENCY) {
-                    migrationStrategy = new LowestLatency(relevantFogDevicesList, accessPointList, migrationPointPolicy, policyReplicaVm);
+                    migrationStrategy = new LowestLatency(allFogDevices, accessPointList, migrationPointPolicy, policyReplicaVm);
                 } else if (migrationStrategyPolicy == Policies.LOWEST_DIST_BW_SMARTTING_AP) {
-                    migrationStrategy = new LowestDistBwSmartThingAP(relevantFogDevicesList, accessPointList, migrationPointPolicy, policyReplicaVm);
+                    migrationStrategy = new LowestDistBwSmartThingAP(allFogDevices, accessPointList, migrationPointPolicy, policyReplicaVm);
                 }
 
                 /* set before migration */
@@ -864,7 +719,6 @@ public class TestExample4 {
 
                 FogDeviceCharacteristics characteristics = new FogDeviceCharacteristics(arch, os, vmm, host, time_zone, cost, costPerMem, costPerStorage, costPerBw);
 
-
                 /* Allocation Policy */
                 AppModuleAllocationPolicy vmAllocationPolicy = new AppModuleAllocationPolicy(hostList);
                 double upLinkRandom = (int) ((getRand().nextDouble() * (MAX_UP_BANDWITH - MIN_UP_BANDWITH)) + MIN_UP_BANDWITH);
@@ -882,41 +736,21 @@ public class TestExample4 {
                     serviceOffer.setValue(0);
                 }
 
+                FogDevice fogDevice = new FogDevice(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, upLinkRandom, downLinkRandom, upLinkLatency, ratePerMips, coord, id, serviceOffer, migrationStrategy, policyReplicaVm, beforeMigration, offloadingResponseTimeCalculator);
 
+                fogDevice.setParentId(parentId);
+                allFogDevices.add(fogDevice);
+                Log.printLine(fogDevice.getName() + " created at " + fogDevice.getPosition().getCoordinate().toString());
+                /* create Owner */
+                Owner owner = new Owner("ownerOf" + name, fogDevice);
+                fogDevice.setDeviceOwner(owner);
 
-                if(relevantPositions.keySet().contains(coord)){
-
-                    //
-                    //TODO update FogDevice Constructors
-                    //
-
-                    FogDevice fogDevice = new FogDevice(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, upLinkRandom, downLinkRandom, upLinkLatency, ratePerMips, coord, id, serviceOffer, migrationStrategy, policyReplicaVm, beforeMigration, offloadingResponseTimeCalculator);
-//              FogDevice fogDevice = new FogDevice(name, coordX, coordY, id);
-                    // TODO(): setzen von cloudserver/datacenter
-                    fogDevice.setParentId(parentId);
-                    relevantFogDevicesList.add(fogDevice);
-                    allFogDevices.add(fogDevice);
-                    Log.printLine(fogDevice.getName() + " created at " + fogDevice.getPosition().getCoordinate().toString());
-                    /* create Owner */
-                    Owner owner = new Owner("ownerOf" + name, fogDevice);
-                    fogDevice.setDeviceOwner(owner);
-                    if (allPositions.get(coord) == true){
-                        allCompromisedFogDevices.add(fogDevice);
-                    }
-                    if (relevantPositions.get(coord) == true) {
-                        relevantCompromisedDevices.add(fogDevice);
-                    }
-                } else {
-                    //dummy instance
-                    FogDevice fogDevice = new FogDevice( coord, id);
-                    allFogDevices.add(fogDevice);
-                    if(allPositions.get(coord)==true){
-                        allCompromisedFogDevices.add(fogDevice);
-                    }
-                }
+                if (compromisedCoords.contains(coord))
+                    compromisedFogDevices.add(fogDevice);
             }
+
             long t2 = System.currentTimeMillis();
-            System.out.println("dauer Pfade setzten: "+(t2-t1));
+            System.out.println("dauer createFogDevices: "+(t2-t1));
         } catch (Exception e) {
             e.printStackTrace();
             Log.printLine("Errors happen...");
@@ -1099,22 +933,6 @@ public class TestExample4 {
         return deviceMap;
     }
 
-    public static ArrayList<FogDevice> getRelevantFogDevicesList() {
-        return relevantFogDevicesList;
-    }
-
-    public static void setRelevantFogDevicesList(ArrayList<FogDevice> relevantFogDevicesList) {
-        TestExample4.relevantFogDevicesList = relevantFogDevicesList;
-    }
-
-    public static List<FogDevice> getRelevantCompromisedDevices() {
-        return relevantCompromisedDevices;
-    }
-
-    public static void setRelevantCompromisedDevices(List<FogDevice> relevantCompromisedDevices) {
-        TestExample4.relevantCompromisedDevices = relevantCompromisedDevices;
-    }
-
     public static int getNumOfFogDevices() {
         return NUM_OF_FOG_DEVICES;
     }
@@ -1151,12 +969,12 @@ public class TestExample4 {
         TestExample4.allFogDevices = allFogDevices;
     }
 
-    public static List<FogDevice> getAllCompromisedFogDevices() {
-        return allCompromisedFogDevices;
+    public static List<FogDevice> getCompromisedFogDevices() {
+        return compromisedFogDevices;
     }
 
-    public static void setAllCompromisedFogDevices(List<FogDevice> allCompromisedFogDevices) {
-        TestExample4.allCompromisedFogDevices = allCompromisedFogDevices;
+    public static void setCompromisedFogDevices(List<FogDevice> compromisedFogDevices) {
+        TestExample4.compromisedFogDevices = compromisedFogDevices;
     }
 
     public static HashMap<List<Coordinate>, List<FogDevice>> getFogDevicesInField() {

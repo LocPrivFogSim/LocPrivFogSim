@@ -34,14 +34,12 @@ public class Attacker {
     }
 
     public void update(FogDevice source, MobileDevice mobileDevice, int timestamp, int eventId, int eventType, String event) {
-        Log.formatLine("Attacker was notified: MobileDevice '%s' was %sed to '%s' due to a %s event.", mobileDevice.getName(),
-                event, source.getName(), EventType.eventTypeToString(eventType));
+        // Log.formatLine("Attacker was notified: MobileDevice '%s' was %sed to '%s' due to a %s event.", mobileDevice.getName(),
+        //        event, source.getName(), EventType.eventTypeToString(eventType));
 
-//        if (eventType != EventType.OFFLOADING)
-//            return;
+        //if (eventType != EventType.OFFLOADING)
+        //    return;
 
-        // TODO(markus): Überprüfe ob source device is controlled device
-
-          TestExample4.jsonHelper.addEvent(source.getMyId(),event,eventId, eventType, timestamp);
+        // TestExample4.jsonHelper.addEvent(source.getMyId(),event,eventId, eventType, timestamp);
     }
 }
