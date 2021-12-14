@@ -67,7 +67,7 @@ public class TestExample4 {
     private static final int MAX_UP_BANDWITH = 1000; // Max Up Bandwidth 1000 MB/s (1 Gbit)
     private static final int TRANSMISSION_TIME = 1;
     private static final int LATENCY_BETWEEN_FOG_DEVICES = 1;
-    private static int NUM_OF_ACCESS_POINTS;      // NUM_OF_ACCESS_POINTS <= NUM_OF_FOG_DEVICES!! (for this simulation only...)
+    private static int NUM_OF_ACCESS_POINTS;
     private static int NUM_OF_FOG_DEVICES;
 
     // TODO(markus): Which scenarios do we need?
@@ -84,8 +84,7 @@ public class TestExample4 {
     // 2 => knows location of all fog nodes
 
     private static double RATE_OF_COMPROMISED_DEVICES = 0.05; // Controls the persentage of compromised devices => numCompromised = NUM_OF_FOG_DEVICES * RATE_OF_COMPROMISED_DEVICES
-    // TODO(markus): Do we need this static field?
-    private static int MOBILE_CAN_BE_TURNED_OFF = 1;    // boolean
+
     private static int SEED2 = 28; // MobileDevice, connections, and more
     private static int SEED3 = 5; // Attacker
     private static String filename = "results/results.csv";
@@ -97,14 +96,12 @@ public class TestExample4 {
     private static ArrayList<FogDevice> allFogDevices = new ArrayList<>(); // all fog nodes
     private static List<FogDevice> compromisedFogDevices = new ArrayList<>(); // all compromised fog nodes
 
-    //TODO cleanup members if necessary
-    private static List<Vm> vmList = new ArrayList<>();
     private static List<MobileDevice> mobileDeviceList = new ArrayList<>();
     private static List<ApDevice> accessPointList = new ArrayList<>();
     private static List<FogBroker> brokerList = new ArrayList<>();
     private static List<String> appIdList = new ArrayList<>();
     private static List<Application> applicationList = new ArrayList<>();
-    private static List<Attacker> attackerList = new ArrayList<>();
+
     /* migration settings (see MobFogSim) */
     private static Random rand;
     private static int migrationStrategyPolicy = Policies.LOWEST_DIST_BW_SMARTTING_AP;
@@ -113,7 +110,6 @@ public class TestExample4 {
     private static int stepPolicy = 1;
     private static boolean migrationable = true;
     private static Coordinate map;
-    private static DeviceMap deviceMap = new DeviceMap();
     private static SimField field;
 
     private static long startTime = 0;
@@ -130,7 +126,6 @@ public class TestExample4 {
 
     public static HashMap<List<Coordinate>, List<FogDevice>> fogDevicesInField = new HashMap<>();
 
-
     public static void main(String args[]) {
 
         try {
@@ -140,24 +135,7 @@ public class TestExample4 {
             /* parse settings from command line args
              * or comment these out to use settings from above
              */
-            int mySc = Integer.parseInt(args[0]);
-            if(mySc == 1){
-                SCENARIO =1;
-                MOBILE_CAN_BE_TURNED_OFF = 0;
-            }
-            if(mySc == 2){
-                SCENARIO = 2;
-                MOBILE_CAN_BE_TURNED_OFF = 0;
-            }
-            if(mySc == 3){
-                SCENARIO = 1;
-                MOBILE_CAN_BE_TURNED_OFF =1;
-            }
-            if(mySc == 4){
-                SCENARIO = 2;
-                MOBILE_CAN_BE_TURNED_OFF = 1;
-            }
-
+            SCENARIO = Integer.parseInt(args[0]);
             RATE_OF_COMPROMISED_DEVICES = Double.parseDouble(args[1]);
             SEED2 = Integer.parseInt(args[2]);
             SEED3 = Integer.parseInt(args[3]);
@@ -174,7 +152,6 @@ public class TestExample4 {
             }
 
             System.out.println("Scenario: "+SCENARIO);
-            System.out.println("can be turned of: "+MOBILE_CAN_BE_TURNED_OFF);
             System.out.println("rate: "+RATE_OF_COMPROMISED_DEVICES);
             System.out.println("Offloading Threshold:"  + OFFLOADING_THRESHOLD);
             System.out.println("Offloading Strategy: " + OFFLOADING_STRATEGY);
@@ -211,23 +188,14 @@ public class TestExample4 {
 
             System.out.println("Kompromitierte fog nodes: "+ compromisedFogDevices.size());
 
-            for (FogDevice fogDevice : allFogDevices) {
-                deviceMap.addDevice(fogDevice);
-            }
-
             /* create AccessPoints */
             createAccessPoints();
             Log.printLine(accessPointList);
-            for (ApDevice accessPoint : accessPointList) {
-                deviceMap.addDevice(accessPoint);
-            }
-
 
             long before = System.currentTimeMillis();
 
             /* create Attacker */
             Attacker attacker = new Attacker("attacker", allFogDevices, compromisedFogDevices);
-            attackerList.add(attacker);
 
             System.out.println("all paths loaded in : "+((System.currentTimeMillis() - before)/1000) + " sekunden");
 
@@ -364,7 +332,6 @@ public class TestExample4 {
             MobileController mobileController = new MobileController("MobileController", allFogDevices, accessPointList, mobileDeviceList, brokerList, moduleMapping, migrationPointPolicy, migrationStrategyPolicy, stepPolicy, map, SEED, migrationable);
 
             for(int j = 0; j < mobileDeviceList.size() ; j++){
-                deviceMap.addDevice(mobileDeviceList.get(j));
                 setMobilityData(mobileDeviceList.get(j), mobileController, selectedPath);
                 Log.printLine(mobileDeviceList.get(j).getName() + " path: " + mobileDeviceList.get(j));
             }
@@ -929,10 +896,6 @@ public class TestExample4 {
         TestExample4.SCENARIO = SCENARIO;
     }
 
-    public static DeviceMap getDeviceMap() {
-        return deviceMap;
-    }
-
     public static int getNumOfFogDevices() {
         return NUM_OF_FOG_DEVICES;
     }
@@ -947,10 +910,6 @@ public class TestExample4 {
 
     public static void setAveragePathLength(double averagePathLength) {
         TestExample4.averagePathLength = averagePathLength;
-    }
-
-    public static int getMobileCanBeTurnedOff() {
-        return MOBILE_CAN_BE_TURNED_OFF;
     }
 
     public static long getStartTime() {
