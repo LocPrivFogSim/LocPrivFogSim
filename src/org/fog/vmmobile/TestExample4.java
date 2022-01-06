@@ -20,14 +20,7 @@ import org.fog.localization.Coordinate;
 import org.fog.localization.Distances;
 import org.fog.localization.Path;
 import org.fog.localization.SimField;
-import org.fog.offloading.FixedOffloadingScheduler;
-import org.fog.offloading.IOffloadingResponseTimeCalculator;
-import org.fog.offloading.IOffloadingScheduler;
-import org.fog.offloading.IOffloadingStrategy;
-import org.fog.offloading.OffloadingTask;
-import org.fog.offloading.BandwidthCpuResponseTimeCalculator;
-import org.fog.offloading.BelowThresholdLowestResponseTimeOffloadingStrategy;
-import org.fog.offloading.BelowThresholdRandomDeviceOffloadingStrategy;
+import org.fog.offloading.*;
 import org.fog.placement.MobileController;
 import org.fog.placement.ModuleMapping;
 import org.fog.policy.AppModuleAllocationPolicy;
@@ -146,6 +139,8 @@ public class TestExample4 {
                 offloadingStrategy = new BelowThresholdRandomDeviceOffloadingStrategy(SEED3, OFFLOADING_THRESHOLD);
             else if (OFFLOADING_STRATEGY.equalsIgnoreCase("BelowThresholdLowestResponseTime"))
                 offloadingStrategy = new BelowThresholdLowestResponseTimeOffloadingStrategy(OFFLOADING_THRESHOLD);
+            else if (OFFLOADING_STRATEGY.equalsIgnoreCase("ClosestFogDevice"))
+                offloadingStrategy = new ClosestFogDeviceOffloadingStrategy();
             else {
                 Log.printLine("Unknown offloading strategy...");
                 return;
