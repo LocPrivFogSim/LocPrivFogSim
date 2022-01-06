@@ -710,7 +710,8 @@ public class FogDevice extends PowerDatacenter {
         if (count == 1)
             notifyObservers(mobileDevice, mobileDevice.getPosition().getTimestamp(), 6001,EventType.OFFLOADING, "add");
 
-        TestExample4.jsonHelper.addEvent(getMyId(), "add",6001, EventType.OFFLOADING, mobileDevice.getPosition().getTimestamp());
+        double availableMips = getHost().getPeList().get(0).getPeProvisioner().getAvailableMips();
+        TestExample4.jsonHelper.addEvent(getMyId(), "add",6001, EventType.OFFLOADING, mobileDevice.getPosition().getTimestamp(), availableMips, task.getInputDataSize());
     }
 
     public void removeOffloadingTask(MobileDevice mobileDevice, OffloadingTask task) {
@@ -731,7 +732,8 @@ public class FogDevice extends PowerDatacenter {
         if (count == 0)
             notifyObservers(mobileDevice, mobileDevice.getPosition().getTimestamp(), 6004,EventType.OFFLOADING, "remove");
 
-        TestExample4.jsonHelper.addEvent(getMyId(), "remove",6004, EventType.OFFLOADING, mobileDevice.getPosition().getTimestamp());
+        double availableMips = getHost().getPeList().get(0).getPeProvisioner().getAvailableMips();
+        TestExample4.jsonHelper.addEvent(getMyId(), "remove",6004, EventType.OFFLOADING, mobileDevice.getPosition().getTimestamp(), availableMips, task.getOutputDataSize());
     }
 
     public int getMyId() {

@@ -347,10 +347,7 @@ public class TestExample4 {
             System.out.println("start sim.  Init took: "+ (time2 - time1)/1000);
 
             /*init Jsonhelper */
-            List<Integer> compromisedIds = compromisedFogDevices.stream().map(x -> {
-                return x.getMyId();
-            }).collect(Collectors.toList());
-            jsonHelper = new PrivacyJsonHelper(selectedPath.getPathId(), SCENARIO, compromisedIds);
+            jsonHelper = new PrivacyJsonHelper(selectedPath.getPathId(), SCENARIO, allFogDevices, compromisedFogDevices);
 
             /* Simulation */
             TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());
