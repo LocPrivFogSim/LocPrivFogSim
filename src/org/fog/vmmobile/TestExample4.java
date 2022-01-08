@@ -129,7 +129,7 @@ public class TestExample4 {
              * or comment these out to use settings from above
              */
             SCENARIO = Integer.parseInt(args[0]);
-            RATE_OF_COMPROMISED_DEVICES = Double.parseDouble(args[1]);
+            RATE_OF_COMPROMISED_DEVICES = Integer.parseInt(args[1])/100d;
             SEED2 = Integer.parseInt(args[2]);
             SEED3 = Integer.parseInt(args[3]);
             OFFLOADING_THRESHOLD = Double.parseDouble(args[4]);
