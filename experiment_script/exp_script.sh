@@ -3,6 +3,7 @@
 interval=5
 offloading_threshold=0.0462
 iterations=100
+enable_logging="false"
 
 # misc variables
 time_script_start=0
@@ -48,7 +49,7 @@ do
         let seed2=$RANDOM%50+1
         let seed3=$RANDOM%20
 
-        java -jar LocPrivFogSim.jar $scenario $i $seed2 $seed3 $offloading_threshold $j
+        java -jar LocPrivFogSim.jar $scenario $i $seed2 $seed3 $offloading_threshold $j $enable_logging
       done
 
 			time_strategy_end=$(date +%s) # end time for the current selected offloading strategy
