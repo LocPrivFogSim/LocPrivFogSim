@@ -80,7 +80,7 @@ public class TestExample4 {
 
     private static int SEED2 = 28; // MobileDevice, connections, and more
     private static int SEED3 = 5; // Attacker
-    private static String filename = "privacy/output.json";
+    private static String filename;
     private static int NUM_OF_MOBILE_DEVICES = 1;
 
     private  static DBConnector dbConnector = new DBConnector();
@@ -135,6 +135,7 @@ public class TestExample4 {
             OFFLOADING_THRESHOLD = Double.parseDouble(args[4]);
             int OFFLOADING_STRATEGY = Integer.parseInt(args[5]);
             boolean debug = Boolean.parseBoolean(args[6]);
+            int iteration = Integer.parseInt(args[7]);
 
             if (OFFLOADING_STRATEGY == 1) // "BelowThresholdRandomDevice"
                 offloadingStrategy = new BelowThresholdRandomDeviceOffloadingStrategy(SEED3, OFFLOADING_THRESHOLD);
@@ -151,6 +152,8 @@ public class TestExample4 {
             System.out.println("rate: "+RATE_OF_COMPROMISED_DEVICES);
             System.out.println("Offloading Threshold:"  + OFFLOADING_THRESHOLD);
             System.out.println("Offloading Strategy: " + OFFLOADING_STRATEGY);
+
+            filename = "privacy/output_" +SCENARIO + "_" + args[1] + "_" + OFFLOADING_STRATEGY + "_" + iteration + ".json";
 
             FileOutputStream stream = new FileOutputStream("privacy/output");
             LogMobile.ENABLED = debug;
