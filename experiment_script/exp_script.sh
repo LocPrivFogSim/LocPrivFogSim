@@ -1,12 +1,13 @@
 #!/bin/bash
 
-rate=0.05
-seed2=12
-seed3=5
+#rate=0.05
+#seed2=12
+#seed3=5
 can_be_turned_off=0
-interval=0.1
+interval=5
 paths_per_go=70
-
+offloading_threshold=0.0462
+strat=""
 
 time_begin=0
 time_before=0
@@ -19,20 +20,20 @@ time_begin=$(date +%s)
 
 
 
-for ((scenario=1;scenario<=4;scenario++))
+for ((scenario=1;scenario<=2;scenario++))
 do
 
 	time_before=$(date +%s)
 
-	for ((i=5;i<=100;i=$i+5))
-	do	
-		
-		for ((j=0;j<15;j++))
+	for ((i=5;i<=100;i=$i+$interval)) #i is rate of compromised devices
+	do
+		for((j=1;j<=3;j++))			#j is offloading_strat  1 = BelowThresholdRandomDevice, 2 = BelowThresholdLowestResponseTime, 3 = ClosestFogDevice
+
 		do
 			let seed2=$RANDOM%50+1
 			let seed3=$RANDOM%20
-			java -jar LocPrivFogSim.jar $scenario $i $seed2 $seed3 $paths_per_go
-		done
+			java -jar LocPrivFogSim.jar $scenario ($i/100) $seed2 $seed3 $offloading_threshold $j
+		
 	done
 
 	time_after=$(date +%s)
