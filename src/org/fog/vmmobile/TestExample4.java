@@ -134,6 +134,7 @@ public class TestExample4 {
             SEED3 = Integer.parseInt(args[3]);
             OFFLOADING_THRESHOLD = Double.parseDouble(args[4]);
             int OFFLOADING_STRATEGY = Integer.parseInt(args[5]);
+            boolean debug = Boolean.parseBoolean(args[6]);
 
             if (OFFLOADING_STRATEGY == 1) // "BelowThresholdRandomDevice"
                 offloadingStrategy = new BelowThresholdRandomDeviceOffloadingStrategy(SEED3, OFFLOADING_THRESHOLD);
@@ -152,11 +153,15 @@ public class TestExample4 {
             System.out.println("Offloading Strategy: " + OFFLOADING_STRATEGY);
 
             FileOutputStream stream = new FileOutputStream("privacy/output");
-            LogMobile.ENABLED = true;
-            LogMobile.setOutput(stream);
-            Log.enable();
-            //Log.disable();
-            Log.setOutput(stream);
+            LogMobile.ENABLED = debug;
+
+            if (debug == true) LogMobile.setOutput(stream);
+
+            if (debug== true) Log.enable();
+            else Log.disable();
+
+            if (debug == true) Log.setOutput(stream);
+
             Log.printLine("Starting Test4...");
 
             /* init cloudSim */
