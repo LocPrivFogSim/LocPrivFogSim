@@ -316,7 +316,7 @@ public class MobileController extends SimEntity {
             mobileDevice.setTravelTimeId(mobileDevice.getTravelTimeId()+1);
             mobileDevice.setPosition(position);
 
-            int delay = (position.getTimestamp() - old.getTimestamp()) * 100;
+            int delay = (position.getTimestamp() - old.getTimestamp()) * 10;
             send(getId()//Application
                 , delay
                 , MobileEvents.NEXT_STEP

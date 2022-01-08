@@ -80,7 +80,7 @@ public class TestExample4 {
 
     private static int SEED2 = 28; // MobileDevice, connections, and more
     private static int SEED3 = 5; // Attacker
-    private static String filename = "results/results.csv";
+    private static String filename = "privacy/output.json";
     private static int NUM_OF_MOBILE_DEVICES = 1;
 
     private  static DBConnector dbConnector = new DBConnector();
@@ -112,7 +112,7 @@ public class TestExample4 {
 
     private static final IOffloadingResponseTimeCalculator offloadingResponseTimeCalculator = new BandwidthCpuResponseTimeCalculator();
 
-    private static final IOffloadingScheduler offloadingScheduler = new FixedOffloadingScheduler(1000, 20, 2000, 2);
+    private static IOffloadingScheduler offloadingScheduler;
 
     private static double OFFLOADING_THRESHOLD = 0.0462d;
     private static IOffloadingStrategy offloadingStrategy;
@@ -182,6 +182,9 @@ public class TestExample4 {
             field = SimField.getFieldForBeijing();
 
             Path selectedPath = getRandomPath();
+
+            int travelTime = selectedPath.getPositions().get(selectedPath.getPositions().size() - 1).getTimestamp();
+            offloadingScheduler = new FixedOffloadingScheduler(travelTime, 100, 20, 2000, 2);
 
             /* create FogDevice(s) */
             createFogDevices(cloud.getId());
@@ -360,9 +363,6 @@ public class TestExample4 {
 
             Log.printLine();
 
-            PrintWriter resultsWriter = new PrintWriter(new FileWriter(filename, true));
-            resultsWriter.write("traceCompVal;sizeOfUncertainty;scenario;canBeTurnedOff;rate\n");
-
             long time3 = System.currentTimeMillis();
 
             System.out.println("sim finished, took: "+ (time3 - time2)/1000);
@@ -370,7 +370,7 @@ public class TestExample4 {
             /* results */
             Log.printLine("\nTest4 finished");
 
-            jsonHelper.writeJsonToFile("privacy/output.json");
+            jsonHelper.writeJsonToFile(filename);
 
             long time4 = System.currentTimeMillis();
 
