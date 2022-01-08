@@ -2,6 +2,7 @@
 
 interval=5
 offloading_threshold=0.0462
+iterations=100
 
 # misc variables
 time_script_start=0
@@ -41,10 +42,14 @@ do
 
 		  time_strategy_start=$(date +%s) # start time for the current selected offloading strategy
 
-			let seed2=$RANDOM%50+1
-			let seed3=$RANDOM%20
+      for((k=1;k<=$iterations;k++)) # k is the number of iterations the simulator is executed
+      do
+        # execute simulator
+        let seed2=$RANDOM%50+1
+        let seed3=$RANDOM%20
 
-			java -jar LocPrivFogSim.jar $scenario $i $seed2 $seed3 $offloading_threshold $j
+        java -jar LocPrivFogSim.jar $scenario $i $seed2 $seed3 $offloading_threshold $j
+      done
 
 			time_strategy_end=$(date +%s) # end time for the current selected offloading strategy
 			echo -e "Simulation of scenario "$scenario" with rate of "$i" for offloading strategy "$j" took "(($time_strategy_end-$time_strategy_start))" seconds\r\n" >> results/results.csv
