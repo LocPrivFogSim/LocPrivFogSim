@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rate_start=5
+rate_end=100
 interval=5
 offloading_threshold=0.0462
 iterations=100
@@ -29,7 +31,7 @@ do
   # Loop through the rate of compromised nodes in $interval steps
   # Currently we start with 5% of compromised fog nodes and use an interval of 5 percent points up to a rate of 100%
   # compromised fog nodes.
-	for ((i=5;i<=100;i=$i+$interval)) # i is the rate of compromised nodes
+	for ((i=$rate_start;i<=$rate_end;i=$i+$interval)) # i is the rate of compromised nodes
 	do
 
 	  time_rate_start=$(date +%s) # start time for the current selected rate of compromised fog nodes
@@ -53,17 +55,21 @@ do
       done
 
 			time_strategy_end=$(date +%s) # end time for the current selected offloading strategy
-			echo -e "Simulation of scenario "$scenario" with rate of "$i" for offloading strategy "$j" took "(($time_strategy_end-$time_strategy_start))" seconds\r\n" >> results/results.csv
+			time=($time_strategy_end-$time_strategy_start)
+			echo -e "Simulation of scenario "$scenario" with rate of "$i" for offloading strategy "$j" took "$time" seconds\r\n" >> results/results.csv
 	  done
 
     time_rate_end=$(date +%s) # end time for the current selected rate of compromised fog nodes
-    echo -e "Simulation of all offloading strategies with rate of "$i" for scenario "$scenario" took "((time_rate_end-time_rate_start))" seconds\r\n" >> results/results.csv
+    time=($time_rate_end-$time_rate_start)
+    echo -e "Simulation of all offloading strategies with rate of "$i" for scenario "$scenario" took "$time" seconds\r\n" >> results/results.csv
   done
 
   time_scenario_end=$(date +%s) # end time for the current scenario
-  echo -e "Simulation of all offloading strategies with all rate with an interval of "$interval" for scenario "$scenario" took "((time_scenario_end-time_scenario_start))" seconds\r\n" >> results/results.csv
+  time=($time_scenario_end-$time_scenario_start)
+  echo -e "Simulation of all offloading strategies with all rate with an interval of "$interval" for scenario "$scenario" took "$time" seconds\r\n" >> results/results.csv
 done
 
 time_script_end=$(date +%s) # end time of script execution
-echo -e "Total script execution time: "((time_script_end-time_script_start))" seconds\n" >> results/results.csv
+time=($time_script_end-$time_script_start)
+echo -e "Total script execution time: "$time" seconds\n" >> results/results.csv
 echo -e "Script finished" >> results/results.csv
