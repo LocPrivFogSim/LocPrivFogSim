@@ -133,13 +133,13 @@ public class TestExample4 {
             SEED2 = Integer.parseInt(args[2]);
             SEED3 = Integer.parseInt(args[3]);
             OFFLOADING_THRESHOLD = Double.parseDouble(args[4]);
-            String OFFLOADING_STRATEGY = args[5];
+            int OFFLOADING_STRATEGY = Integer.parseInt(args[5]);
 
-            if (OFFLOADING_STRATEGY.equalsIgnoreCase("BelowThresholdRandomDevice"))
+            if (OFFLOADING_STRATEGY == 1) // "BelowThresholdRandomDevice"
                 offloadingStrategy = new BelowThresholdRandomDeviceOffloadingStrategy(SEED3, OFFLOADING_THRESHOLD);
-            else if (OFFLOADING_STRATEGY.equalsIgnoreCase("BelowThresholdLowestResponseTime"))
+            else if (OFFLOADING_STRATEGY == 2) // "BelowThresholdLowestResponseTime"
                 offloadingStrategy = new BelowThresholdLowestResponseTimeOffloadingStrategy(OFFLOADING_THRESHOLD);
-            else if (OFFLOADING_STRATEGY.equalsIgnoreCase("ClosestFogDevice"))
+            else if (OFFLOADING_STRATEGY == 3) // "ClosestFogDevice"
                 offloadingStrategy = new ClosestFogDeviceOffloadingStrategy();
             else {
                 Log.printLine("Unknown offloading strategy...");
