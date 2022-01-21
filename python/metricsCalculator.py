@@ -5,7 +5,7 @@ from scipy.spatial import Voronoi, voronoi_plot_2d
 
 json_path = "../privacy/output.json"
 db_path = "../geoLifePaths.db"
-
+locations_file = "locations.json"
 
 def connect_to_db(path):
     conn = None
@@ -112,14 +112,42 @@ def test_voronoi(conn):
     plt.show()
 
 
+def retrieve_locations(filepath):
+    file = open(filepath, 'r+')
+    json_arr = file.read()
+    k = json.loads(json_arr)
+    return k
+
+
+def calc_strategy_fastest(events:list  ,locations:list, fog_nodes:list, ):
+    
+    #for each location check which fog node is the fastest to respond
+
+    current_min = 1000000000 #some high nr
+    
+    
+
+    for event in events:
+        fog_device_id = event[0]
+        for location in locations:
+            response_time =  calc_response_time
+            if(response_time < current_min):
+                current_min =  response_time
+
+
+
+def calc_response_time():
+    return 100
+
 
 def main():
 
     conn = connect_to_db(db_path)
-    test_voronoi(conn)
-    
-
-    exit()
+    #test_voronoi(conn)
+     
+     
+    locations = retrieve_locations(locations_file) 
+   
 
     with open(json_path) as json_file:
         data = json.load(json_file)
@@ -128,6 +156,13 @@ def main():
     simulatedScenario = data['simulatedScenario']
     compromised_fog_nodes = data['compromisedFogNodes']
     events = data['events']     #each event { fog_device_id, event_name, event_type, event_id, timestamp }
+
+
+
+
+
+
+    exit()
     
     observed_order_of_fognodes = get_observed_order_of_fognodes(events)
    

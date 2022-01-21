@@ -1,0 +1,3 @@
+pip install geopy
+pip install pyproj
+pip install numba
