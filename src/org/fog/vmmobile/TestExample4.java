@@ -152,6 +152,8 @@ public class TestExample4 {
             System.out.println("rate: "+RATE_OF_COMPROMISED_DEVICES);
             System.out.println("Offloading Threshold:"  + OFFLOADING_THRESHOLD);
             System.out.println("Offloading Strategy: " + OFFLOADING_STRATEGY);
+            System.out.println("Debug: " + debug);
+            System.out.println("Iteration: " + iteration);
 
             filename = "privacy/output_" +SCENARIO + "_" + args[1] + "_" + OFFLOADING_STRATEGY + "_" + iteration + ".json";
 
