@@ -147,7 +147,7 @@ public class TestExample4 {
             System.out.println("Debug: " + debug);
             System.out.println("Iteration: " + iteration);
 
-            filename = "privacy/output_" + args[1] + "_" + OFFLOADING_STRATEGY + "_" + iteration + ".json";
+            filename = "privacy/output_" + OFFLOADING_STRATEGY + "_" + args[0] + "_" + iteration + ".json";
 
             FileOutputStream stream = new FileOutputStream("privacy/output");
             LogMobile.ENABLED = debug;
