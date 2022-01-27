@@ -4,12 +4,13 @@ import org.fog.entities.FogDevice;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.fog.localization.Coordinate;
+import org.fog.offloading.OffloadingTask;
+import org.fog.vmmobile.TestExample4;
 
 /*
 holds data while simulation is running and prints it to Json once sim finishes is gathered
@@ -17,14 +18,13 @@ holds data while simulation is running and prints it to Json once sim finishes i
 public class PrivacyJsonHelper {
 
     int simulatedPath;
-    int simulatedScenario;
     List<Integer> compromisedFogNodes;
     List<FogDeviceInfo> fogDeviceInfos;
     LinkedList<Event> events = new LinkedList<>();
+    Map<String, Map<Integer, Double>> deviceStats;
 
-    public PrivacyJsonHelper(int simulatedPath, int simulatedScenario, List<FogDevice> allFogDevices, List<FogDevice> compromisedFogDevices) {
+    public PrivacyJsonHelper(int simulatedPath, List<FogDevice> allFogDevices, List<FogDevice> compromisedFogDevices) {
         this.simulatedPath = simulatedPath;
-        this.simulatedScenario = simulatedScenario;
 
         this.fogDeviceInfos = allFogDevices.stream().map(x -> {
             return new FogDeviceInfo(x.getMyId(), x.getDownlinkBandwidth(), x.getUplinkBandwidth(), x.getUplinkLatency());
@@ -33,11 +33,40 @@ public class PrivacyJsonHelper {
         this.compromisedFogNodes = compromisedFogDevices.stream().map(x -> {
             return x.getMyId();
         }).collect(Collectors.toList());
+
+        this.deviceStats = new HashMap<String, Map<Integer, Double>>();
     }
 
-    public void addEvent(int fogNodeId, String eventName, int eventId, int eventType, int timestamp, double availableMips, int dataSize) {
-        Event e =  new Event(fogNodeId,eventName,eventType,eventId, timestamp, availableMips, dataSize);
+    public void addEvent(int fogNodeId, String eventName, int eventId, int eventType, int timestamp, double availableMips, OffloadingTask task) {
+        int dataSize = (eventId == 6001) ? task.getInputDataSize() : task.getOutputDataSize();
+        Event e =  new Event(fogNodeId, eventName, eventType, eventId, timestamp, availableMips, task.getUid(), dataSize, task.getMi());
         events.add(e);
+
+        if (eventId != 6001)
+            return;
+
+        // Find region of source mobile device
+        List<Coordinate> key = null;
+        for (List<Coordinate> keys : TestExample4.fogDevicesInField.keySet()) {
+            if (Coordinate.coordIsInField(keys, task.getSource().getPosition().getCoordinate()))
+            {
+                key = keys;
+                break;
+            }
+        }
+
+        if (key == null)
+            throw new IllegalStateException();
+
+        // Fetch all fog devices in region
+        List<FogDevice> devices = TestExample4.fogDevicesInField.get(key);
+
+        // Write down all stats of all fog nodes
+        Map<Integer, Double> stats = new HashMap<Integer, Double>();
+        for (FogDevice device : devices) {
+            stats.put(device.getId(), device.getHost().getPeList().get(0).getPeProvisioner().getAvailableMips());
+        }
+        this.deviceStats.put(task.getUid(), stats);
     }
 
     public void writeJsonToFile(String filePath){
@@ -65,14 +94,6 @@ public class PrivacyJsonHelper {
         this.simulatedPath = simulatedPath;
     }
 
-    public int getSimulatedScenario() {
-        return simulatedScenario;
-    }
-
-    public void setSimulatedScenario(int simulatedScenario) {
-        this.simulatedScenario = simulatedScenario;
-    }
-
     public List<FogDeviceInfo> getFogDeviceInfos() {
         return fogDeviceInfos;
     }
@@ -96,6 +117,10 @@ public class PrivacyJsonHelper {
     public void setEvents(LinkedList<Event> events) {
         this.events = events;
     }
+
+    public Map<String, Map<Integer, Double>> getDeviceStats() { return deviceStats; }
+
+    public void SetDeviceStats(Map<String, Map<Integer, Double>> deviceStats) { this.deviceStats = deviceStats; }
 }
 
 /*
@@ -158,16 +183,20 @@ class Event {
     int event_id;
     int timestamp;
     double availableMips;
+    String taskId;
     int dataSize;
+    int mi;
 
-    public Event(int fog_device_id, String event_name, int event_type, int event_id, int timestamp, double availableMips, int dataSize) {
+    public Event(int fog_device_id, String event_name, int event_type, int event_id, int timestamp, double availableMips, String taskId, int dataSize, int mi) {
         this.fog_device_id = fog_device_id;
         this.event_name = event_name;
         this.event_type = event_type;
         this.event_id = event_id;
         this.timestamp = timestamp;
         this.availableMips = availableMips;
+        this.taskId = taskId;
         this.dataSize = dataSize;
+        this.mi = mi;
     }
 
     public int getFog_device_id() {
@@ -218,11 +247,27 @@ class Event {
         this.availableMips = availableMips;
     }
 
-    public double getDataSize() {
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public int getDataSize() {
         return dataSize;
     }
 
     public void setDataSize(int dataSize) {
         this.dataSize = dataSize;
+    }
+
+    public int getMi() {
+        return mi;
+    }
+
+    public void setMi(int mi) {
+        this.mi = mi;
     }
 }

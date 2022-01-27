@@ -36,10 +36,8 @@ import org.fog.vmmigration.*;
 import org.fog.vmmobile.constants.MaxAndMin;
 import org.fog.vmmobile.constants.Policies;
 import org.fog.vmmobile.constants.Services;
-import org.junit.experimental.theories.Theories;
 
 import java.io.*;
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,18 +61,14 @@ public class TestExample4 {
     private static int NUM_OF_ACCESS_POINTS;
     private static int NUM_OF_FOG_DEVICES;
 
-    // TODO(markus): Which scenarios do we need?
+    // TODO(markus): Descriptions of cmd args
     /* Settings for the experiment (or parse them from cmd args):
-     * - Scenario - what does the adversary know about the fog nodes locations
      * - Rate of fog nodes controlled by the adversary
      * - Possibility if the mobile device is allowed to disconnect
      * - Seeds
      * - Resolution of the (voronoi) map scanning
      * - output file for results
      */
-    private static int SCENARIO = 1;  // Scenario 1 or 2 -> differ in the adversary's knowledge about the locations of all fog nodes
-    // 1 => knows location of compromised fog nodes only
-    // 2 => knows location of all fog nodes
 
     private static double RATE_OF_COMPROMISED_DEVICES = 0.05; // Controls the persentage of compromised devices => numCompromised = NUM_OF_FOG_DEVICES * RATE_OF_COMPROMISED_DEVICES
 
@@ -128,14 +122,13 @@ public class TestExample4 {
             /* parse settings from command line args
              * or comment these out to use settings from above
              */
-            SCENARIO = Integer.parseInt(args[0]);
-            RATE_OF_COMPROMISED_DEVICES = Integer.parseInt(args[1])/100d;
-            SEED2 = Integer.parseInt(args[2]);
-            SEED3 = Integer.parseInt(args[3]);
-            OFFLOADING_THRESHOLD = Double.parseDouble(args[4]);
-            int OFFLOADING_STRATEGY = Integer.parseInt(args[5]);
-            boolean debug = Boolean.parseBoolean(args[6]);
-            int iteration = Integer.parseInt(args[7]);
+            RATE_OF_COMPROMISED_DEVICES = Integer.parseInt(args[0])/100d;
+            SEED2 = Integer.parseInt(args[1]);
+            SEED3 = Integer.parseInt(args[2]);
+            OFFLOADING_THRESHOLD = Double.parseDouble(args[3]);
+            int OFFLOADING_STRATEGY = Integer.parseInt(args[4]);
+            boolean debug = Boolean.parseBoolean(args[5]);
+            int iteration = Integer.parseInt(args[6]);
 
             if (OFFLOADING_STRATEGY == 1) // "BelowThresholdRandomDevice"
                 offloadingStrategy = new BelowThresholdRandomDeviceOffloadingStrategy(SEED3, OFFLOADING_THRESHOLD);
@@ -148,12 +141,11 @@ public class TestExample4 {
                 return;
             }
 
-            System.out.println("Scenario: "+SCENARIO);
             System.out.println("rate: "+RATE_OF_COMPROMISED_DEVICES);
             System.out.println("Offloading Threshold:"  + OFFLOADING_THRESHOLD);
             System.out.println("Offloading Strategy: " + OFFLOADING_STRATEGY);
 
-            filename = "privacy/output_" +SCENARIO + "_" + args[1] + "_" + OFFLOADING_STRATEGY + "_" + iteration + ".json";
+            filename = "privacy/output_" + args[1] + "_" + OFFLOADING_STRATEGY + "_" + iteration + ".json";
 
             FileOutputStream stream = new FileOutputStream("privacy/output");
             LogMobile.ENABLED = debug;
@@ -353,7 +345,7 @@ public class TestExample4 {
             System.out.println("start sim.  Init took: "+ (time2 - time1)/1000);
 
             /*init Jsonhelper */
-            jsonHelper = new PrivacyJsonHelper(selectedPath.getPathId(), SCENARIO, allFogDevices, compromisedFogDevices);
+            jsonHelper = new PrivacyJsonHelper(selectedPath.getPathId(), allFogDevices, compromisedFogDevices);
 
             /* Simulation */
             TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());
@@ -886,14 +878,6 @@ public class TestExample4 {
 
     public static void setRand(Random rand) {
         TestExample4.rand = rand;
-    }
-
-    public static int getSCENARIO() {
-        return SCENARIO;
-    }
-
-    public static void setSCENARIO(int SCENARIO) {
-        TestExample4.SCENARIO = SCENARIO;
     }
 
     public static int getNumOfFogDevices() {

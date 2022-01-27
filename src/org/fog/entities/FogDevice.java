@@ -698,6 +698,17 @@ public class FogDevice extends PowerDatacenter {
     }
 
     public void addOffloadingTask(MobileDevice mobileDevice, OffloadingTask task) {
+        double availableMips = getHost().getPeList().get(0).getPeProvisioner().getAvailableMips();
+        TestExample4.jsonHelper.addEvent(
+                getMyId(),
+                "add",
+                6001,
+                EventType.OFFLOADING,
+                mobileDevice.getPosition().getTimestamp(),
+                availableMips,
+                task
+        );
+
         task.setTarget(this);
 
         getHost().getPeList().get(0).getPeProvisioner().allocateMipsForOffloadingTask(task, task.getMi());
@@ -709,9 +720,6 @@ public class FogDevice extends PowerDatacenter {
         // The first task of the mobile device was added. Notify Observers
         if (count == 1)
             notifyObservers(mobileDevice, mobileDevice.getPosition().getTimestamp(), 6001,EventType.OFFLOADING, "add");
-
-        double availableMips = getHost().getPeList().get(0).getPeProvisioner().getAvailableMips();
-        TestExample4.jsonHelper.addEvent(getMyId(), "add",6001, EventType.OFFLOADING, mobileDevice.getPosition().getTimestamp(), availableMips, task.getInputDataSize());
     }
 
     public void removeOffloadingTask(MobileDevice mobileDevice, OffloadingTask task) {
@@ -733,7 +741,15 @@ public class FogDevice extends PowerDatacenter {
             notifyObservers(mobileDevice, mobileDevice.getPosition().getTimestamp(), 6004,EventType.OFFLOADING, "remove");
 
         double availableMips = getHost().getPeList().get(0).getPeProvisioner().getAvailableMips();
-        TestExample4.jsonHelper.addEvent(getMyId(), "remove",6004, EventType.OFFLOADING, mobileDevice.getPosition().getTimestamp(), availableMips, task.getOutputDataSize());
+        TestExample4.jsonHelper.addEvent(
+                getMyId(),
+                "remove",
+                6004,
+                EventType.OFFLOADING,
+                mobileDevice.getPosition().getTimestamp(),
+                availableMips,
+                task
+        );
     }
 
     public int getMyId() {
