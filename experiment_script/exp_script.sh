@@ -1,8 +1,8 @@
 #!/bin/bash
 
-rate_start=5
-rate_end=100
-interval=5
+rate_start=30
+rate_end=40
+interval=10
 offloading_threshold=0.0462
 iterations=100
 enable_logging="false"
@@ -40,7 +40,7 @@ do
 	  # - j = 1: BelowThresholdRandomDevice
 	  # - j = 2: BelowThresholdLowestResponseTime
 	  # - j = 3: ClosestFogDevice
-		for((j=1;j<=3;j++)) # j is the offloading strategy used
+		for((j=1;j<=1;j++)) # j is the offloading strategy used
 		do
 
 		  time_strategy_start=$(date +%s) # start time for the current selected offloading strategy
@@ -50,8 +50,7 @@ do
         # execute simulator
         let seed2=$RANDOM%50+1
         let seed3=$RANDOM%20
-
-        java -jar LocPrivFogSim.jar $scenario $i $seed2 $seed3 $offloading_threshold $j $enable_logging
+        java -jar LocPrivFogSim.jar $scenario $i $seed2 $seed3 $offloading_threshold $j $enable_logging $k
       done
 
 			time_strategy_end=$(date +%s) # end time for the current selected offloading strategy

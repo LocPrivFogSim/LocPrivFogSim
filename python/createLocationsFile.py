@@ -14,6 +14,8 @@ def createLocationsFile(): #create List of all Locations and serialize it as Jso
     location_edge_len = 500 #metres
 
     locations = []
+    
+    location_points = []
 
     i = 0.0
     
@@ -32,6 +34,8 @@ def createLocationsFile(): #create List of all Locations and serialize it as Jso
 
             locations.append( (list(bot_left), list(top_left), list(top_right), list(bot_right)))
 
+            location_points.append(list(bot_left))
+
            # print(bot_left, top_left, top_right, bot_right)
             
             bot_left = top_left
@@ -44,7 +48,10 @@ def createLocationsFile(): #create List of all Locations and serialize it as Jso
     file = open("locations.json",'w+')
     file.write(json.dumps(locations))
     file.close
-    
+
+    file = open("locations_points.json",'w+')
+    file.write(json.dumps(location_points))
+    file.close
 
 
 def debugPrint():
