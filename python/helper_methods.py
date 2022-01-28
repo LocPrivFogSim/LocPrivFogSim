@@ -85,7 +85,7 @@ def get_observed_order_of_fognodes(events):
 
 
 #locations
-def retrieve_locations(filepath):
+def retrieve_list_from_json(filepath):
     file = open(filepath, 'r+')
     json_arr = file.read()
     k = json.loads(json_arr)
