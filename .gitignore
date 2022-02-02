@@ -2,6 +2,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/intellij,visualstudiocode,eclipse,java
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij,visualstudiocode,eclipse,java
 
+python/input
+
 ### Eclipse ###
 .metadata
 bin/
