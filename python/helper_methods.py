@@ -98,12 +98,14 @@ def retrieve_list_from_json(filepath):
 def retrieve_data_from_json(jsonpath):
      with open(jsonpath) as json_file:
         data = json.load(json_file)
-    
+   
      path_id = data['simulatedPath']
      #simulatedScenario = data['simulatedScenario']
      compromised_fog_nodes = data['compromisedFogNodes']
      events = data['events']     
-     return [path_id, compromised_fog_nodes, events]
+     fog_device_infos = data['fogDeviceInfos']
+     device_stats = data['deviceStats']
+     return [path_id, compromised_fog_nodes, events, fog_device_infos, device_stats]
 
 #distances 
 
