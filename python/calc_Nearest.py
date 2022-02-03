@@ -17,7 +17,7 @@ def get_results(path_data,location_for_nodes):
 
     events = path_data[2]  #event{ fog_device_id, event_name, event_type, event_id, timestamp }
 
-    print(events[0])
+    #print(events[0])
     #print(events)
 
     #find vornoi field for fog_node
