@@ -6,6 +6,7 @@ import org.cloudbus.cloudsim.Log;
 import org.fog.entities.ApDevice;
 import org.fog.entities.FogDevice;
 import org.fog.entities.MobileDevice;
+import org.fog.localization.Coordinate;
 
 public class BandwidthCpuResponseTimeCalculator implements IOffloadingResponseTimeCalculator {
 
@@ -25,6 +26,9 @@ public class BandwidthCpuResponseTimeCalculator implements IOffloadingResponseTi
 			Log.printLine("The MobileDevice's destination Ap is not set. The MobileDevice might be in a handoff... Returning double max value");
 			return Double.MAX_VALUE;
 		}
+
+		double distance = Coordinate.calcDistance(source.getPosition().getCoordinate(), target.getPosition().getCoordinate());
+		double distanceFactor = 1 - (distance / 10000); // 10.000m due to the regions being 10x10km
 
 		Log.formatLine("OffloadingTask calculating estimated response time between %s and %s; AP: %s", source.getName(), target.getName(), ap.getName());
 
@@ -64,8 +68,11 @@ public class BandwidthCpuResponseTimeCalculator implements IOffloadingResponseTi
 //		double targetMIPS =  getTarget().getHost().getAvailableMips() - getTarget().getHost().getTotalMips();
 		double targetMIPS = target.getHost().getPeList().get(0).getPeProvisioner().getAvailableMips();
 
-		double upTransmissionTime = task.getInputDataSize() / minUpBandwidth;
-		double downTransmissionTime = task.getOutputDataSize() / minDownBandwidth;
+		double upBandwidth = minUpBandwidth * distanceFactor;
+		double downBandwidth = minDownBandwidth * distanceFactor;
+
+		double upTransmissionTime = task.getInputDataSize() / upBandwidth;
+		double downTransmissionTime = task.getOutputDataSize() / downBandwidth;
 		double executionTime = task.getMi() / targetMIPS;
 
 		double responseTime = upTransmissionTime + executionTime + downTransmissionTime;
