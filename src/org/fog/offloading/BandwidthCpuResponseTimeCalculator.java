@@ -10,6 +10,9 @@ import org.fog.localization.Coordinate;
 
 public class BandwidthCpuResponseTimeCalculator implements IOffloadingResponseTimeCalculator {
 
+	// The max distance in a 10x10km region is 10000m * sqrt(2)
+	public static final double MAX_DISTANCE = 10000 * Math.sqrt(2);
+
 	@Override
 	public double calculateResponseTime(List<FogDevice> serverCloudlets, List<ApDevice> apDevices,
 			MobileDevice source, FogDevice target, OffloadingTask task) {
@@ -28,7 +31,7 @@ public class BandwidthCpuResponseTimeCalculator implements IOffloadingResponseTi
 		}
 
 		double distance = Coordinate.calcDistance(source.getPosition().getCoordinate(), target.getPosition().getCoordinate());
-		double distanceFactor = 1 - (distance / 10000); // 10.000m due to the regions being 10x10km
+		double distanceFactor = 1 - (distance / MAX_DISTANCE);
 
 		Log.formatLine("OffloadingTask calculating estimated response time between %s and %s; AP: %s", source.getName(), target.getName(), ap.getName());
 
