@@ -45,25 +45,9 @@ public class PrivacyJsonHelper {
         if (eventId != 6001)
             return;
 
-        // Find region of source mobile device
-        List<Coordinate> key = null;
-        for (List<Coordinate> keys : TestExample4.fogDevicesInField.keySet()) {
-            if (Coordinate.coordIsInField(keys, task.getSource().getPosition().getCoordinate()))
-            {
-                key = keys;
-                break;
-            }
-        }
-
-        if (key == null)
-            throw new IllegalStateException();
-
-        // Fetch all fog devices in region
-        List<FogDevice> devices = TestExample4.fogDevicesInField.get(key);
-
-        // Write down all stats of all fog nodes
+        // Write down available mips from all fog nodes
         Map<Integer, Double> stats = new HashMap<Integer, Double>();
-        for (FogDevice device : devices) {
+        for (FogDevice device : TestExample4.getAllFogDevices()) {
             stats.put(device.getId(), device.getHost().getPeList().get(0).getPeProvisioner().getAvailableMips());
         }
         this.deviceStats.put(task.getUid(), stats);
