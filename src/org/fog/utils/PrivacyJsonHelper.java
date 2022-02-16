@@ -40,8 +40,22 @@ public class PrivacyJsonHelper {
     public void addEvent(int fogNodeId, String eventName, int eventId, int eventType, int timestamp, double availableMips, OffloadingTask task) {
         double maxMips = TestExample4.getAllFogDevices().stream().mapToDouble(x -> x.getHost().getPeList().get(0).getPeProvisioner().getAvailableMips()).max().getAsDouble();
 
+        // Find region of source mobile device
+        List<Coordinate> key = TestExample4.fogDevicesInField
+                .keySet()
+                .stream()
+                .filter(x -> Coordinate.coordIsInField(x, task.getSource().getPosition().getCoordinate()))
+                .findFirst()
+                .get();
+
+        if (key == null)
+            throw new IllegalStateException();
+
+        // Fetch all fog devices in region
+        List<Integer> devices = TestExample4.fogDevicesInField.get(key).stream().map(x -> x.getMyId()).collect(Collectors.toList());
+
         int dataSize = (eventId == 6001) ? task.getInputDataSize() : task.getOutputDataSize();
-        Event e =  new Event(fogNodeId, eventName, eventType, eventId, timestamp, availableMips, task.getUid(), dataSize, task.getMi(), maxMips);
+        Event e =  new Event(fogNodeId, eventName, eventType, eventId, timestamp, availableMips, task.getUid(), dataSize, task.getMi(), maxMips, devices);
         events.add(e);
 
         if (eventId != 6001)
@@ -178,8 +192,9 @@ class Event {
     int dataSize;
     int mi;
     double maxMips;
+    List<Integer> consideredFogNodes;
 
-    public Event(int fog_device_id, String event_name, int event_type, int event_id, int timestamp, double availableMips, String taskId, int dataSize, int mi, double maxMips) {
+    public Event(int fog_device_id, String event_name, int event_type, int event_id, int timestamp, double availableMips, String taskId, int dataSize, int mi, double maxMips, List<Integer> consideredFogNodes) {
         this.fog_device_id = fog_device_id;
         this.event_name = event_name;
         this.event_type = event_type;
@@ -190,6 +205,7 @@ class Event {
         this.dataSize = dataSize;
         this.mi = mi;
         this.maxMips = maxMips;
+        this.consideredFogNodes = consideredFogNodes;
     }
 
     public int getFog_device_id() {
@@ -270,5 +286,13 @@ class Event {
 
     public void setMaxMips(double maxMips) {
         this.maxMips = maxMips;
+    }
+
+    public List<Integer> getConsideredFogNodes() {
+        return consideredFogNodes;
+    }
+
+    public void setConsideredFogNodes(List<Integer> consideredFogNodes) {
+        this.consideredFogNodes = consideredFogNodes;
     }
 }
