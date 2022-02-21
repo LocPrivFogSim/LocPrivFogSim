@@ -4,7 +4,6 @@ from helper_methods import *
 import pandas as pd
 import os
 from math import sqrt
-import numpy as np
 
 db_con = connect_to_db()
 
@@ -78,13 +77,6 @@ def calc_strategy_fastest(path_data, locations:list):
 
     counted_events = 0
  
-    
-    # remove all events that dont belong to a compromised fog_node
-    events = [event for event in events if event['fog_device_id'] in compromised_fog_nodes]
-
-    #clean data into np arrays
-    #location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, selected_fog_node_position
-
     for event in events:
         fog_device_id = event['fog_device_id']
         selected_fog_node_position = fog_device_positions[fog_device_id]
@@ -106,9 +98,6 @@ def calc_strategy_fastest(path_data, locations:list):
         if add_event['taskId'] != remove_event['taskId']:
             continue
         
-        
-        #print("######## new event ##############")
-
         timestamp = event['timestamp']
 
 
@@ -118,71 +107,61 @@ def calc_strategy_fastest(path_data, locations:list):
 
         counted_events += 1
 
-        #get relevant locations    
-        edges = [[edge_point['lat'], edge_point['lon']]  for edge_point in event['consideredField']]
-        edges = np.asarray(edges)
 
-        relevant_locations = [np.array([l[0], l[1]]) for l in locations if calc_dist_in_m(selected_fog_node_position, l) < 10000 * sqrt(2)] 
-        relevant_locations = [ l for l in relevant_locations if ray_tracing(l[0], l[1], edges)] #only get locations inside 10x10km square
-
-        
-        #print("selected_fn_position: ",selected_fog_node_position)
-        #print("edgepoints: ",edges)
-        #print("example relevant pos: ",relevant_locations[0])
-        #print("eventId: ", event['event_id'])
-        
-        considered_fog_devices = event['consideredFogNodes']
-        
-        for location in relevant_locations:
+        for location in locations:
+            if (calc_dist_in_m(selected_fog_node_position, location) > 10000 * sqrt(2)):
+                continue
            
-            chosen_device = get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices)
-            #debug_map.append(chosen_device)
+            chosen_device = get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, selected_fog_node_position)
+            #print(datetime.now()- time2)
+            #exit()
+            #print("loc: " , location, "     node_pos: ",selected_fog_node_position, "   chosen device: ", chosen_device , "    selected_device: ", fog_device_id )
             if chosen_device == None:
                 continue
             if chosen_device == fog_device_id:
                 possible_locations.append(location)   
 
-        #print("possible locations: ",possible_locations)
-        if(len(possible_locations) == 0):
-            return 0,0
+        print(possible_locations)
+        exit()
 
-            
+
+
         probability = 1/len(possible_locations)
 
         for poss_location in possible_locations:
-            distance = calc_dist_in_m(poss_location, actual_position)
-            #print(distance)
-            correctness = probability * distance
-            total_correctness += correctness
+            continue
 
-    if(counted_events == 0):
-        return 0,0     
-    
+
     avg_corr = total_correctness/counted_events
-
-    print ("avg_corr: ",avg_corr, "      total: ",total_correctness)
 
     return total_correctness, avg_corr
 
 
-def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices):
+def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, selected_fog_node_position):
     in_data_size = add_event['dataSize']
     out_data_size = remove_event['dataSize']
     mi = add_event['mi']
     sample_point = numpy.array([numpy.float64(location[0]), numpy.float64(location[1])])
-    base_mips = add_event['maxMips']
+    #base_mips = add_event['maxMips']
 
     task_id = add_event['taskId']
 
-    #base_mips = max(device_stats[task_id].values())
-    #min_mips = min(device_stats[task_id].values())
+    base_mips = max(device_stats[task_id].values())
+    min_mips = min(device_stats[task_id].values())
+    print(base_mips)
+    print(min_mips)
+    exit()
+
+    
+
+    
 
     device_stats_keys = device_stats[task_id].keys()
    
     current_min_rt = 1000000000000
     fastest_node = None
 
-    for i in considered_fog_devices: 
+    for i in range(len(fog_device_positions)): #iterate all fog nodes
         
         mips = base_mips
         position = fog_device_positions[i]
@@ -220,7 +199,6 @@ def main():
      #iterate input files
     for dirpath, dirs, files in os.walk(input_json_dir):
         for file in files:
-            time0 = datetime.now()
             print(dirpath, "     - file: ",file)
             input_file = os.path.join(dirpath,file)
             total_correctness,avg_corr= calc_strategy_fastest(retrieve_data_from_json(input_file),locations)
@@ -230,11 +208,8 @@ def main():
             iteration = file_split[3].split('.')[0]
 
             df = df.append({'strategy':strat, 'rate':rate, 'iteration':iteration, 'total_correctness':total_correctness,'avg_correctness':avg_corr}, ignore_index=True)
-            time1 = datetime.now()
 
-            print("\n one file took:  ",str(time1-time0), " \n\n")
-            
-    df.to_csv(result_file_path) 
+
     return
 
 
