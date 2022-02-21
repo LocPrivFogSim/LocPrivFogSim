@@ -26,7 +26,8 @@ def get_results(path_data,location_for_nodes):
 
 
     total_correctness = 0
-
+    
+    count_of_tracked_interactions = 0
  
     for event in events:
         
@@ -37,6 +38,8 @@ def get_results(path_data,location_for_nodes):
         
         if fog_device_id not in compromised_fog_nodes:  #probability = 0 
             continue
+        
+        count_of_tracked_interactions = count_of_tracked_interactions + 1 
 
         locations_in_polygon = location_for_nodes[fog_device_id][2]
 
@@ -57,9 +60,10 @@ def get_results(path_data,location_for_nodes):
         
         total_correctness = total_correctness + calc_correctness(location_probabilities, correct_pos)
 
-
-    avg_corr = total_correctness/len(events)
-
+    if count_of_tracked_interactions == 0:
+        return 0,0
+        
+    avg_corr = total_correctness/count_of_tracked_interactions
     #print("####### finished ########")
     #print("total correctness: ",total_correctness)
     #print("avg_correctness: ",avg_corr)
@@ -89,6 +93,8 @@ def calc_strategy_nearest():
             print(file)
             input_file = os.path.join(dirpath,file)
             total_correctness,avg_corr= get_results(retrieve_data_from_json(input_file),location_for_nodes)
+            if total_correctness == 0 or avg_corr == 0:
+                continue
             #print(total_correctness)
             #print(avg_corr)
             file_split = (str(file)).split('_') # e.g. ['output', '3', '100', '1.json']
