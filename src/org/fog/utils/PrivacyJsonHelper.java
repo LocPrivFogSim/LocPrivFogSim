@@ -38,33 +38,38 @@ public class PrivacyJsonHelper {
     }
 
     public void addEvent(int fogNodeId, String eventName, int eventId, int eventType, int timestamp, double availableMips, OffloadingTask task) {
-        int dataSize = (eventId == 6001) ? task.getInputDataSize() : task.getOutputDataSize();
-        Event e =  new Event(fogNodeId, eventName, eventType, eventId, timestamp, availableMips, task.getUid(), dataSize, task.getMi());
-        events.add(e);
-
-        if (eventId != 6001)
-            return;
+        double maxMips = TestExample4.getAllFogDevices().stream().mapToDouble(x -> x.getHost().getPeList().get(0).getPeProvisioner().getAvailableMips()).max().getAsDouble();
 
         // Find region of source mobile device
-        List<Coordinate> key = null;
-        for (List<Coordinate> keys : TestExample4.fogDevicesInField.keySet()) {
-            if (Coordinate.coordIsInField(keys, task.getSource().getPosition().getCoordinate()))
-            {
-                key = keys;
-                break;
-            }
-        }
+        List<Coordinate> key = TestExample4.fogDevicesInField
+                .keySet()
+                .stream()
+                .filter(x -> Coordinate.coordIsInField(x, task.getSource().getPosition().getCoordinate()))
+                .findFirst()
+                .get();
 
         if (key == null)
             throw new IllegalStateException();
 
         // Fetch all fog devices in region
-        List<FogDevice> devices = TestExample4.fogDevicesInField.get(key);
+        List<Integer> devices = TestExample4.fogDevicesInField.get(key).stream().map(x -> x.getMyId()).collect(Collectors.toList());
 
-        // Write down all stats of all fog nodes
+        int dataSize = (eventId == 6001) ? task.getInputDataSize() : task.getOutputDataSize();
+        Event e =  new Event(fogNodeId, eventName, eventType, eventId, timestamp, availableMips, task.getUid(), dataSize, task.getMi(), maxMips, devices);
+        events.add(e);
+
+        if (eventId != 6001)
+            return;
+
+        // Write down available mips from all fog nodes
         Map<Integer, Double> stats = new HashMap<Integer, Double>();
-        for (FogDevice device : devices) {
-            stats.put(device.getId(), device.getHost().getPeList().get(0).getPeProvisioner().getAvailableMips());
+        for (FogDevice device : TestExample4.getAllFogDevices()) {
+            double deviceMips = device.getHost().getPeList().get(0).getPeProvisioner().getAvailableMips();
+
+            if (deviceMips == maxMips)
+                continue;
+
+            stats.put(device.getMyId(), deviceMips);
         }
         this.deviceStats.put(task.getUid(), stats);
     }
@@ -186,8 +191,10 @@ class Event {
     String taskId;
     int dataSize;
     int mi;
+    double maxMips;
+    List<Integer> consideredFogNodes;
 
-    public Event(int fog_device_id, String event_name, int event_type, int event_id, int timestamp, double availableMips, String taskId, int dataSize, int mi) {
+    public Event(int fog_device_id, String event_name, int event_type, int event_id, int timestamp, double availableMips, String taskId, int dataSize, int mi, double maxMips, List<Integer> consideredFogNodes) {
         this.fog_device_id = fog_device_id;
         this.event_name = event_name;
         this.event_type = event_type;
@@ -197,6 +204,8 @@ class Event {
         this.taskId = taskId;
         this.dataSize = dataSize;
         this.mi = mi;
+        this.maxMips = maxMips;
+        this.consideredFogNodes = consideredFogNodes;
     }
 
     public int getFog_device_id() {
@@ -269,5 +278,21 @@ class Event {
 
     public void setMi(int mi) {
         this.mi = mi;
+    }
+
+    public double getMaxMips() {
+        return maxMips;
+    }
+
+    public void setMaxMips(double maxMips) {
+        this.maxMips = maxMips;
+    }
+
+    public List<Integer> getConsideredFogNodes() {
+        return consideredFogNodes;
+    }
+
+    public void setConsideredFogNodes(List<Integer> consideredFogNodes) {
+        this.consideredFogNodes = consideredFogNodes;
     }
 }
