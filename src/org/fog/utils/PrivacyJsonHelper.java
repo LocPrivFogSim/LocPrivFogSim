@@ -48,6 +48,8 @@ public class PrivacyJsonHelper {
                 .findFirst()
                 .get();
 
+
+
         if (key == null)
             throw new IllegalStateException();
 
@@ -55,7 +57,7 @@ public class PrivacyJsonHelper {
         List<Integer> devices = TestExample4.fogDevicesInField.get(key).stream().map(x -> x.getMyId()).collect(Collectors.toList());
 
         int dataSize = (eventId == 6001) ? task.getInputDataSize() : task.getOutputDataSize();
-        Event e =  new Event(fogNodeId, eventName, eventType, eventId, timestamp, availableMips, task.getUid(), dataSize, task.getMi(), maxMips, devices);
+        Event e =  new Event(fogNodeId, eventName, eventType, eventId, timestamp, availableMips, task.getUid(), dataSize, task.getMi(), maxMips, devices, key);
         events.add(e);
 
         if (eventId != 6001)
@@ -193,8 +195,9 @@ class Event {
     int mi;
     double maxMips;
     List<Integer> consideredFogNodes;
+    List<Coordinate> consideredField;
 
-    public Event(int fog_device_id, String event_name, int event_type, int event_id, int timestamp, double availableMips, String taskId, int dataSize, int mi, double maxMips, List<Integer> consideredFogNodes) {
+    public Event(int fog_device_id, String event_name, int event_type, int event_id, int timestamp, double availableMips, String taskId, int dataSize, int mi, double maxMips, List<Integer> consideredFogNodes, List<Coordinate> consideredField) {
         this.fog_device_id = fog_device_id;
         this.event_name = event_name;
         this.event_type = event_type;
@@ -206,6 +209,7 @@ class Event {
         this.mi = mi;
         this.maxMips = maxMips;
         this.consideredFogNodes = consideredFogNodes;
+        this.consideredField = consideredField;
     }
 
     public int getFog_device_id() {
@@ -294,5 +298,13 @@ class Event {
 
     public void setConsideredFogNodes(List<Integer> consideredFogNodes) {
         this.consideredFogNodes = consideredFogNodes;
+    }
+
+    public List<Coordinate> getConsideredField() {
+        return consideredField;
+    }
+
+    public void setConsideredField(List<Coordinate> consideredField) {
+        this.consideredField = consideredField;
     }
 }
