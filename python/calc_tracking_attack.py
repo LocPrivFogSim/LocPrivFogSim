@@ -55,15 +55,6 @@ def calc_strategy_fastest(path_data, locations:list):
 
     fog_device_positions = select_all_node_positions(db_con)
 
-    #print(fog_device_positions[1792])
-    #print(fog_device_positions[23552])
-    #print(fog_device_positions[25856])
-    #print(fog_device_positions[25857])
-    #print(fog_device_positions[16642])
-    #print(fog_device_positions[25858])
-
-    #exit()
-
     total_correctness = 0
     avg_corr = 0
 
@@ -71,8 +62,6 @@ def calc_strategy_fastest(path_data, locations:list):
     current_min = 1000000000 #some high nr
 
     
-
-
     add_event = None
     remove_event = None
 
@@ -112,7 +101,7 @@ def calc_strategy_fastest(path_data, locations:list):
         timestamp = event['timestamp']
 
 
-        possible_locations = []
+        
         
         actual_position = get_position_for_timestamp(path_coords, timestamp)
 
@@ -133,24 +122,23 @@ def calc_strategy_fastest(path_data, locations:list):
         
         considered_fog_devices = event['consideredFogNodes']
         
+        prob_location= 1/len(relevant_locations)        #Pr(ℓ) = 1/|L|
+        prob_fog_node = 1/len(considered_fog_devices)   #Pr(f∗) = 1/|F|
+
+        threshold_distr = {}  #key=threshold, val=prob
+
         for location in relevant_locations:
            
-            chosen_device = get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices)
-            #debug_map.append(chosen_device)
-            if chosen_device == None:
-                continue
-            if chosen_device == fog_device_id:
-                possible_locations.append(location)   
+            for threshold in threshold_distr.keys():
+                cond_probability_node = cond_prob_select_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices, threshold)
+                prob = threshold_distr[threshold]
 
-        #print("possible locations: ",possible_locations)
-        if(len(possible_locations) == 0):
-            continue
+                #Todo Integral (Formel 9)
 
-            
-        probability = 1/len(possible_locations)
 
-        for poss_location in possible_locations:
-            distance = calc_dist_in_m(poss_location, actual_position)
+
+        for location in possible_locations:
+            distance = calc_dist_in_m(location, actual_position)
             #print(distance)
             correctness = probability * distance
             total_correctness += correctness
@@ -165,7 +153,9 @@ def calc_strategy_fastest(path_data, locations:list):
     return total_correctness, avg_corr
 
 
-def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices):
+#Pr(f∗ |ℓ,x)  = 1/|ˆF(ℓ,x)| if f∗ ∈ ˆF(ℓ,x   || 0 otherwise 
+#conditional prob that node f* is selected from location l for threshold x
+def cond_prob_select_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices,selected_fog_node_id, threshold):
     in_data_size = add_event['dataSize']
     out_data_size = remove_event['dataSize']
     mi = add_event['mi']
@@ -178,9 +168,10 @@ def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_info
     #min_mips = min(device_stats[task_id].values())
 
     device_stats_keys = device_stats[task_id].keys()
-   
-    current_min_rt = 1000000000000
-    fastest_node = None
+
+
+    nodes_with_rt_below_threshold = []
+
 
     for i in considered_fog_devices: 
         
@@ -194,20 +185,25 @@ def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_info
         if i in device_stats_keys:
             mips = device_stats[i]
          
-        response_time = calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point)    
+        response_time = calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point)
 
-        if response_time < current_min_rt:
-            current_min_rt = response_time
-            fastest_node = i
+        if response_time <= threshold:
+            nodes_with_rt_below_threshold.append(i)    
 
-    return fastest_node
+    if len(nodes_with_rt_below_threshold) == 0:
+        return 0
+
+    if selected_fog_node_id not in nodes_with_rt_below_threshold:
+        return 0
+    
+    return 1/len(nodes_with_rt_below_threshold)  #1/|ˆF(ℓ,x)
 
 
 
 def main():
-    result_file_path = "results/fastest.csv"
+    result_file_path = "results/not_slow.csv"
 
-    input_json_dir = "input/Strategie_2"
+    input_json_dir = "input/Strategie_1"
 
     locations= retrieve_list_from_json("json/locations_points.json")#[nodeid, node_position,locations]
 
