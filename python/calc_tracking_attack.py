@@ -1,4 +1,5 @@
 from datetime import datetime
+from tkinter import N
 from turtle import distance, position
 from helper_methods import *
 import pandas as pd
@@ -32,6 +33,40 @@ def calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, 
     calculation_time = mi / mips
     down_transfere_time = out_data_size / (down_bandwidth * distance_factor)
     return up_transfere_time + calculation_time + down_transfere_time
+
+
+#Pfade kommen aus dem Datensatz?  - ja 
+#und findet bei "possible" path schon eine vorauswahl statt? -> Falls ja worüber?
+#pfad -> koordinaten Reihenfolge
+#Segmente haben eine Gewisse länge in Meter -> möglichst kurz damit davon ausgegangen werden kann, dass jedes Segment eine Geschwindigkeit x hat
+#Wie sollen die Segmente gebildet werden? -> Idee: Sliding Window über Pfad und jeweils Segmente bei denen die Dauer passt ( Länger als getrackte Sequenz)
+#Zeile 6: erst hier möglich, da erst geschwindigkeiten bekannt
+
+
+#tracked fog node = [timestamp, node_id, amount_of_data_transferred]
+def calc_tracking_attack(tracked_fog_nodes:list):
+
+    tracked_duration = 0 #TODO (last tracked_fog_nodes[timestamp] - first )
+
+
+    possible_paths = [] #TODD
+
+    for path in possible_paths:
+        alpha = 0
+        path_segments = []  #divide path into path into segments P1... Pc
+        
+        path_duration = 0 #TODO
+
+        number_of_journeys = 0 #TODO
+
+        if path_duration > tracked_duration:
+            for j in range(number_of_journeys):
+                beta = 1
+
+    return 0 #TODO return probability distribution over the set of possible paths
+
+
+
 
 def calc_strategy_fastest(path_data, locations:list):
 
@@ -201,9 +236,9 @@ def cond_prob_select_node(location, add_event, remove_event, fog_device_infos, d
 
 
 def main():
-    result_file_path = "results/not_slow.csv"
+    result_file_path = "results/tracking_attack.csv"
 
-    input_json_dir = "input/Strategie_1"
+    input_json_dir = "input/Strategie_1"    #Todo
 
     locations= retrieve_list_from_json("json/locations_points.json")#[nodeid, node_position,locations]
 
@@ -219,6 +254,7 @@ def main():
             time0 = datetime.now()
             print(dirpath, "     - file: ",file)
             input_file = os.path.join(dirpath,file)
+
             total_correctness,avg_corr= calc_strategy_fastest(retrieve_data_from_json(input_file),locations)
             file_split = (str(file)).split('_') # e.g. ['output', '3', '100', '1.json']
             strat = file_split[1]
