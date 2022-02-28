@@ -1,11 +1,15 @@
+from array import array
 from datetime import datetime
-from tkinter import N
+from msilib import type_key
+from random import randrange
+from tkinter import E, N
 from turtle import distance, position
 from helper_methods import *
 import pandas as pd
 import os
-from math import sqrt
+#from math import sqrt
 import numpy as np
+import math
 
 db_con = connect_to_db()
 
@@ -44,28 +48,171 @@ def calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, 
 
 
 #tracked fog node = [timestamp, node_id, amount_of_data_transferred]
-def calc_tracking_attack(tracked_fog_nodes:list):
+def calc_tracking_attack(path_data, locations):
 
-    tracked_duration = 0 #TODO (last tracked_fog_nodes[timestamp] - first )
+    events = path_data[2]
+    events = [event for event in events if event['event_name'] == "add"]
+  
+    tracked_duration = events[-1]['timestamp'] #TODO (last tracked_fog_nodes[timestamp] - first )
+  
+    number_of_observations = len(events) - 1 #k
+
+    possible_paths = [] #TODD heuristic selection probably needed
+
+    example_path = select_path_from_db(db_con, 3)
 
 
-    possible_paths = [] #TODD
+    example_path = path_as_dict(example_path)
+
+
+    possible_paths.append(example_path)
+    #possible_paths.append(example_path2)
+
 
     for path in possible_paths:
         alpha = 0
-        path_segments = []  #divide path into path into segments P1... Pc
+
+        path_coords = np.array([[float(coord[0]), float(coord[1])]  for coord in  path['path_coords']])
+        len_of_segments = 5 # in metres
+        nr_of_segments = math.ceil(path['distance']/len_of_segments)
+        segments, coords,comparison = divide_path_into_segments(path_coords, len_of_segments, nr_of_segments)  #divide path into path into segments P1... Pc
         
-        path_duration = 0 #TODO
+        #for i in range(100):
+        #    print(segments[i])
 
-        number_of_journeys = 0 #TODO
+        #print("#######START1######")
 
-        if path_duration > tracked_duration:
-            for j in range(number_of_journeys):
+        f =  open("original_path.gpx", 'w+')
+        f.write(createGPX(coords))
+        f.close
+        #print(createGPX(coords))
+        #print("#######Start2######")
+        f =  open("segmented_path.gpx", 'w+')
+        f.write(createGPX(comparison))
+        f.close
+
+        nr_iterations = 100 #TODO probably increase
+
+        for j in range(nr_iterations):
+            
+
+            segments = sample_velocities(segments)
+            time_for_traversing = sum([ segment[6] for segment in segments])
+            
+            print("tracked_time: ", tracked_duration)
+            print("time total: ", time_for_traversing)
+
+            if time_for_traversing > tracked_duration:
                 beta = 1
+
+               t_0 = select_random_t0()
+                    
+
+                for segment in reversed(segments):
+                    while 
+
+
 
     return 0 #TODO return probability distribution over the set of possible paths
 
 
+#returns list of [segment_start_lat, segment_start_lon, segment_end_lat , segment_end_lon, distance, velocity,traversing_time], distance = len_of_segments for all but the last element
+@njit
+def divide_path_into_segments(coords, len_of_segments:int, nr_of_segments):
+
+    #print(coords)
+    #print("---------")
+    segment_arr = np.zeros((nr_of_segments,7))
+    
+    segment_i = 0
+
+    segment_start = coords[0]
+
+    left_till_segment_length = len_of_segments
+
+
+    for i in range(1, len(coords)): 
+        x = coords[i-1]
+        y = coords[i]
+
+        
+        
+        distance = calc_dist_njit(x,y)
+
+        while(left_till_segment_length < distance): #segment_end is between x and y 
+            
+            vec = y - x
+            segment_end = x + (left_till_segment_length/distance)*vec
+
+            segment_arr[segment_i][0] = segment_start[0]   # start_lat
+            segment_arr[segment_i][1] = segment_start[1]   #  start_lon
+            segment_arr[segment_i][2] = segment_end[0]          #  end_lat
+            segment_arr[segment_i][3] = segment_end[1]          #  end_lon
+            segment_arr[segment_i][4] = len_of_segments         # dist
+
+            segment_i += 1
+
+            x = segment_end
+            segment_start = segment_end
+            
+            distance -= left_till_segment_length
+            left_till_segment_length = len_of_segments
+
+
+        left_till_segment_length -= distance
+
+
+
+    # add last section (with distance < len_of_segments)
+    final_coord = coords[-1]
+    segment_arr[segment_i][0] = segment_start[0]   # start_lat
+    segment_arr[segment_i][1] = segment_start[1]   #  start_lon
+    segment_arr[segment_i][2] = final_coord[0]          #  end_lat
+    segment_arr[segment_i][3] = final_coord[1]          #  end_lon
+    
+    distance = calc_dist_njit(segment_start, final_coord) # distance
+    segment_arr[segment_i][4] = distance  
+
+
+    comparison = []
+    for x in segment_arr:
+        #a = [x[0], x[1]]
+        b = [x[2], x[3]]
+
+        #if a not in comparison:
+        #    comparison.append(a)
+        if b not in comparison:
+            comparison.append(b)
+
+    
+
+    return segment_arr, coords, comparison
+
+@njit
+def sample_velocities(segments):
+    for segment in segments:
+        velocity = (randrange(4,7)*1000)/(60*60)
+        segment[5] = velocity        # velocity TODO
+        segment[6] = segment[4]/velocity   # traversing_time
+    return segments
+
+def createGPX(coords: list):
+    # header = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?> \n\n"
+    follow = "<gpx>\n<trk>\n<trkseg>\n"
+    end = "</trkseg>\n</trk>\n</gpx>"
+
+    coordstmp = ""
+    for coord1 in coords:
+        lat1 = str(coord1[0])
+        lon1 = str(coord1[1])
+
+        
+
+        coordstmp = coordstmp + "<trkpt lat=\"" + lat1 + "\" lon=\"" + lon1 + "\"> </trkpt>\n"
+
+    content = follow + coordstmp + end
+    # print(content)
+    return content
 
 
 def calc_strategy_fastest(path_data, locations:list):
@@ -170,7 +317,7 @@ def calc_strategy_fastest(path_data, locations:list):
 
                 #Todo Integral (Formel 9)
 
-
+        possible_locations = [] # TODO
 
         for location in possible_locations:
             distance = calc_dist_in_m(location, actual_position)
@@ -255,7 +402,10 @@ def main():
             print(dirpath, "     - file: ",file)
             input_file = os.path.join(dirpath,file)
 
-            total_correctness,avg_corr= calc_strategy_fastest(retrieve_data_from_json(input_file),locations)
+    
+            total_correctness,avg_corr = calc_tracking_attack((retrieve_data_from_json(input_file)), locations)
+
+            #total_correctness,avg_corr= calc_strategy_fastest(retrieve_data_from_json(input_file),locations)
             file_split = (str(file)).split('_') # e.g. ['output', '3', '100', '1.json']
             strat = file_split[1]
             rate = file_split[2]

@@ -1,11 +1,15 @@
+from cmath import pi
 from re import X
 import sqlite3
 import json
 import numpy
 import numba.np.extensions
-from math import sin, cos, sqrt, atan2, radians
+from math import degrees, sin, asin, atan,  cos, sqrt, atan2, radians
 from decimal import Decimal
 from numba import njit
+from geopy.distance import geodesic
+from geopy import Point
+
 
 
 db_path = "../geoLifePaths.db"
@@ -38,11 +42,22 @@ def select_path_from_db(conn, path_id):
         raise ValueError( str(len(rows)) + ' paths (!=1) selected! in metricsCalculator.select_path_from_db()') 
 
     path = rows[0]
+
     return path
+
+
+def get_path_distance(conn, path_id):
+    path = select_path_from_db(conn, path_id)
+    print(path)
+    exit()
+
 
 def get_path_coordinates_from_db(conn, path_id):
     full_path = select_path_from_db(conn, path_id)
-    coords_string = full_path[1]
+    return format_path_coordinates(full_path[1])
+
+def format_path_coordinates(full_path):
+    coords_string = full_path
     coords_list = []
     split_string = coords_string.split("||")
     x = []
@@ -52,6 +67,16 @@ def get_path_coordinates_from_db(conn, path_id):
             x.append([split_inner[0], split_inner[1], split_inner[2]])
     return x
 
+def path_as_dict(path_before):
+    path = {
+        'id': path_before[0],
+        'path_coords': format_path_coordinates(path_before[1]),
+        'distance': path_before[3],
+        'fog_nodes_trace' : path_before[-1]
+    }
+    
+
+    return path
 
 def get_position_for_timestamp(path, timestamp):
     for coord in path:
@@ -136,6 +161,53 @@ def calc_dist_njit(x, y):
 def calc_response_time():
     return 100
 
+@njit
+def get_bearing(lat1,lon1,lat2,lon2):
+    lat1 = numpy.deg2rad(lat1)
+    lon1 = numpy.deg2rad(lon1)
+    lat2 = numpy.deg2rad(lat2)
+    lon2 = numpy.deg2rad(lon2)
+    dLon = lon2 - lon1
+    y = sin(dLon) * cos(lat2)
+    x = cos(lat1)*sin(lat2) - sin(lat1)*cos(lat2)*cos(dLon)
+    brng = numpy.rad2deg(atan2(y, x))
+    if brng < 0: brng+= 360
+    
+    print("brn: ",brng)
+
+    return brng
+
+
+def calc_destination_between_points(start, end, distance):
+    print("Start ",start[0])
+    bearing = get_bearing(start[0], start[1], end[0], end[1])
+    print("geod: ",geodesic(meters = distance*1000).destination(Point(start[0], start[1]), bearing).latitude,geodesic(meters = distance).destination(Point(start[0], start[1]), bearing).longitude )
+    print("sec: ", calc_destination_for_bearing(start[0], start[1], bearing, distance))
+    return calc_destination_for_bearing(start[0], start[1], bearing, distance)
+
+
+@njit
+def calc_destination_for_bearing(lat1, lon1, bearing, distance):
+    radius = 6371
+    lat1 = radians(lat1)
+    lon1 = radians(lon1)
+
+    d_div_r = float(distance) / radius
+
+    lat2 = asin(
+        sin(lat1) * cos(d_div_r) +
+        cos(lat1) * sin(d_div_r) * cos(radians(bearing))
+    )
+
+    lon2 = lon1 + atan2(
+        sin(bearing) * sin(d_div_r) * cos(lat1),
+        cos(d_div_r) - sin(lat1) * sin(lat2)
+    )       
+
+    
+
+    return[degrees(lat2), degrees(lon2)]
+
 #checks if point(x,y) is inside of polygon poly
 @njit
 def ray_tracing(x,y,poly):
@@ -172,6 +244,53 @@ def calc_correctness(locations_propabilities:list, correct_location):
     
 
     return sum
+
+
+def dtw(path_X, path_Y):
+    x = []
+    y = []
+    for i in range(len(path_X)):
+        typedA = numpy.float64(path_X[i][0])
+        typedB = numpy.float64(path_X[i][1])
+        x.append([typedA, typedB])
+
+    for i in range(len(path_Y)):
+        typedA = numpy.float64(path_Y[i][0])
+        typedB = numpy.float64(path_Y[i][1])
+        y.append([typedA, typedB])
+
+    npArrA = numpy.array(x)
+    npArrB = numpy.array(y)
+
+    return dtw_njit(npArrA, npArrB)
+
+
+@njit()
+def dtw_njit(path_X, path_Y):
+    X = len(path_X)
+    Y = len(path_Y)
+
+    # store distances for all pairs of both paths in matrix
+    distance_mat = numpy.zeros((X, Y))
+
+    for i in range(X):
+        for j in range(Y):
+            distance_mat[i, j] = calc_dist_njit(path_X[i], path_Y[j])
+
+    # init cost matrix
+    dist_mat = numpy.zeros((X + 1, Y + 1))
+    for i in range(1, X + 1):
+        dist_mat[i, 0] = numpy.inf
+    for i in range(1, Y + 1):
+        dist_mat[0, i] = numpy.inf
+
+    # fill cost matrix
+    for i in range(1, X + 1):
+        for j in range(1, Y + 1):
+            loc_dist = distance_mat[i - 1, j - 1]
+            dist_mat[i, j] = loc_dist + min([dist_mat[i - 1, j - 1], dist_mat[i, j - 1], dist_mat[i - 1, j]])
+
+    return dist_mat[X, Y]
 
 
 
