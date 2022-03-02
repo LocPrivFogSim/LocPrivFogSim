@@ -11,6 +11,15 @@ import os
 import numpy as np
 import math
 
+from numba import njit
+from numba.core import types
+from numba.typed import Dict
+
+#Arraytype for numba
+float_array = types.float64[:]
+
+
+
 db_con = connect_to_db()
 
 # The max distance in a 10x10km region is 10000m * sqrt(2)
@@ -48,14 +57,23 @@ def calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, 
 
 
 #tracked fog node = [timestamp, node_id, amount_of_data_transferred]
-def calc_tracking_attack(path_data, locations):
+def calc_tracking_attack(path_data, locations, strategy_id):
+    #path_data [path_id, compromised_fog_nodes, events, fog_device_infos, device_stats]
 
+    actual_path_id = path_data[0]
+    compromised_fog_nodes = path_data[1]
     events = path_data[2]
-    events = [event for event in events if event['event_name'] == "add"]
-  
+    
+    # remove all events that dont belong to a compromised fog_node
+    events = [event for event in events if event['fog_device_id'] in compromised_fog_nodes]
+    
     tracked_duration = events[-1]['timestamp'] #TODO (last tracked_fog_nodes[timestamp] - first )
   
-    number_of_observations = len(events) - 1 #k
+    number_of_observations = len(events)  #k
+
+    print(number_of_observations)
+
+    exit()
 
     possible_paths = [] #TODD heuristic selection probably needed
 
@@ -99,17 +117,48 @@ def calc_tracking_attack(path_data, locations):
             segments = sample_velocities(segments)
             time_for_traversing = sum([ segment[6] for segment in segments])
             
-            print("tracked_time: ", tracked_duration)
-            print("time total: ", time_for_traversing)
+            print("observered traversing time: ", tracked_duration)
+            print("time total for path: ", time_for_traversing)
 
             if time_for_traversing > tracked_duration:
                 beta = 1
+                
+                max_t0 = int(time_for_traversing - tracked_duration)
+                rand_t0 = randrange(0,max_t0)
 
-               t_0 = select_random_t0()
+                segments_dict = get_segments_dict(segments, rand_t0, tracked_duration) 
+                
+                timestamps = [event['timestamp'] for event in events]
+                timestamps = np.array(list(dict.fromkeys(timestamps)))  #remove duplicates
+
+                locations_on_path = get_locations_at_ts(segments_dict, timestamps)                            
+
+                for i in range(number_of_observations/2):
+                    # - strat = 1: BelowThresholdRandomDevice
+                    # - strat = 2: BelowThresholdLowestResponseTime
+                    # - strat = 3: ClosestFogDevice
+
                     
 
-                for segment in reversed(segments):
-                    while 
+                    e = events[i*2]
+
+
+                    selected_fog_node = e['fog_device_id']
+
+                    timestamp = events[i]["timestamp"]
+                    guessed_location = locations_on_path[timestamp]
+                    
+                    prob_for_location = prob_of_guessed_loc(guessed_location, e, locations,strategy_id)
+
+
+                    #get timestamp
+                    #find point in segments for that timestamp
+
+
+
+
+
+         
 
 
 
@@ -188,6 +237,7 @@ def divide_path_into_segments(coords, len_of_segments:int, nr_of_segments):
 
     return segment_arr, coords, comparison
 
+
 @njit
 def sample_velocities(segments):
     for segment in segments:
@@ -196,6 +246,105 @@ def sample_velocities(segments):
         segment[6] = segment[4]/velocity   # traversing_time
     return segments
 
+@njit
+def get_segments_dict(segments, t_0, duration):
+
+    segments_map = Dict.empty(
+        key_type=types.float64,
+        value_type=float_array
+    )
+    sum_times = 0
+    first_elem = 0
+    for i in  range(len(segments)):
+        first_elem = i
+        sum_times += segments[i][6]
+        if(sum_times < t_0):
+            continue
+        sum_times = 0
+        break
+    
+    for j in range(first_elem,len(segments)):
+        segments_map[sum_times] = segments[j]
+        
+        if (sum_times > duration):
+            break
+        sum_times += segments[j][6]
+
+    #print(segments_map)
+    #print(next(iter(segments_map)))
+    return segments_map
+
+@njit
+def get_locations_at_ts(segments_dict, timestamps):
+
+    locations_dict = Dict.empty(
+        key_type=types.int64,
+        value_type=float_array
+    )
+
+    keys = list(segments_dict.keys())     
+
+    i = 0
+
+    for j in range(len(timestamps)-1):
+        while not keys[i+1] > timestamps[j]: #timestamp relates to point on current segment
+            i+=1
+            continue
+
+        timestamp = timestamps[j]
+        segment = segments_dict[keys[i]]
+
+        segment_start_lat = segment[0]
+        segment_start_lon = segment[1]
+        segment_end_lat = segment[2]
+        segment_end_lon = segment[3]
+        traversing_time = segment[6]
+    
+        start_coord = np.array([segment_start_lat, segment_start_lon])
+        end_coord = np.array([segment_end_lat, segment_end_lon])
+
+        seg_vector = end_coord - start_coord
+        x = (timestamp-keys[i]) / traversing_time
+           
+        dest_point = start_coord + seg_vector * x
+            
+        locations_dict[timestamp] = dest_point
+
+    return locations_dict
+
+
+def prob_of_guessed_loc(guessed_location, current_event, locations, strat):
+    x = 0
+
+    # - strat = 1: BelowThresholdRandomDevice
+    # - strat = 2: BelowThresholdLowestResponseTime
+    # - strat = 3: ClosestFogDevice
+
+    if strat == 1:
+        x = prob_not_slow(guessed_location, current_event, locations)
+    if strat == 2:
+        x = prob_fastest(guessed_location, current_event, locations)
+
+    if strat == 3:
+        x = prob_clostest(guessed_location, current_event, locations)
+
+
+    return x
+
+def prob_not_slow(guessed_location, current_event, locations):
+    return 0
+
+def prob_fastest(guessed_location, current_event, locations):
+    return 0
+
+
+def prob_clostest(guessed_location, current_event, locations):
+    return 0
+
+
+
+
+#for Debugging
 def createGPX(coords: list):
     # header = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?> \n\n"
     follow = "<gpx>\n<trk>\n<trkseg>\n"
@@ -215,7 +364,7 @@ def createGPX(coords: list):
     return content
 
 
-def calc_strategy_fastest(path_data, locations:list):
+def calc_strategy_not_slow(path_data, locations:list):
 
     #path_data [path_id, compromised_fog_nodes, events, fog_device_infos, device_stats]
     #fog_device_infos [fog_device_id, downlink_bandwidth, uplink_bandwidth, uplink_latency]
@@ -239,11 +388,7 @@ def calc_strategy_fastest(path_data, locations:list):
 
     total_correctness = 0
     avg_corr = 0
-
-    #for each location check which fog node is the fastest to respond
-    current_min = 1000000000 #some high nr
-
-    
+   
     add_event = None
     remove_event = None
 
@@ -282,9 +427,6 @@ def calc_strategy_fastest(path_data, locations:list):
 
         timestamp = event['timestamp']
 
-
-        
-        
         actual_position = get_position_for_timestamp(path_coords, timestamp)
 
         counted_events += 1
@@ -403,13 +545,15 @@ def main():
             input_file = os.path.join(dirpath,file)
 
     
-            total_correctness,avg_corr = calc_tracking_attack((retrieve_data_from_json(input_file)), locations)
 
             #total_correctness,avg_corr= calc_strategy_fastest(retrieve_data_from_json(input_file),locations)
             file_split = (str(file)).split('_') # e.g. ['output', '3', '100', '1.json']
             strat = file_split[1]
             rate = file_split[2]
             iteration = file_split[3].split('.')[0]
+
+            total_correctness,avg_corr = calc_tracking_attack((retrieve_data_from_json(input_file)), locations, strat)
+
 
             df = df.append({'strategy':strat, 'rate':rate, 'iteration':iteration, 'total_correctness':total_correctness,'avg_correctness':avg_corr}, ignore_index=True)
             time1 = datetime.now()
