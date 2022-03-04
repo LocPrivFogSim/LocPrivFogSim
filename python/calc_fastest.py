@@ -1,10 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from turtle import distance, position
+from urllib import response
 from helper_methods import *
 import pandas as pd
 import os
 from math import sqrt
 import numpy as np
+
 
 db_con = connect_to_db()
 
@@ -88,10 +90,6 @@ def calc_strategy_fastest(path_data, locations:list):
     for event in events:
         fog_device_id = event['fog_device_id']
         selected_fog_node_position = fog_device_positions[fog_device_id]
-
-
-        if fog_device_id not in compromised_fog_nodes:
-            continue
         
         event_name = event['event_name']
         if (event_name == "add"):
@@ -166,6 +164,7 @@ def calc_strategy_fastest(path_data, locations:list):
 
 
 def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices):
+ 
     in_data_size = add_event['dataSize']
     out_data_size = remove_event['dataSize']
     mi = add_event['mi']
@@ -174,27 +173,28 @@ def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_info
 
     task_id = add_event['taskId']
 
-    #base_mips = max(device_stats[task_id].values())
-    #min_mips = min(device_stats[task_id].values())
+    base_mips = max(device_stats[task_id].values())
+    min_mips = min(device_stats[task_id].values())
 
     device_stats_keys = device_stats[task_id].keys()
-   
-    current_min_rt = 1000000000000
+
+    current_min_rt = 100000000000
     fastest_node = None
 
     for i in considered_fog_devices: 
-        
+      
         mips = base_mips
         position = fog_device_positions[i]
         #position = numpy.array([numpy.float64(position[0]), numpy.float64(position[1])])
-        device = fog_device_infos["fog_device_id" == i]     
+        device = fog_device_infos["fog_device_id" == i]  
+
         up_bandwidth = device['uplink_bandwidth']
         down_bandwidth = device['downlink_bandwidth']
 
         if i in device_stats_keys:
             mips = device_stats[i]
-         
-        response_time = calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point)    
+
+        response_time = calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point)
 
         if response_time < current_min_rt:
             current_min_rt = response_time

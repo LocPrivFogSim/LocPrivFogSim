@@ -33,7 +33,7 @@ def calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, 
     down_transfere_time = out_data_size / (down_bandwidth * distance_factor)
     return up_transfere_time + calculation_time + down_transfere_time
 
-def calc_strategy_fastest(path_data, locations:list):
+def calc_not_slow(path_data, locations:list):
 
     #path_data [path_id, compromised_fog_nodes, events, fog_device_infos, device_stats]
     #fog_device_infos [fog_device_id, downlink_bandwidth, uplink_bandwidth, uplink_latency]

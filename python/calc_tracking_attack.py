@@ -1,19 +1,22 @@
 from array import array
-from datetime import datetime
-from msilib import type_key
+from datetime import datetime, timedelta
+import pstats
 from random import randrange
-from tkinter import E, N
-from turtle import distance, position
 from helper_methods import *
+#from calc_fastest import get_fastest_comp_fog_node
 import pandas as pd
 import os
 #from math import sqrt
 import numpy as np
 import math
 
-from numba import njit
+from numba import njit, jit
 from numba.core import types
 from numba.typed import Dict
+
+import cProfile
+
+
 
 #Arraytype for numba
 float_array = types.float64[:]
@@ -21,6 +24,9 @@ float_array = types.float64[:]
 
 
 db_con = connect_to_db()
+
+rel_locations_for_node = {} 
+
 
 # The max distance in a 10x10km region is 10000m * sqrt(2)
 #max_distance = 10000 * sqrt(2)
@@ -35,12 +41,13 @@ max_distance =   sqrt(145000^2 + 200000^2)*1000 #140x194 km rectangle
 # down_bandwidth  => Target fog node download bandwidth
 # mips            => Target fog node available mips at time t
 # sample_point    => Position of the point to test for
-
-@njit
+ 
+@njit(parallel = True)
 def calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point):
     
     #position = numpy.array([numpy.float64(position[0]), numpy.float64(position[1])])
-    distance = calc_dist_njit(position, sample_point)
+    #distance1 = calc_dist_njit(position, sample_point)
+    distance = test_distance(position[0], position[1], sample_point[0], sample_point[1])
     distance_factor = 1 - (distance / max_distance)
     up_transfere_time = in_data_size / (up_bandwidth * distance_factor)
     calculation_time = mi / mips
@@ -48,78 +55,66 @@ def calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, 
     return up_transfere_time + calculation_time + down_transfere_time
 
 
-#Pfade kommen aus dem Datensatz?  - ja 
-#und findet bei "possible" path schon eine vorauswahl statt? -> Falls ja worüber?
-#pfad -> koordinaten Reihenfolge
-#Segmente haben eine Gewisse länge in Meter -> möglichst kurz damit davon ausgegangen werden kann, dass jedes Segment eine Geschwindigkeit x hat
-#Wie sollen die Segmente gebildet werden? -> Idee: Sliding Window über Pfad und jeweils Segmente bei denen die Dauer passt ( Länger als getrackte Sequenz)
-#Zeile 6: erst hier möglich, da erst geschwindigkeiten bekannt
-
-
 #tracked fog node = [timestamp, node_id, amount_of_data_transferred]
+
 def calc_tracking_attack(path_data, locations, strategy_id):
     #path_data [path_id, compromised_fog_nodes, events, fog_device_infos, device_stats]
 
+    locations = np.array(locations)
+
     actual_path_id = path_data[0]
+    actual_coords = get_path_coordinates_from_db(db_con, actual_path_id)
     compromised_fog_nodes = path_data[1]
     events = path_data[2]
-    
+    fog_device_infos = path_data[3]
+    device_stats = path_data[4]
+
+    fog_device_positions = select_all_node_positions(db_con)
+    fog_device_positions = np.array(fog_device_positions)
+
     # remove all events that dont belong to a compromised fog_node
     events = [event for event in events if event['fog_device_id'] in compromised_fog_nodes]
     
+    if len(events) == 0:
+        return 0,0
+    
     tracked_duration = events[-1]['timestamp'] #TODO (last tracked_fog_nodes[timestamp] - first )
-  
     number_of_observations = len(events)  #k
 
-    print(number_of_observations)
-
-    exit()
-
-    possible_paths = [] #TODD heuristic selection probably needed
-
-    example_path = select_path_from_db(db_con, 3)
+    debug_path_heuristik = 0 #TODO remove
 
 
-    example_path = path_as_dict(example_path)
+    path_prob = {}
 
+    for path_id in range(37000,50000):
 
-    possible_paths.append(example_path)
-    #possible_paths.append(example_path2)
+        path = select_path_from_db(db_con, path_id)
+        path = path_as_dict(path)
 
-
-    for path in possible_paths:
         alpha = 0
 
         path_coords = np.array([[float(coord[0]), float(coord[1])]  for coord in  path['path_coords']])
-        len_of_segments = 5 # in metres
-        nr_of_segments = math.ceil(path['distance']/len_of_segments)
-        segments, coords,comparison = divide_path_into_segments(path_coords, len_of_segments, nr_of_segments)  #divide path into path into segments P1... Pc
+
+        if calc_dist_in_m(path_coords[0], actual_coords[0]) > 5000: #heuristic to reduce runtime
+            continue
         
-        #for i in range(100):
-        #    print(segments[i])
+        debug_path_heuristik += 1
 
-        #print("#######START1######")
+        print("path nr: ", path_id)
 
-        f =  open("original_path.gpx", 'w+')
-        f.write(createGPX(coords))
-        f.close
-        #print(createGPX(coords))
-        #print("#######Start2######")
-        f =  open("segmented_path.gpx", 'w+')
-        f.write(createGPX(comparison))
-        f.close
-
+        len_of_segments = 15 # in metres
+        nr_of_segments = math.ceil(path['distance']/len_of_segments)
+        
+        segments = divide_path_into_segments(path_coords, len_of_segments, nr_of_segments)  #divide path into path into segments P1... Pc
+        
         nr_iterations = 100 #TODO probably increase
 
         for j in range(nr_iterations):
             
-
+            
             segments = sample_velocities(segments)
             time_for_traversing = sum([ segment[6] for segment in segments])
             
-            print("observered traversing time: ", tracked_duration)
-            print("time total for path: ", time_for_traversing)
-
             if time_for_traversing > tracked_duration:
                 beta = 1
                 
@@ -127,42 +122,56 @@ def calc_tracking_attack(path_data, locations, strategy_id):
                 rand_t0 = randrange(0,max_t0)
 
                 segments_dict = get_segments_dict(segments, rand_t0, tracked_duration) 
-                
+
                 timestamps = [event['timestamp'] for event in events]
                 timestamps = np.array(list(dict.fromkeys(timestamps)))  #remove duplicates
 
-                locations_on_path = get_locations_at_ts(segments_dict, timestamps)                            
-
-                for i in range(number_of_observations/2):
-                    # - strat = 1: BelowThresholdRandomDevice
-                    # - strat = 2: BelowThresholdLowestResponseTime
-                    # - strat = 3: ClosestFogDevice
-
-                    
-
+             
+                locations_on_path = get_locations_at_ts(segments_dict, timestamps)
+           
+                for i in range(int(number_of_observations/2)):
                     e = events[i*2]
-
 
                     selected_fog_node = e['fog_device_id']
 
                     timestamp = events[i]["timestamp"]
                     guessed_location = locations_on_path[timestamp]
+
+                    actual_position = get_position_for_timestamp(actual_coords, timestamp)
+                    actual_position = np.array([float(actual_position[0]), float(actual_position[1])])
+
+                    strategy_id = int(strategy_id)
+
+                    prob_for_location = 0
+                   
+                    # - strat = 1: BelowThresholdRandomDevice
+                    # - strat = 2: BelowThresholdLowestResponseTime
+                    # - strat = 3: ClosestFogDevice
+                    if strategy_id ==1 :
+                        prob_for_location = prob_not_slow(guessed_location, e, events[i+1])
                     
-                    prob_for_location = prob_of_guessed_loc(guessed_location, e, locations,strategy_id)
+                    if strategy_id ==2 :
+                        prob_for_location = prob_fastest(guessed_location, actual_position, e, events[i+1], fog_device_infos, device_stats, fog_device_positions, locations)
+
+                    if strategy_id ==3 :
+                        prob_for_location = prob_clostest(guessed_location, e)
+                    
+                    beta = beta * prob_for_location
+
+                alpha += beta
+
+        if alpha > 0:
+            path_prob[path_id] = alpha
 
 
-                    #get timestamp
-                    #find point in segments for that timestamp
+    print("Anzahl untersuchter Pfade: ",debug_path_heuristik)
+    print("\n\n DONEEEE")
 
 
+    print(path_prob)
 
-
-
-         
-
-
-
-    return 0 #TODO return probability distribution over the set of possible paths
+    
+    return 100,0 #TODO return probability distribution over the set of possible paths
 
 
 #returns list of [segment_start_lat, segment_start_lon, segment_end_lat , segment_end_lon, distance, velocity,traversing_time], distance = len_of_segments for all but the last element
@@ -184,8 +193,6 @@ def divide_path_into_segments(coords, len_of_segments:int, nr_of_segments):
         x = coords[i-1]
         y = coords[i]
 
-        
-        
         distance = calc_dist_njit(x,y)
 
         while(left_till_segment_length < distance): #segment_end is between x and y 
@@ -207,10 +214,7 @@ def divide_path_into_segments(coords, len_of_segments:int, nr_of_segments):
             distance -= left_till_segment_length
             left_till_segment_length = len_of_segments
 
-
         left_till_segment_length -= distance
-
-
 
     # add last section (with distance < len_of_segments)
     final_coord = coords[-1]
@@ -223,19 +227,7 @@ def divide_path_into_segments(coords, len_of_segments:int, nr_of_segments):
     segment_arr[segment_i][4] = distance  
 
 
-    comparison = []
-    for x in segment_arr:
-        #a = [x[0], x[1]]
-        b = [x[2], x[3]]
-
-        #if a not in comparison:
-        #    comparison.append(a)
-        if b not in comparison:
-            comparison.append(b)
-
-    
-
-    return segment_arr, coords, comparison
+    return segment_arr
 
 
 @njit
@@ -287,61 +279,176 @@ def get_locations_at_ts(segments_dict, timestamps):
     i = 0
 
     for j in range(len(timestamps)-1):
-        while not keys[i+1] > timestamps[j]: #timestamp relates to point on current segment
+        
+     
+        
+
+        if i+1 >= len(keys):
+            break
+      
+        
+
+        while not keys[i] > timestamps[j]: #timestamp relates to point on current segment
             i+=1
-            continue
+            if i+1 >= len(keys):
+                break
+            
+       
+
+
+        ts = 0
 
         timestamp = timestamps[j]
-        segment = segments_dict[keys[i]]
 
-        segment_start_lat = segment[0]
-        segment_start_lon = segment[1]
-        segment_end_lat = segment[2]
-        segment_end_lon = segment[3]
-        traversing_time = segment[6]
-    
+        key = keys[i-1]
+
+
+
+        #print(timestamps)
+        #print(keys)
+        #print(timestamp)
+        #print(key)
+        #return None
+        segment = segments_dict[key]
+        try:
+            segment_start_lat = segment[0]
+            segment_start_lon = segment[1]
+            segment_end_lat = segment[2]
+            segment_end_lon = segment[3]
+            traversing_time = segment[6]
+        except Exception:
+            print("e")
+
         start_coord = np.array([segment_start_lat, segment_start_lon])
         end_coord = np.array([segment_end_lat, segment_end_lon])
 
         seg_vector = end_coord - start_coord
-        x = (timestamp-keys[i]) / traversing_time
-           
-        dest_point = start_coord + seg_vector * x
+        x = (timestamp-key) / traversing_time
             
+        dest_point = start_coord + seg_vector * x
+                
         locations_dict[timestamp] = dest_point
+        
+          
 
     return locations_dict
 
 
-def prob_of_guessed_loc(guessed_location, current_event, locations, strat):
-    x = 0
 
-    # - strat = 1: BelowThresholdRandomDevice
-    # - strat = 2: BelowThresholdLowestResponseTime
-    # - strat = 3: ClosestFogDevice
+def prob_not_slow(guessed_location, actual_position, current_add_event, next_remove_event, fog_device_infos, device_stats, fog_device_positions, locations):
 
-    if strat == 1:
-        x = prob_not_slow(guessed_location, current_event, locations)
-    if strat == 2:
-        x = prob_fastest(guessed_location, current_event, locations)
-
-    if strat == 3:
-        x = prob_clostest(guessed_location, current_event, locations)
+    #
 
 
-    return x
-
-def prob_not_slow(guessed_location, current_event, locations):
     return 0
 
-def prob_fastest(guessed_location, current_event, locations):
-    return 0
+def prob_fastest(guessed_location, actual_position, current_add_event, next_remove_event, fog_device_infos, device_stats, fog_device_positions, locations):
+    t1 = datetime.now()
+
+    if calc_dist_njit(guessed_location, actual_position) > 10000 * sqrt(2):
+        return 0
+
+    actual_device = current_add_event['fog_device_id']
+    actual_device_position = np.array(fog_device_positions[actual_device])
+
+    #location has to be in 10*10 square  
+    edges = [[edge_point['lat'], edge_point['lon']]  for edge_point in current_add_event['consideredField']]
+    edges = np.asarray(edges)
+
+    
+    guessed_location = np.array([guessed_location[0], guessed_location[1]])
+
+    if not ray_tracing(guessed_location[0], guessed_location[1], edges):
+        return 0    
+
+
+    #if relev 
+    if actual_device not in rel_locations_for_node.keys():
+        relevant_locations = get_relevant_locations(locations, actual_device_position, edges)
+        rel_locations_for_node[actual_device] = relevant_locations
+
+    relevant_locations = rel_locations_for_node[actual_device]
+  
+    considered_fog_devices = current_add_event['consideredFogNodes']
+    
+
+    chosen_device = get_fastest_comp_fog_node(guessed_location, current_add_event, next_remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices)
+    
+    if chosen_device != actual_device:
+        return 0
+
+    possible_locations = []
+
+    for location in relevant_locations:
+        chosen_device = get_fastest_comp_fog_node(location, current_add_event, next_remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices)
+        if chosen_device == actual_device:
+            possible_locations.append(location)
+    
+
+    #print("weitere mögliche Positionen: ",possible_locations)
+
+    return 1/(len(possible_locations) + 1)
+
+@njit
+def get_relevant_locations(locations, node_pos, edges):
+    threshold = 10000 * sqrt(2)
+    i = 0
+    arr = np.empty(shape=(len(locations),2))
+
+    for l in locations:
+        if calc_dist_njit(node_pos, l) < threshold:
+            if ray_tracing(l[0], l[1], edges):
+                arr[i] = [l[0], l[1]] 
+                i += 1
+
+    arr1 = arr[0:i]  #sliced array 
+   
+    return arr1
+   
+
+@jit
+def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices):
+ 
+    in_data_size = add_event['dataSize']
+    out_data_size = remove_event['dataSize']
+    mi = add_event['mi']
+    sample_point = numpy.array([numpy.float64(location[0]), numpy.float64(location[1])])
+    base_mips = add_event['maxMips']
+
+    task_id = add_event['taskId']
+
+    base_mips = max(device_stats[task_id].values())
+ 
+    device_stats_keys = device_stats[task_id].keys()
+
+    current_min_rt = 100000000000
+    fastest_node = None
+
+    for i in range(len(considered_fog_devices)): 
+      
+        mips = base_mips
+        position = fog_device_positions[i]
+        #position = numpy.array([numpy.float64(position[0]), numpy.float64(position[1])])
+        device = fog_device_infos["fog_device_id" == considered_fog_devices[i]]  
+
+        up_bandwidth = device['uplink_bandwidth']
+        down_bandwidth = device['downlink_bandwidth']
+
+        if i in device_stats_keys:
+            mips = device_stats[considered_fog_devices[i]]
+        
+        #response_time = calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point)
+        response_time = 0
+        if response_time < current_min_rt:
+            current_min_rt = response_time
+            fastest_node = considered_fog_devices[i]
+
+    return fastest_node
+
 
 
 def prob_clostest(guessed_location, current_event, locations):
     return 0
-
-
 
 
 #for Debugging
@@ -364,170 +471,11 @@ def createGPX(coords: list):
     return content
 
 
-def calc_strategy_not_slow(path_data, locations:list):
-
-    #path_data [path_id, compromised_fog_nodes, events, fog_device_infos, device_stats]
-    #fog_device_infos [fog_device_id, downlink_bandwidth, uplink_bandwidth, uplink_latency]
-    #event [fog_device_id, event_name, event_type, event_id, timestamp, availableMips, taskID, dataSize, mi, maxMips]
-    #device_stats []
-    path_id = path_data[0]
-
-    path_coords = get_path_coordinates_from_db(db_con, path_id)
-
-
-    compromised_fog_nodes = path_data[1]
-
-    events = path_data[2]  #event{ fog_device_id, event_name, event_type, event_id, timestamp, consideredFogNodes, consideredField, ...}
-    
-    fog_device_infos = path_data[3]
-
-    device_stats = path_data[4]
-
-
-    fog_device_positions = select_all_node_positions(db_con)
-
-    total_correctness = 0
-    avg_corr = 0
-   
-    add_event = None
-    remove_event = None
-
-    counted_events = 0
- 
-    
-    # remove all events that dont belong to a compromised fog_node
-    events = [event for event in events if event['fog_device_id'] in compromised_fog_nodes]
-
-    #clean data into np arrays
-    #location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, selected_fog_node_position
-
-    for event in events:
-        fog_device_id = event['fog_device_id']
-        selected_fog_node_position = fog_device_positions[fog_device_id]
-
-
-        if fog_device_id not in compromised_fog_nodes:
-            continue
-        
-        event_name = event['event_name']
-        if (event_name == "add"):
-            add_event = event
-
-        if (event_name == "remove"):
-            remove_event= event
-
-        if remove_event is None or add_event is None:
-            continue
-
-        if add_event['taskId'] != remove_event['taskId']:
-            continue
-        
-        
-        #print("######## new event ##############")
-
-        timestamp = event['timestamp']
-
-        actual_position = get_position_for_timestamp(path_coords, timestamp)
-
-        counted_events += 1
-
-        #get relevant locations    
-        edges = [[edge_point['lat'], edge_point['lon']]  for edge_point in event['consideredField']]
-        edges = np.asarray(edges)
-
-        relevant_locations = [np.array([l[0], l[1]]) for l in locations if calc_dist_in_m(selected_fog_node_position, l) < 10000 * sqrt(2)] 
-        relevant_locations = [ l for l in relevant_locations if ray_tracing(l[0], l[1], edges)] #only get locations inside 10x10km square
-
-        
-        #print("selected_fn_position: ",selected_fog_node_position)
-        #print("edgepoints: ",edges)
-        #print("example relevant pos: ",relevant_locations[0])
-        #print("eventId: ", event['event_id'])
-        
-        considered_fog_devices = event['consideredFogNodes']
-        
-        prob_location= 1/len(relevant_locations)        #Pr(ℓ) = 1/|L|
-        prob_fog_node = 1/len(considered_fog_devices)   #Pr(f∗) = 1/|F|
-
-        threshold_distr = {}  #key=threshold, val=prob
-
-        for location in relevant_locations:
-           
-            for threshold in threshold_distr.keys():
-                cond_probability_node = cond_prob_select_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices, threshold)
-                prob = threshold_distr[threshold]
-
-                #Todo Integral (Formel 9)
-
-        possible_locations = [] # TODO
-
-        for location in possible_locations:
-            distance = calc_dist_in_m(location, actual_position)
-            #print(distance)
-            correctness = probability * distance
-            total_correctness += correctness
-
-    if(counted_events == 0):
-        return 0,0     
-    
-    avg_corr = total_correctness/counted_events
-
-    print ("avg_corr: ",avg_corr, "      total: ",total_correctness)
-
-    return total_correctness, avg_corr
-
-
-#Pr(f∗ |ℓ,x)  = 1/|ˆF(ℓ,x)| if f∗ ∈ ˆF(ℓ,x   || 0 otherwise 
-#conditional prob that node f* is selected from location l for threshold x
-def cond_prob_select_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices,selected_fog_node_id, threshold):
-    in_data_size = add_event['dataSize']
-    out_data_size = remove_event['dataSize']
-    mi = add_event['mi']
-    sample_point = numpy.array([numpy.float64(location[0]), numpy.float64(location[1])])
-    base_mips = add_event['maxMips']
-
-    task_id = add_event['taskId']
-
-    #base_mips = max(device_stats[task_id].values())
-    #min_mips = min(device_stats[task_id].values())
-
-    device_stats_keys = device_stats[task_id].keys()
-
-
-    nodes_with_rt_below_threshold = []
-
-
-    for i in considered_fog_devices: 
-        
-        mips = base_mips
-        position = fog_device_positions[i]
-        #position = numpy.array([numpy.float64(position[0]), numpy.float64(position[1])])
-        device = fog_device_infos["fog_device_id" == i]     
-        up_bandwidth = device['uplink_bandwidth']
-        down_bandwidth = device['downlink_bandwidth']
-
-        if i in device_stats_keys:
-            mips = device_stats[i]
-         
-        response_time = calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point)
-
-        if response_time <= threshold:
-            nodes_with_rt_below_threshold.append(i)    
-
-    if len(nodes_with_rt_below_threshold) == 0:
-        return 0
-
-    if selected_fog_node_id not in nodes_with_rt_below_threshold:
-        return 0
-    
-    return 1/len(nodes_with_rt_below_threshold)  #1/|ˆF(ℓ,x)
-
-
 
 def main():
     result_file_path = "results/tracking_attack.csv"
 
-    input_json_dir = "input/Strategie_1"    #Todo
+    input_json_dir = "input/Strategie_2"    #Todo
 
     locations= retrieve_list_from_json("json/locations_points.json")#[nodeid, node_position,locations]
 
@@ -554,16 +502,24 @@ def main():
 
             total_correctness,avg_corr = calc_tracking_attack((retrieve_data_from_json(input_file)), locations, strat)
 
+            if total_correctness == 100:
+                break
 
             df = df.append({'strategy':strat, 'rate':rate, 'iteration':iteration, 'total_correctness':total_correctness,'avg_correctness':avg_corr}, ignore_index=True)
             time1 = datetime.now()
 
             print("\n one file took:  ",str(time1-time0), " \n\n")
             
+        
     df.to_csv(result_file_path) 
     return
 
 
 
 if __name__ == '__main__':
+    pr = cProfile.Profile()
+    pr.enable()
     main()
+    pr.disable()
+    stats =pstats.Stats(pr)
+    stats.sort_stats('tottime').print_stats(7)

@@ -141,6 +141,7 @@ def calc_dist_in_m(coordinate1, coordinate2):
 
 @njit()
 def calc_dist_njit(x, y):
+
     radius_earth = 6371.0
 
     lat1 = radians(x[0])
@@ -157,9 +158,11 @@ def calc_dist_njit(x, y):
     distance = radius_earth * c * 1000
     return distance
 
-
-def calc_response_time():
-    return 100
+@njit( parallel = True)
+def test_distance(lat1, lon1, lat2, lon2):
+    p = 0.017453292519943295
+    a = 0.5 - cos((lat2 - lat1) * p)/2 + cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2
+    return 1000 * 12742 * asin(sqrt(a))
 
 @njit
 def get_bearing(lat1,lon1,lat2,lon2):
