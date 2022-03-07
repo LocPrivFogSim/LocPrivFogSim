@@ -7,6 +7,8 @@ import numba.np.extensions
 from math import degrees, sin, asin, atan,  cos, sqrt, atan2, radians
 from decimal import Decimal
 from numba import njit
+from numba import types
+from numba.typed import Dict
 from geopy.distance import geodesic
 from geopy import Point
 
@@ -15,6 +17,7 @@ from geopy import Point
 db_path = "../geoLifePaths.db"
 locations_file = "locations.json"
 
+float64_array = types.float64[:]
 
 #db
 def connect_to_db():
@@ -84,7 +87,21 @@ def get_position_for_timestamp(path, timestamp):
             return coord
     
 
+def get_coords_dict(coords):
+    
+    coords_map = Dict.empty(
+        key_type=types.float64,
+        value_type=float64_array
+    )
 
+    for coord in coords:
+        ts = float(coord[2])
+        lat = float(coord[0])
+        lon = float (coord[1])
+        coords_map[ts] = numpy.array([lat, lon])
+    return coords_map
+
+    
 def get_observed_order_of_fognodes(events):
     """
     eg. fog_device_ids from one example json:
@@ -158,7 +175,7 @@ def calc_dist_njit(x, y):
     distance = radius_earth * c * 1000
     return distance
 
-@njit( parallel = True)
+@njit()
 def test_distance(lat1, lon1, lat2, lon2):
     p = 0.017453292519943295
     a = 0.5 - cos((lat2 - lat1) * p)/2 + cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2

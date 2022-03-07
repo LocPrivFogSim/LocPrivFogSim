@@ -183,7 +183,7 @@ def cond_prob_select_node(location, add_event, remove_event, fog_device_infos, d
         down_bandwidth = device['downlink_bandwidth']
 
         if i in device_stats_keys:
-            mips = device_stats[i]
+            mips = device_stats[task_id][i]
          
         response_time = calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point)
 

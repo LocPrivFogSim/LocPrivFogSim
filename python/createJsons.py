@@ -91,6 +91,7 @@ def createLocationsFile(): #create List of all Locations and serialize it as Jso
 
 
     for i in range(len(node_positions)):  
+         
 
         #DEBUGGING######
         counter = counter +1 
@@ -110,6 +111,7 @@ def createLocationsFile(): #create List of all Locations and serialize it as Jso
 
 
         vertices_coords =  np.asarray(vertices_coords)
+        
 
 
         #polygon = Polygon(vertices_coords)
@@ -145,8 +147,8 @@ def createLocationsFile(): #create List of all Locations and serialize it as Jso
             #print("NO LOCATIONS FOR: ",pos_of_fog_node, "   ", vertices_coords)
             #print("############################")
 
-
-        nodes_with_locations.append([fog_node_id, pos_of_fog_node, locations_in_polygon])
+    
+        nodes_with_locations.append([fog_node_id, pos_of_fog_node, locations_in_polygon, vertices_coords.tolist()])
 
       
 
@@ -161,9 +163,6 @@ def createLocationsFile(): #create List of all Locations and serialize it as Jso
     file.write(json.dumps(nodes_with_locations))
     file.close()
 
-    file.open("json/left_overs.json",'w+')
-    file.write(json.dumps(locations_not_added))
-    file.close
 
 
 
