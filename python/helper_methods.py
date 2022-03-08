@@ -87,6 +87,37 @@ def get_position_for_timestamp(path, timestamp):
             return coord
     
 
+@njit
+def get_relevant_locations(locations, node_pos, edges):
+    threshold = 10000 * sqrt(2)
+    i = 0
+    arr = numpy.empty(shape=(len(locations),2))
+
+    for l in locations:
+        if calc_dist_njit(node_pos, l) < threshold:
+            if ray_tracing(l[0], l[1], edges):
+                arr[i] = [l[0], l[1]] 
+                i += 1
+
+    arr1 = arr[0:i]  #sliced array 
+   
+    return arr1
+
+def trans_device_infos(device_infos):
+    devices_map = Dict.empty(
+        key_type=types.int64,
+        value_type=float64_array
+    )
+
+    for device in  device_infos:
+
+        dw_bandw = float(device['downlink_bandwidth'])
+        up_bandw = float(device['uplink_bandwidth'])
+        uplink_latency = float(device['uplink_latency'])
+        devices_map[device["fog_device_id"]] = numpy.array([dw_bandw, up_bandw, uplink_latency])
+
+    return devices_map
+
 def get_coords_dict(coords):
     
     coords_map = Dict.empty(

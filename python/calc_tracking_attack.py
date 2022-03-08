@@ -373,20 +373,7 @@ def get_locations_at_ts(segments_dict, timestamps):
     return locations_dict
 
 
-def trans_device_infos(device_infos):
-    devices_map = Dict.empty(
-        key_type=types.int64,
-        value_type=float64_array
-    )
 
-    for device in  device_infos:
-
-        dw_bandw = float(device['downlink_bandwidth'])
-        up_bandw = float(device['uplink_bandwidth'])
-        uplink_latency = float(device['uplink_latency'])
-        devices_map[device["fog_device_id"]] = np.array([dw_bandw, up_bandw, uplink_latency])
-
-    return devices_map
 
 
 def prob_not_slow(guessed_location, actual_position, current_add_event, next_remove_event, fog_device_infos, device_stats, fog_device_positions, locations):
@@ -420,7 +407,9 @@ def prob_not_slow(guessed_location, actual_position, current_add_event, next_rem
     prob_location= 1/len(relevant_locations)        #Pr(ℓ) = 1/|L|
     prob_fog_node = 1/len(considered_fog_devices)   #Pr(f∗) = 1/|F|
 
-    threshold_distr = {0.06: 1}   #TODO
+    threshold_distr = {0.03:0.25,
+        0.0462: 0.5,
+        0.5: 0.25}  #key=threshold, val=prob
 
     prob_total = 0
     
@@ -546,21 +535,6 @@ def prob_fastest(guessed_location, actual_position, current_add_event, next_remo
 
     return 1/(len(possible_locations) + 1)
 
-@njit
-def get_relevant_locations(locations, node_pos, edges):
-    threshold = 10000 * sqrt(2)
-    i = 0
-    arr = np.empty(shape=(len(locations),2))
-
-    for l in locations:
-        if calc_dist_njit(node_pos, l) < threshold:
-            if ray_tracing(l[0], l[1], edges):
-                arr[i] = [l[0], l[1]] 
-                i += 1
-
-    arr1 = arr[0:i]  #sliced array 
-   
-    return arr1
    
 
 
@@ -587,10 +561,6 @@ def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_info
 def find_fastest_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos, id_with_min_mips , min_mips, in_data_size, out_data_size, mi, sample_point ):
     fastest_node = 0
     current_min_rt = 100000000000
-
-
-   
-
   
     for i in range(len(considered_fog_devices)): 
         current_id = considered_fog_devices[i]

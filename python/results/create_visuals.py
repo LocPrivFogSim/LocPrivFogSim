@@ -7,7 +7,7 @@ import os
 
 path_nearest_results = './nearest.csv'
 path_fastest_results = './fastest.csv'
-
+path_not_slow_results = './not_slow.csv'
 
 def visuals_for_nearest():
     
@@ -59,10 +59,37 @@ def visuals_for_fastest():
     plt.savefig('fastest_avg')
     #plt.show()
 
+def visuals_for_not_slow():
+    
+    data = pd.read_csv(path_not_slow_results,sep=",",index_col=None)
+    data_grouped = data.groupby('rate').mean()
+
+    plt.figure(5)
+    plt.subplot()
+    plt.plot(data_grouped.index, data_grouped['total_correctness'], c='r', label='total_correctness')
+    plt.title("Strategy: Not Slow")
+    plt.xlabel('rate of compromised fog nodes')
+    plt.ylabel('correctness in <unit>')
+    plt.legend()
+    plt.savefig('not_slow_total')
+
+
+    plt.figure(6)
+    plt.subplot()
+    plt.plot(data_grouped.index, data_grouped['avg_correctness'], c='b', label='avg_correctness')
+    plt.title("Strategy: Not Slow")
+    plt.xlabel('rate of compromised fog nodes')
+    plt.ylabel('correctness in <unit>')
+    plt.legend()
+    plt.savefig('not_slow_avg')
+    #plt.show()
+
+
 
 def main():
   visuals_for_nearest()
   visuals_for_fastest()
+  visuals_for_not_slow()
 
 if __name__ == '__main__':
     main()
