@@ -291,7 +291,8 @@ def main():
         iteration = result[2]
         total_correctness = result[3]
         avg_corr = result[4]
-        df = df.append({'strategy':strat, 'rate':rate, 'iteration':iteration, 'total_correctness':total_correctness,'avg_correctness':avg_corr}, ignore_index=True)
+        if(total_correctness > 0):
+            df = df.append({'strategy':strat, 'rate':rate, 'iteration':iteration, 'total_correctness':total_correctness,'avg_correctness':avg_corr}, ignore_index=True)
 
 
     df.to_csv(result_file_path) 

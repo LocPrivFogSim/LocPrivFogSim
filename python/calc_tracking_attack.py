@@ -66,7 +66,7 @@ def calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, 
 
 #tracked fog node = [timestamp, node_id, amount_of_data_transferred]
 
-def calc_tracking_attack(file, path_data, locations, strategy_id):
+def calc_tracking_attack(path_data, locations, strat, rate, iteration):
     #path_data [path_id, compromised_fog_nodes, events, fog_device_infos, device_stats]
     
 
@@ -130,7 +130,6 @@ def calc_tracking_attack(file, path_data, locations, strategy_id):
         
         segments = divide_path_into_segments(path_coords, len_of_segments, nr_of_segments)  #divide path into path into segments P1... Pc
 
-       
 
         #x_debug = [[x[2], x[3]]  for x in segments]
         #y_debug = actual_coords
@@ -197,7 +196,7 @@ def calc_tracking_attack(file, path_data, locations, strategy_id):
                     #actual_position = np.array([float(actual_position[0]), float(actual_position[1])])
                     
                                 
-                    strategy_id = int(strategy_id)
+                    strategy_id = int(strat)
 
                     prob_for_location = 0
                    
@@ -206,14 +205,16 @@ def calc_tracking_attack(file, path_data, locations, strategy_id):
                     # - strat = 3: ClosestFogDevice
                     if strategy_id ==1 :
                         prob_for_location = prob_not_slow(guessed_location, actual_position, e, events[i+1], fog_device_infos, device_stats, fog_device_positions, locations)
+                        #if prob_for_location > 0:
+                        #    print (prob_for_location)
                     
                     if strategy_id ==2 :
                         prob_for_location = prob_fastest(guessed_location, actual_position, e, events[i+1], fog_device_infos, device_stats, fog_device_positions, locations)
 
                     if strategy_id ==3 :
                         prob_for_location = prob_clostest(guessed_location, selected_fog_node)
-
-                    beta = beta * prob_for_location
+                    if prob_for_location > 0:
+                        beta = beta * prob_for_location
 
                     
                 alpha += beta
@@ -226,9 +227,11 @@ def calc_tracking_attack(file, path_data, locations, strategy_id):
     #print("Anzahl untersuchter Pfade: ",debug_path_heuristik)
     #print("\n\n DONEEEE")
 
-    #print(path_prob)
+    print(path_prob)
+
+    exit()
     
-    return (file, path_prob) 
+    return (strat, rate, iteration, path_prob) 
 
 
 #returns list of [segment_start_lat, segment_start_lon, segment_end_lat , segment_end_lon, distance, velocity,traversing_time], distance = len_of_segments for all but the last element
@@ -290,7 +293,7 @@ def divide_path_into_segments(coords, len_of_segments:int, nr_of_segments):
 @njit
 def sample_velocities(segments):
     for segment in segments:
-        velocity = (randrange(4,7)*1000)/(60*60)
+        velocity = (randrange(4,10)*1000)/(60*60)
         segment[5] = velocity        # velocity TODO
         segment[6] = segment[4]/velocity   # traversing_time
     return segments
@@ -372,10 +375,6 @@ def get_locations_at_ts(segments_dict, timestamps):
         
     return locations_dict
 
-
-
-
-
 def prob_not_slow(guessed_location, actual_position, current_add_event, next_remove_event, fog_device_infos, device_stats, fog_device_positions, locations):
 
 
@@ -421,7 +420,7 @@ def prob_not_slow(guessed_location, actual_position, current_add_event, next_rem
 
         prob_total += prob_guessed_location*prob_threshold
 
-    print ((prob_location/prob_fog_node) * prob_total)
+    #print ((prob_location/prob_fog_node) * prob_total)
     return (prob_location/prob_fog_node) * prob_total
 
 def cond_prob_guessed_location(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices, selected_fog_node_id,threshold):
@@ -452,9 +451,7 @@ def cond_prob_guessed_location(location, add_event, remove_event, fog_device_inf
         return 0
     
     return 1/len(not_slow)
-
    
-
 @njit
 def find_not_slow_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos, id_with_min_mips , min_mips, in_data_size, out_data_size, mi, sample_point, threshold ):
   
@@ -485,7 +482,6 @@ def find_not_slow_loop(considered_fog_devices, base_mips, fog_device_positions, 
     arr = arr[0:j]
        
     return arr
-
 
 def prob_fastest(guessed_location, actual_position, current_add_event, next_remove_event, fog_device_infos, device_stats, fog_device_positions, locations):
 
@@ -535,9 +531,6 @@ def prob_fastest(guessed_location, actual_position, current_add_event, next_remo
 
     return 1/(len(possible_locations) + 1)
 
-   
-
-
 def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices):
     
     #prepares data so that njit works efficiently
@@ -554,8 +547,6 @@ def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_info
 
     fastest_node = find_fastest_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos,  id_with_min_mips, min_mips, in_data_size,out_data_size, mi, sample_point )
     return fastest_node
-
-   
 
 @njit
 def find_fastest_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos, id_with_min_mips , min_mips, in_data_size, out_data_size, mi, sample_point ):
@@ -587,8 +578,6 @@ def find_fastest_loop(considered_fog_devices, base_mips, fog_device_positions, f
        
     return fastest_node
 
-
-
 def prob_clostest(guessed_location, device_id):
 
  
@@ -606,7 +595,6 @@ def prob_clostest(guessed_location, device_id):
         return 1 / (len(locations_in_polygon) +1)
 
     return 0
-
 
 #for Debugging
 def createGPX(coords: list):
@@ -628,7 +616,6 @@ def createGPX(coords: list):
     return content
 
 
-
 def main():
     result_file_path = "results/tracking_attack.csv"
 
@@ -645,9 +632,8 @@ def main():
 
     df = pd.DataFrame(columns=['strategy','rate','iteration','total_correctness','avg_correctness'])
 
-    
-
-    pool = mp.Pool(mp.cpu_count())
+    #pool = mp.Pool(mp.cpu_count())
+    pool = mp.Pool(1)
 
 
      #iterate input files
@@ -665,8 +651,12 @@ def main():
             iteration = file_split[3].split('.')[0]
 
             #calc_tracking_attack(file,(retrieve_data_from_json(input_file)), locations, strat)
-            pool.apply_async(calc_tracking_attack, args=(file, retrieve_data_from_json(input_file), locations, strat), callback=get_results)
+            pool.apply_async(calc_tracking_attack, args=(retrieve_data_from_json(input_file), locations, strat, rate, iteration), callback=get_results)
+
+
             
+            # 
+            #     
             #if total_correctness == 100:
             #    break
 
@@ -677,9 +667,11 @@ def main():
             
     pool.close()
     pool.join()    
+
+
     
     df.to_csv(result_file_path)
-    print(results1)
+    #print(results1)
 
     return
 
