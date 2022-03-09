@@ -33,20 +33,33 @@ rel_locations_for_node = {}
 
 location_for_nodes = retrieve_list_from_json("json/node_locations.json")
 
+nr_of_paths = 57947
+paths_global = {}
+fog_device_positions_global = []
+
+def set_globals():
+    global paths_global
+    for i in range(nr_of_paths+1):
+        path = select_path_from_db(db_con, i)
+        path_dict = path_as_dict(path)
+        paths_global[i] = path_dict
+    fog_device_positions = select_all_node_positions(db_con)
+    global fog_device_positions_global
+    fog_device_positions_global = np.array(fog_device_positions)
 
 def calc_tracking_attack(path_data, locations, strat, rate, iteration):
     #path_data [path_id, compromised_fog_nodes, events, fog_device_infos, device_stats]
     
-
     locations = np.array(locations)
 
     actual_path_id = path_data[0]
 
     #print(actual_path_id)
 
-    actual_coords = get_path_coordinates_from_db(db_con, actual_path_id)
+    #actual_coords = get_path_coordinates_from_db(db_con, actual_path_id)
+    #actual_coords_dict = get_coords_dict(actual_coords)
+    actual_coords = paths_global[actual_path_id]['path_coords']
     actual_coords_dict = get_coords_dict(actual_coords)
-
 
     compromised_fog_nodes = path_data[1]
     events = path_data[2]
@@ -55,16 +68,12 @@ def calc_tracking_attack(path_data, locations, strat, rate, iteration):
     fog_device_infos = trans_device_infos(fog_device_infos)   
     
     device_stats = path_data[4]
- 
-
-    fog_device_positions = select_all_node_positions(db_con)
-    fog_device_positions = np.array(fog_device_positions)
 
     # remove all events that dont belong to a compromised fog_node
     events = [event for event in events if event['fog_device_id'] in compromised_fog_nodes]
     
     if len(events) == 0:
-        return 0,0
+        return (strat, rate, iteration, total_corr, avg_corr) 
     
     tracked_duration = events[-1]['timestamp']-events[0]['timestamp'] #TODO (last tracked_fog_nodes[timestamp] - first )
     number_of_observations = len(events)  #k
@@ -75,16 +84,20 @@ def calc_tracking_attack(path_data, locations, strat, rate, iteration):
     path_prob = {}
 
     #for path_id in range(36196,36197):
-    for path_id in range(0, 50000):
+    for path_id in range(0, nr_of_paths):
 
-
-        path = select_path_from_db(db_con, path_id)
-        path = path_as_dict(path)
-
+        #path = select_path_from_db(db_con, path_id)
+        #path = path_as_dict(path)
+        #path = paths_global[path_id]
 
         alpha = 0
 
-        path_coords = np.array([[float(coord[0]), float(coord[1])]  for coord in  path['path_coords']])
+        path = paths_global[path_id]
+        
+        #print(path_coords)
+        
+        path_coords = path['path_coords']
+        path_coords = np.array([[p[0],p[1]] for p in path_coords ]  )
 
         if calc_dist_in_m(path_coords[0], actual_coords[0]) > 2000: #heuristic to reduce runtime
             continue
@@ -110,7 +123,7 @@ def calc_tracking_attack(path_data, locations, strat, rate, iteration):
         #f2.write(createGPX(y_debug))
         #f2.close
 
-                
+                        
         nr_iterations = 50 #TODO probably increase
 
         for j in range(nr_iterations):
@@ -172,15 +185,19 @@ def calc_tracking_attack(path_data, locations, strat, rate, iteration):
                     # - strat = 2: BelowThresholdLowestResponseTime
                     # - strat = 3: ClosestFogDevice
                     if strategy_id ==1 :
-                        prob_for_location = prob_not_slow(guessed_location, actual_position, e, events[i+1], fog_device_infos, device_stats, fog_device_positions, locations)
+                        prob_for_location = prob_not_slow(guessed_location, actual_position, e, events[i+1], fog_device_infos, device_stats, fog_device_positions_global, locations)
                         #if prob_for_location > 0:
                         #    print (prob_for_location)
                     
                     if strategy_id ==2 :
-                        prob_for_location = prob_fastest(guessed_location, actual_position, e, events[i+1], fog_device_infos, device_stats, fog_device_positions, locations)
+                        prob_for_location = prob_fastest(guessed_location, actual_position, e, events[i+1], fog_device_infos, device_stats, fog_device_positions_global, locations)
 
                     if strategy_id ==3 :
                         prob_for_location = prob_clostest(guessed_location, selected_fog_node)
+                    
+                    
+                    
+                    
                     if prob_for_location > 0:
                         beta = beta * prob_for_location
 
@@ -195,17 +212,50 @@ def calc_tracking_attack(path_data, locations, strat, rate, iteration):
     #print("Anzahl untersuchter Pfade: ",debug_path_heuristik)
     #print("\n\n DONEEEE")
 
-    print(path_prob)
 
-    exit()
+    total_corr, avg_corr = 0, 0
+
+
+    #print(path_prob)
+
+    #exit()
+
+
+    for path_id in path_prob.keys():
+        prob_path = path_prob[path_id]
+
+        path_coords =paths_global[path_id]['path_coords']
+        path_coords = np.array([[float(coord[0]), float(coord[1])]  for coord in  path_coords])
+
+        actual_coords = np.array([[float(coord[0]), float(coord[1])]  for coord in  actual_coords])
+        distance = dtw_njit(path_coords, actual_coords)
+        
+        x_debug = path_coords
+        y_debug = actual_coords
+
+       # f1 = open('guessed_path.gpx', "w")
+       # f1.write(createGPX(x_debug))
+       # f1.close
+
+       # f2 = open('original_path.gpx', "w")
+       # f2.write(createGPX(y_debug))
+       # f2.close
+
+        #print("path id: ", path_id)
+        #print("actual path: ", actual_path_id)
+        #print("dtw: ",distance)
+        #print("prob for path:  ",prob_path)
+        #print("################")
+
+        #exit()
+
     
-    return (strat, rate, iteration, path_prob) 
+    return (strat, rate, iteration, total_corr, avg_corr) 
 
 
 #returns list of [segment_start_lat, segment_start_lon, segment_end_lat , segment_end_lon, distance, velocity,traversing_time], distance = len_of_segments for all but the last element
 @njit
 def divide_path_into_segments(coords, len_of_segments:int, nr_of_segments):
-
     #print(coords)
     #print("---------")
     segment_arr = np.zeros((nr_of_segments,7))
@@ -256,7 +306,6 @@ def divide_path_into_segments(coords, len_of_segments:int, nr_of_segments):
 
 
     return segment_arr
-
 
 @njit
 def sample_velocities(segments):
@@ -398,8 +447,12 @@ def prob_fastest(guessed_location, actual_position, current_add_event, next_remo
         return 0
 
     actual_device = current_add_event['fog_device_id']
-    actual_device_position = np.array(fog_device_positions[actual_device])
-
+    try:
+        actual_device_position = fog_device_positions_global[actual_device]
+    except:
+        print("id: ", actual_device)
+        print(len(fog_device_positions_global))
+        exit()
     #location has to be in 10*10 square  
     edges = [[edge_point['lat'], edge_point['lon']]  for edge_point in current_add_event['consideredField']]
     edges = np.asarray(edges)
@@ -426,7 +479,7 @@ def prob_fastest(guessed_location, actual_position, current_add_event, next_remo
     if chosen_device != actual_device:
         return 0
 
-    print("'!!  chosen  == actual device !!")
+    #print("'!!  chosen  == actual device !!")
 
     possible_locations = []
 
@@ -482,6 +535,10 @@ def main():
 
     input_json_dir = "input/Test"
    
+    set_globals()
+
+    print("globals set!")
+
     locations= retrieve_list_from_json("json/locations_points.json")#[nodeid, node_position,locations]
     location_for_nodes = retrieve_list_from_json("json/node_locations.json")#[nodeid, node_position,locations, voronoi_vertices]    
 
@@ -491,8 +548,8 @@ def main():
 
     df = pd.DataFrame(columns=['strategy','rate','iteration','total_correctness','avg_correctness'])
 
-    #pool = mp.Pool(mp.cpu_count())
-    pool = mp.Pool(1)
+    pool = mp.Pool(mp.cpu_count())
+    #pool = mp.Pool(1)
 
 
      #iterate input files
@@ -509,13 +566,10 @@ def main():
             rate = file_split[2]
             iteration = file_split[3].split('.')[0]
 
-            #calc_tracking_attack(file,(retrieve_data_from_json(input_file)), locations, strat)
+            #x = calc_tracking_attack(retrieve_data_from_json(input_file), locations, strat, rate, iteration)
             pool.apply_async(calc_tracking_attack, args=(retrieve_data_from_json(input_file), locations, strat, rate, iteration), callback=get_results)
-
-
             
-            # 
-            #     
+    
             #if total_correctness == 100:
             #    break
 

@@ -101,9 +101,6 @@ def calc_not_slow(strat, rate, iteration, path_data, locations:list):
 
         relevant_locations = rel_locations_for_node[fog_device_id]
 
-        
-
-
         #print("selected_fn_position: ",selected_fog_node_position)
         #print("edgepoints: ",edges)
         #print("example relevant pos: ",relevant_locations[0])
@@ -124,7 +121,7 @@ def calc_not_slow(strat, rate, iteration, path_data, locations:list):
             prob = 0
            
             for threshold in threshold_distr.keys():
-                cond_probability_node = cond_prob_select_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices, fog_device_id, threshold)              
+                cond_probability_node = cond_prob_guessed_location(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices, fog_device_id, threshold)              
                 prob_threshold = threshold_distr[threshold]
 
                 prob += cond_probability_node * prob_threshold #

@@ -24,7 +24,7 @@ def connect_to_db():
     conn = None
     try:
         conn = sqlite3.connect(db_path)
-    except Error as e:
+    except Exception as e:
         print(e)
     return conn
 
@@ -67,7 +67,7 @@ def format_path_coordinates(full_path):
     for s in split_string:
         if len(s) != 0:
             split_inner = s.split(",")
-            x.append([split_inner[0], split_inner[1], split_inner[2]])
+            x.append([float(split_inner[0]),float(split_inner[1]),  float(split_inner[2])])
     return x
 
 def path_as_dict(path_before):
@@ -375,7 +375,7 @@ def find_fastest_loop(considered_fog_devices, base_mips, fog_device_positions, f
         if current_id == id_with_min_mips:
             mips = min_mips
         
-        dist = calc_dist_in_m(sample_point, position)
+        #dist = calc_dist_in_m(sample_point, position)
 
         response_time = calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point)
 
@@ -422,7 +422,7 @@ def cond_prob_guessed_location(location, add_event, remove_event, fog_device_inf
 def find_not_slow_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos, id_with_min_mips , min_mips, in_data_size, out_data_size, mi, sample_point, threshold ):
   
 
-    arr = np.zeros(len(considered_fog_devices))
+    arr = numpy.zeros(len(considered_fog_devices))
     j = 0
   
     for i in range(len(considered_fog_devices)): 
@@ -451,8 +451,8 @@ def find_not_slow_loop(considered_fog_devices, base_mips, fog_device_positions, 
 
 
 # The max distance in a 10x10km region is 10000m * sqrt(2)
-#max_distance = 10000 * sqrt(2)
-max_distance =   sqrt(145000^2 + 200000^2)*1000 #140x194 km rectangle  
+max_distance = 10000 * sqrt(2)
+#max_distance =   sqrt(145000^2 + 200000^2)*1000 #140x194 km rectangle  
 # in_data_size    => Tasks input data size
 # out_data_size   => Tasks output data size
 # mi              => Tasks mi

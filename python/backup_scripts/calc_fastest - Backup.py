@@ -150,7 +150,7 @@ def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_info
     min_mips = min(device_stats[task_id].values())
     print(base_mips)
     print(min_mips)
-    exit()
+    #exit()
 
     
 

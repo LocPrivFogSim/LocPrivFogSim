@@ -100,9 +100,11 @@ def calc_strategy_fastest(strat, rate, iteration, path_data, locations:list):
         #print("selected_fn_position: ",selected_fog_node_position)
         #print("edgepoints: ",edges)
         #print("example relevant pos: ",relevant_locations[0])
-        #print("eventId: ", event['event_id'])
+        #print("eventId: ", event)
+        #exit()
         
-        considered_fog_devices = event['consideredFogNodes']
+        
+        considered_fog_devices =  np.array(event['consideredFogNodes'])
         
         for location in relevant_locations:
            
@@ -118,6 +120,7 @@ def calc_strategy_fastest(strat, rate, iteration, path_data, locations:list):
             continue
             
         probability = 1/len(possible_locations)
+        #print("pos locations",len(possible_locations), "          all relevants: ", len(relevant_locations))
 
         for poss_location in possible_locations:
             distance = calc_dist_in_m(poss_location, actual_position)
@@ -127,12 +130,11 @@ def calc_strategy_fastest(strat, rate, iteration, path_data, locations:list):
 
     if(counted_events == 0):
         #print("hiii")
-
         return (strat, rate, iteration, 0, 0)     
     
     avg_corr = total_correctness/counted_events
 
-    print ("avg_corr: ",avg_corr, "      total: ",total_correctness)
+    #print ("avg_corr: ",avg_corr, "      total: ",total_correctness)
 
     return (strat, rate, iteration, total_correctness, avg_corr)
 
@@ -156,6 +158,7 @@ def main():
     df = pd.DataFrame(columns=['strategy','rate','iteration','total_correctness','avg_correctness'])
 
     pool = mp.Pool(mp.cpu_count())
+    #pool = mp.Pool(1)
      #iterate input files
     for dirpath, dirs, files in os.walk(input_json_dir):
         for file in files:
@@ -173,7 +176,7 @@ def main():
             #df = df.append({'strategy':strat, 'rate':rate, 'iteration':iteration, 'total_correctness':total_correctness,'avg_correctness':avg_corr}, ignore_index=True)
             time1 = datetime.now()
 
-            print("\n one file took:  ",str(time1-time0), " \n\n")
+            #print("\n one file took:  ",str(time1-time0), " \n\n")
 
     pool.close()
     pool.join()
