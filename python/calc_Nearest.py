@@ -1,4 +1,4 @@
-from helper_methods import *
+from shared_methods import *
 
 import os
 import matplotlib.pyplot as plt

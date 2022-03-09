@@ -4,7 +4,7 @@ import pstats
 from random import randrange
 import traceback
 from turtle import pos
-from helper_methods import *
+from shared_methods import *
 #from calc_fastest import get_fastest_comp_fog_node
 import pandas as pd
 import os
@@ -31,40 +31,8 @@ db_con = connect_to_db()
 
 rel_locations_for_node = {} 
 
-location_for_nodes = location_for_nodes = retrieve_list_from_json("json/node_locations.json")
+location_for_nodes = retrieve_list_from_json("json/node_locations.json")
 
-
-
-
-
-# The max distance in a 10x10km region is 10000m * sqrt(2)
-max_distance = 10000 * sqrt(2)
-
-#max_distance =   sqrt(145000^2 + 200000^2)*1000 #140x194 km rectangle  
-
-# in_data_size    => Tasks input data size
-# out_data_size   => Tasks output data size
-# mi              => Tasks mi
-# position        => Target fog nodes position
-# up_bandwidth    => Target fog node upload bandwidth
-# down_bandwidth  => Target fog node download bandwidth
-# mips            => Target fog node available mips at time t
-# sample_point    => Position of the point to test for
- 
-@njit()
-def calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point):
-    
-    #position = numpy.array([numpy.float64(position[0]), numpy.float64(position[1])])
-    distance = calc_dist_njit(position, sample_point)
-    #distance = test_distance(position[0], position[1], sample_point[0], sample_point[1])
-    distance_factor = 1 - (distance / max_distance)
-    up_transfere_time = in_data_size / (up_bandwidth * distance_factor)
-    calculation_time = mi / mips
-    down_transfere_time = out_data_size / (down_bandwidth * distance_factor)
-    return up_transfere_time + calculation_time + down_transfere_time
-
-
-#tracked fog node = [timestamp, node_id, amount_of_data_transferred]
 
 def calc_tracking_attack(path_data, locations, strat, rate, iteration):
     #path_data [path_id, compromised_fog_nodes, events, fog_device_infos, device_stats]
@@ -423,66 +391,7 @@ def prob_not_slow(guessed_location, actual_position, current_add_event, next_rem
     #print ((prob_location/prob_fog_node) * prob_total)
     return (prob_location/prob_fog_node) * prob_total
 
-def cond_prob_guessed_location(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices, selected_fog_node_id,threshold):
-    
-    #prepares data so that njit works efficiently
-
-    in_data_size = add_event['dataSize']
-    out_data_size = remove_event['dataSize']
-    mi = add_event['mi']
-    sample_point = location
-    base_mips = add_event['maxMips']
-    task_id = add_event['taskId']
-    id_with_min_mips = list(device_stats[task_id].keys())[0]
-    min_mips = device_stats[task_id][id_with_min_mips]
-    
-
-    not_slow = find_not_slow_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos,  id_with_min_mips, min_mips, in_data_size,out_data_size, mi, sample_point, threshold )
-    
-    #print(selected_fog_node_id, "       was selected")
-    #print(considered_fog_devices)
-    #print(len(considered_fog_devices), "  len considered")
-
-    if len(not_slow) == 0:
-        return 0
-
-    #print(len(not_slow), "  len not slow")
-    if selected_fog_node_id not in not_slow:
-        return 0
-    
-    return 1/len(not_slow)
    
-@njit
-def find_not_slow_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos, id_with_min_mips , min_mips, in_data_size, out_data_size, mi, sample_point, threshold ):
-  
-
-    arr = np.zeros(len(considered_fog_devices))
-    j = 0
-  
-    for i in range(len(considered_fog_devices)): 
-        current_id = considered_fog_devices[i]
-
-        mips = base_mips
-        position = fog_device_positions[current_id]
-        #position = numpy.array([numpy.float64(position[0]), numpy.float64(position[1])])
-        device = fog_device_infos[current_id]       
-
-        down_bandwidth = device[0]
-        up_bandwidth = device[1]
-
-        if current_id == id_with_min_mips:
-            mips = min_mips
-        
-        response_time = calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point)
-        
-        if response_time < threshold:
-            arr[j] = current_id
-            j += 1
- 
-    arr = arr[0:j]
-       
-    return arr
-
 def prob_fastest(guessed_location, actual_position, current_add_event, next_remove_event, fog_device_infos, device_stats, fog_device_positions, locations):
 
     if calc_dist_njit(guessed_location, actual_position) > 10000 * sqrt(2):
@@ -531,57 +440,8 @@ def prob_fastest(guessed_location, actual_position, current_add_event, next_remo
 
     return 1/(len(possible_locations) + 1)
 
-def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices):
-    
-    #prepares data so that njit works efficiently
-
-    in_data_size = add_event['dataSize']
-    out_data_size = remove_event['dataSize']
-    mi = add_event['mi']
-    sample_point = location
-    base_mips = add_event['maxMips']
-    task_id = add_event['taskId']
-    id_with_min_mips = list(device_stats[task_id].keys())[0]
-    min_mips = device_stats[task_id][id_with_min_mips]
-    
-
-    fastest_node = find_fastest_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos,  id_with_min_mips, min_mips, in_data_size,out_data_size, mi, sample_point )
-    return fastest_node
-
-@njit
-def find_fastest_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos, id_with_min_mips , min_mips, in_data_size, out_data_size, mi, sample_point ):
-    fastest_node = 0
-    current_min_rt = 100000000000
-  
-    for i in range(len(considered_fog_devices)): 
-        current_id = considered_fog_devices[i]
-
-        mips = base_mips
-        position = fog_device_positions[current_id]
-        #position = numpy.array([numpy.float64(position[0]), numpy.float64(position[1])])
-        device = fog_device_infos[current_id]       
-
-        down_bandwidth = device[0]
-        up_bandwidth = device[1]
-
-        if current_id == id_with_min_mips:
-            mips = min_mips
-        
-        dist = calc_dist_in_m(sample_point, position)
-
-        response_time = calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point)
-
-        if response_time < current_min_rt:
-            current_min_rt = response_time
-            fastest_node = current_id
-
-       
-    return fastest_node
 
 def prob_clostest(guessed_location, device_id):
-
- 
-
     locations_in_polygon = location_for_nodes[device_id][2]
     vertices = location_for_nodes[device_id][3]
     vertices = [ np.array([v[0],v[1]]) for v in vertices]
@@ -593,7 +453,6 @@ def prob_clostest(guessed_location, device_id):
         #print("is in for   ", guessed_location, "    vertices", vertices)
 
         return 1 / (len(locations_in_polygon) +1)
-
     return 0
 
 #for Debugging

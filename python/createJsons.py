@@ -3,7 +3,7 @@ from geopy import Point
 from geopy.distance import geodesic
 import math
 import json
-from helper_methods import *
+from shared_methods import *
 
 from scipy.spatial import Voronoi, voronoi_plot_2d
 #from shapely.geometry import Point as Point2

@@ -29,7 +29,7 @@ db_con = connect_to_db()
 
 rel_locations_for_node = {} 
 
-location_for_nodes = location_for_nodes = retrieve_list_from_json("json/node_locations.json")
+location_for_nodes =  retrieve_list_from_json("json/node_locations.json")
 
 
 

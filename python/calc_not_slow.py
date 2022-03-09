@@ -1,6 +1,6 @@
 from datetime import datetime
 from turtle import distance, position
-from helper_methods import *
+from shared_methods import *
 import pandas as pd
 import os
 from math import sqrt
@@ -17,44 +17,15 @@ db_con = connect_to_db()
 df = pd.DataFrame(columns=['strategy','rate','iteration','total_correctness','avg_correctness'])
 
 results = []
-
-# The max distance in a 10x10km region is 10000m * sqrt(2)
-#max_distance = 10000 * sqrt(2)
-
-max_distance =   sqrt(145000^2 + 200000^2)*1000 #140x194 km rectangle  
-
-# in_data_size    => Tasks input data size
-# out_data_size   => Tasks output data size
-# mi              => Tasks mi
-# position        => Target fog nodes position
-# up_bandwidth    => Target fog node upload bandwidth
-# down_bandwidth  => Target fog node download bandwidth
-# mips            => Target fog node available mips at time t
-# sample_point    => Position of the point to test for
-
 rel_locations_for_node = {} 
 
-
-@njit
-def calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point):
-    
-    #position = numpy.array([numpy.float64(position[0]), numpy.float64(position[1])])
-    distance = calc_dist_njit(position, sample_point)
-    distance_factor = 1 - (distance / max_distance)
-    up_transfere_time = in_data_size / (up_bandwidth * distance_factor)
-    calculation_time = mi / mips
-    down_transfere_time = out_data_size / (down_bandwidth * distance_factor)
-    return up_transfere_time + calculation_time + down_transfere_time
 
 def calc_not_slow(strat, rate, iteration, path_data, locations:list):
 
     #path_data [path_id, compromised_fog_nodes, events, fog_device_infos, device_stats]
     #fog_device_infos [fog_device_id, downlink_bandwidth, uplink_bandwidth, uplink_latency]
     #event [fog_device_id, event_name, event_type, event_id, timestamp, availableMips, taskID, dataSize, mi, maxMips]
-    #device_stats []
     locations = np.array([np.array([l[0], l[1]]) for l in locations])
-
-
 
     path_id = path_data[0]
 
@@ -115,9 +86,6 @@ def calc_not_slow(strat, rate, iteration, path_data, locations:list):
 
         timestamp = event['timestamp']
 
-
-        
-        
         actual_position = get_position_for_timestamp(path_coords, timestamp)
 
         counted_events += 1
@@ -185,60 +153,6 @@ def calc_not_slow(strat, rate, iteration, path_data, locations:list):
 
     return (strat, rate, iteration, total_correctness, avg_corr)
 
-
-#Pr(f∗ |ℓ,x)  = 1/|ˆF(ℓ,x)| if f∗ ∈ ˆF(ℓ,x   || 0 otherwise 
-#conditional prob that node f* is selected from location l for threshold x
-def cond_prob_select_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices,selected_fog_node_id, threshold):
-    in_data_size = add_event['dataSize']
-    out_data_size = remove_event['dataSize']
-    mi = add_event['mi']
-    sample_point = location
-    base_mips = add_event['maxMips']
-    task_id = add_event['taskId']
-    id_with_min_mips = list(device_stats[task_id].keys())[0]
-    min_mips = device_stats[task_id][id_with_min_mips]
-
-    not_slow = find_not_slow_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos,  id_with_min_mips, min_mips, in_data_size,out_data_size, mi, sample_point, threshold )
-
-    if len(not_slow) == 0:
-        return 0
-
-    #print(len(not_slow), "  len not slow")
-    if selected_fog_node_id not in not_slow:
-        return 0
-    
-    return 1/len(not_slow)
-
-@njit
-def find_not_slow_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos, id_with_min_mips , min_mips, in_data_size, out_data_size, mi, sample_point, threshold ):
-  
-
-    arr = np.zeros(len(considered_fog_devices))
-    j = 0
-  
-    for i in range(len(considered_fog_devices)): 
-        current_id = considered_fog_devices[i]
-
-        mips = base_mips
-        position = fog_device_positions[current_id]
-        #position = numpy.array([numpy.float64(position[0]), numpy.float64(position[1])])
-        device = fog_device_infos[current_id]       
-
-        down_bandwidth = device[0]
-        up_bandwidth = device[1]
-
-        if current_id == id_with_min_mips:
-            mips = min_mips
-        
-        response_time = calc_response_time(in_data_size, out_data_size, mi, position, up_bandwidth, down_bandwidth, mips, sample_point)
-        
-        if response_time < threshold:
-            arr[j] = current_id
-            j += 1
- 
-    arr = arr[0:j]
-       
-    return arr
 
 def main():
     result_file_path = "results/not_slow.csv"
