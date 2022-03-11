@@ -124,14 +124,14 @@ def trans_device_infos(device_infos):
 def get_coords_dict(coords):
     
     coords_map = Dict.empty(
-        key_type=types.float64,
+        key_type=types.int64,
         value_type=float64_array
     )
 
     for coord in coords:
-        ts = float(coord[2])
-        lat = float(coord[0])
-        lon = float (coord[1])
+        ts = numpy.int64(coord[2])
+        lat =  numpy.float64(coord[0])
+        lon =  numpy.float64 (coord[1])
         coords_map[ts] = numpy.array([lat, lon])
     return coords_map
 
@@ -280,7 +280,7 @@ def ray_tracing(x,y,poly):
                     if p1x == p2x or x <= xints:
                         inside = not inside
         p1x,p1y = p2x,p2y
-
+    
     return inside
 
 
