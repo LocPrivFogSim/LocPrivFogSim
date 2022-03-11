@@ -189,11 +189,29 @@ def ray_tracing(x,y,poly):
 
     return inside
 
+def rel_locations_for_nodes():
+    my_locations_dict = {}
+
+
+    locations= retrieve_list_from_json("json/locations_points.json")#[nodeid, node_position,locations]
+    locations_typed = np.empty(dtype=float, shape=(len(locations),3))
+    for i in range(len(locations)):
+        l = locations[i]
+        locations_typed[i] = np.array([float(l[0]), float(l[1]) , float(l[2])])
+    locations = locations_typed
+    
+
+    node_positions = select_all_node_positions(db_con)
+    print(node_positions[0])
+    
+
+
+
 
 def main():
    
-    createLocationsFile()
-    
+    #createLocationsFile()
+    rel_locations_for_nodes()
   
 
 

@@ -12,6 +12,8 @@ from numba.typed import Dict
 from geopy.distance import geodesic
 from geopy import Point
 
+from Event_obj import Event
+
 
 
 db_path = "../geoLifePaths.db"
@@ -71,13 +73,13 @@ def format_path_coordinates(full_path):
     return x
 
 def path_as_dict(path_before):
+  
     path = {
         'id': path_before[0],
         'path_coords': format_path_coordinates(path_before[1]),
-        'distance': path_before[3],
+        'distance': numpy.float(path_before[3]),
         'fog_nodes_trace' : path_before[-1]
     }
-    
 
     return path
 
@@ -91,12 +93,13 @@ def get_position_for_timestamp(path, timestamp):
 def get_relevant_locations(locations, node_pos, edges):
     threshold = 10000 * sqrt(2)
     i = 0
-    arr = numpy.empty(shape=(len(locations),2))
+    arr = numpy.empty(shape=len(locations), dtype=numpy.int64)
 
-    for l in locations:
+    for j in  range(len(locations)):
+        l = locations[j]
         if calc_dist_njit(node_pos, l) < threshold:
             if ray_tracing(l[0], l[1], edges):
-                arr[i] = [l[0], l[1]] 
+                arr[i] = j
                 i += 1
 
     arr1 = arr[0:i]  #sliced array 
@@ -281,40 +284,6 @@ def ray_tracing(x,y,poly):
     return inside
 
 
-#correctness
-#TODO
-def calc_correctness(locations_propabilities:list, correct_location):
-    sum = 0
-    for location in locations_propabilities:
-        x = location[0] 
-        y = correct_location
-        distance = calc_dist_in_m(x,y)
-        propability = location[1] 
-        sum = sum + propability * distance
-    
-
-    return sum
-
-
-def dtw(path_X, path_Y):
-    x = []
-    y = []
-    for i in range(len(path_X)):
-        typedA = numpy.float64(path_X[i][0])
-        typedB = numpy.float64(path_X[i][1])
-        x.append([typedA, typedB])
-
-    for i in range(len(path_Y)):
-        typedA = numpy.float64(path_Y[i][0])
-        typedB = numpy.float64(path_Y[i][1])
-        y.append([typedA, typedB])
-
-    npArrA = numpy.array(x)
-    npArrB = numpy.array(y)
-
-    return dtw_njit(npArrA, npArrB)
-
-
 @njit()
 def dtw_njit(path_X, path_Y):
     X = len(path_X)
@@ -340,18 +309,48 @@ def dtw_njit(path_X, path_Y):
             loc_dist = distance_mat[i - 1, j - 1]
             dist_mat[i, j] = loc_dist + min([dist_mat[i - 1, j - 1], dist_mat[i, j - 1], dist_mat[i - 1, j]])
 
-    return dist_mat[X, Y]
+    return dist_mat[X, Y], dist_mat
 
-def get_fastest_comp_fog_node(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices):
+
+@njit
+def compute_optimal_warping_path(D):
+    """Compute the warping path given an accumulated cost matrix
+    """
+    N = D.shape[0]
+    M = D.shape[1]
+    n = N - 1
+    m = M - 1
+    P = [(n, m)]
+    while n > 0 or m > 0:
+        if n == 0:
+            cell = (0, m - 1)
+        elif m == 0:
+            cell = (n - 1, 0)
+        else:
+            val = min(D[n-1, m-1], D[n-1, m], D[n, m-1])
+            if val == D[n-1, m-1]:
+                cell = (n-1, m-1)
+            elif val == D[n-1, m]:
+                cell = (n-1, m)
+            else:
+                cell = (n, m-1)
+        P.append(cell)
+        (n, m) = cell
+    P.reverse()
+    return numpy.array(P)
+        
+
+@njit
+def get_fastest_comp_fog_node(location, add_event:Event, remove_event:Event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices):
  
-    in_data_size = add_event['dataSize']
-    out_data_size = remove_event['dataSize']
-    mi = add_event['mi']
+    in_data_size = add_event.dataSize
+    out_data_size = remove_event.dataSize
+    mi = add_event.mi
     sample_point = location
-    base_mips = add_event['maxMips']
-    task_id = add_event['taskId']
-    id_with_min_mips = list(device_stats[task_id].keys())[0]
-    min_mips = device_stats[task_id][id_with_min_mips]
+    base_mips = add_event.maxMips
+    task_id = add_event.taskId
+    id_with_min_mips = device_stats[task_id][0]
+    min_mips = device_stats[task_id][1]
     
     fastest_node = find_fastest_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos,  id_with_min_mips, min_mips, in_data_size,out_data_size, mi, sample_point )
     return fastest_node
@@ -388,18 +387,19 @@ def find_fastest_loop(considered_fog_devices, base_mips, fog_device_positions, f
 
 #Pr(f∗ |ℓ,x)  = 1/|ˆF(ℓ,x)| if f∗ ∈ ˆF(ℓ,x   || 0 otherwise 
 #conditional prob that node f* is selected from location l for threshold x
-def cond_prob_guessed_location(location, add_event, remove_event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices, selected_fog_node_id,threshold):
+@njit
+def cond_prob_guessed_location(location, add_event:Event, remove_event:Event, fog_device_infos, device_stats, fog_device_positions, considered_fog_devices, selected_fog_node_id,threshold):
     
     #prepares data so that njit works efficiently
 
-    in_data_size = add_event['dataSize']
-    out_data_size = remove_event['dataSize']
-    mi = add_event['mi']
+    in_data_size = add_event.dataSize
+    out_data_size = remove_event.dataSize
+    mi = add_event.mi
     sample_point = location
-    base_mips = add_event['maxMips']
-    task_id = add_event['taskId']
-    id_with_min_mips = list(device_stats[task_id].keys())[0]
-    min_mips = device_stats[task_id][id_with_min_mips]
+    base_mips = add_event.maxMips
+    task_id = add_event.taskId
+    id_with_min_mips = device_stats[task_id][0]
+    min_mips = device_stats[task_id][1]
     
 
     not_slow = find_not_slow_loop(considered_fog_devices, base_mips, fog_device_positions, fog_device_infos,  id_with_min_mips, min_mips, in_data_size,out_data_size, mi, sample_point, threshold )
