@@ -2,7 +2,7 @@ namespace Data;
 
 public class Device
 {
-    public Device(int id, Coord position, bool isCompromised, double downlinkBandwidth, double uplinkBandwidth, double uplinkLatency)
+    public Device(int id, Coord position, bool isCompromised, double downlinkBandwidth, double uplinkBandwidth, double uplinkLatency, List<Coord> voronoiVertices)
     {
         Id = id;
         Position = position;
@@ -10,6 +10,7 @@ public class Device
         DownlinkBandwidth = downlinkBandwidth;
         UplinkBandwidth = uplinkBandwidth;
         UplinkLatency = uplinkLatency;
+        VoronoiVertices = voronoiVertices;
     }
 
     public int Id { get; }
@@ -23,5 +24,9 @@ public class Device
     public double UplinkBandwidth { get; }
 
     public double UplinkLatency { get; }
+
+    public List<Coord> VoronoiVertices{ get; }
+
+
 
 }
