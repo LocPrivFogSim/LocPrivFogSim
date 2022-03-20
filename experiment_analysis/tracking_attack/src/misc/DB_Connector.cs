@@ -3,7 +3,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
 using System.Text;
-
+using Data;
 
 public class DB_Connector
 {
@@ -15,6 +15,45 @@ public class DB_Connector
     {
         con =  new SQLiteConnection("Data Source=" + Constants.DbPath);
     }
+
+    public Dictionary<int, Device> initFogNodesWithPositions(){
+        DataTable dt = new DataTable();
+        Dictionary<int, Device> devices = new Dictionary<int, Device>();
+
+        try
+        {
+            con.Open();
+
+            var command = con.CreateCommand();
+            command.CommandText = 
+            @"
+                SELECT *
+                From node_positions
+            ";
+            var adapter = new SQLiteDataAdapter(command);
+            adapter.Fill(dt);
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.StackTrace);
+        }
+
+        foreach (DataRow row in dt.Rows)
+        {
+            int id = int.Parse(row["node_id"].ToString());
+            double lat = double.Parse(row["lat"].ToString());
+            double lon = double.Parse(row["lon"].ToString());
+            
+            Device device = new Device();
+
+            Coord c = new Coord(lat, lon, -1); 
+            device.Id = id;
+            device.Position = c ;
+            devices[id] = device;
+        }
+        con.Close();
+        return devices;
+    } 
 
     public  Dictionary<int, List<Coord>> GetAllPaths() 
     {

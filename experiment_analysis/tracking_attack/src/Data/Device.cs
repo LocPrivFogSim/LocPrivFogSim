@@ -13,19 +13,23 @@ public class Device
         VoronoiVertices = voronoiVertices;
     }
 
-    public int Id { get; }
+    public Device()
+    {
+        
+    }
+
+    public int Id { get; set;}
     
-    public Coord Position { get; }
+    public Coord Position { get; set;}
 
-    public bool IsCompromised { get; }
+    public bool IsCompromised { get; set;}
     
-    public double DownlinkBandwidth { get; }
+    public double DownlinkBandwidth { get; set;}
+    public double UplinkBandwidth { get; set;}
 
-    public double UplinkBandwidth { get; }
+    public double UplinkLatency { get; set;}
 
-    public double UplinkLatency { get; }
-
-    public List<Coord> VoronoiVertices{ get; }
+    public List<Coord> VoronoiVertices{ get; set;}
 
 
 

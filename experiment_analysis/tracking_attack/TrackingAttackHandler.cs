@@ -7,22 +7,26 @@ using Data;
 public class TrackingAttackHandler
 {
 
-    public List<Coord> Locations { get;}
+    public List<Coord> _locations { get; set;}
 
-    Dictionary<int, List<Coord>> paths { get; set;}
+    Dictionary<int, List<Coord>> _paths { get; set;}
     
+    Dictionary<int, Device> _fogNodes {get; set;}
 
     public void RunTrackingAttack()
     {   
         ArrayList results = ArrayList.Synchronized(new ArrayList());
         
+        DB_Connector connector =  new DB_Connector();
+        _paths =  connector.GetAllPaths();
 
-        paths =  new DB_Connector().GetAllPaths();
+        
+        _fogNodes = connector.initFogNodesWithPositions();
 
         //TODO set Locations
 
-        foreach (var file in 
-        Directory.GetFiles(Constants.EventsFilesDir, "*.json" , SearchOption.AllDirectories))
+
+        foreach (var file in  Directory.GetFiles(Constants.EventsFilesDir, "*.json" , SearchOption.AllDirectories))
         { 
             //TODO parallel execution of following 
             AttackResult r = getAttackResultForFile(file);
@@ -47,7 +51,7 @@ public class TrackingAttackHandler
     List<Device> devices = InitAllDevices();
 
 
-    return calcAttackResults(strategy, rate, iteration, Locations, events, paths);
+    return calcAttackResults(strategy, rate, iteration, _locations, events, _paths);
 
     } 
 
