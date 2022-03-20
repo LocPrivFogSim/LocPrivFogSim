@@ -3,27 +3,29 @@ using System.Collections;
 using Data;
 
 
+
 //Singleton 
 public class TrackingAttackHandler
 {
 
-    public List<Coord> _locations { get; set;}
+    public Dictionary<int, Coord> _locations { get; set;}
 
     Dictionary<int, List<Coord>> _paths { get; set;}
     
     Dictionary<int, Device> _fogNodes {get; set;}
-
+ 
     public void RunTrackingAttack()
     {   
         ArrayList results = ArrayList.Synchronized(new ArrayList());
         
         DB_Connector connector =  new DB_Connector();
         _paths =  connector.GetAllPaths();
+        _fogNodes = connector.InitFogNodesWithPositions();
 
         
-        _fogNodes = connector.initFogNodesWithPositions();
+        JsonParser jsonParser = new JsonParser();
+        _locations = jsonParser.GetLocations();
 
-        //TODO set Locations
 
 
         foreach (var file in  Directory.GetFiles(Constants.EventsFilesDir, "*.json" , SearchOption.AllDirectories))
@@ -47,7 +49,8 @@ public class TrackingAttackHandler
     int strategy = 0;
     int rate = 0;
     int iteration = 0;
-    List<Event> events = JsonPaser.GetEvents(filepath);
+    JsonParser jsonParser = new JsonParser();
+    List<Event> events = jsonParser.GetEvents(filepath);
     List<Device> devices = InitAllDevices();
 
 
@@ -57,7 +60,7 @@ public class TrackingAttackHandler
 
 
 
-    private AttackResult calcAttackResults(int strategy, int rate, int iteration, List<Coord> locations, List<Event> events, Dictionary<int, List<Coord>> paths )
+    private AttackResult calcAttackResults(int strategy, int rate, int iteration, Dictionary<int, Coord> locations, List<Event> events, Dictionary<int, List<Coord>> paths )
     {
 
 

@@ -2,10 +2,10 @@
 {
     static void Main(string[] args)
     {
-        TrackingAttackHandler th = TrackingAttackHandler.Instance;
-        th.RunTrackingAttack();
+        //TrackingAttackHandler th = TrackingAttackHandler.Instance;
+        //th.RunTrackingAttack();
 
-
+        
     }
 }
 

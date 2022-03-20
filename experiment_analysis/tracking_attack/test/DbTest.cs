@@ -32,7 +32,7 @@ public class DbTest
         
         //node id = 0    has pos 40.2915052488617|116.299723355816
         Coord c1 = new Coord(40.2915052488617, 116.299723355816, -1);
-        var x = con.initFogNodesWithPositions();
+        var x = con.InitFogNodesWithPositions();
         Coord c2 =  x[0].Position;
         Assert.True(c1.Lat - c2.Lat < 0.000001);  //some rounding error might occur
     }

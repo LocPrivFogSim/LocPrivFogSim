@@ -16,7 +16,7 @@ public class DB_Connector
         con =  new SQLiteConnection("Data Source=" + Constants.DbPath);
     }
 
-    public Dictionary<int, Device> initFogNodesWithPositions(){
+    public Dictionary<int, Device> InitFogNodesWithPositions(){
         DataTable dt = new DataTable();
         Dictionary<int, Device> devices = new Dictionary<int, Device>();
 
