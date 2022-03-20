@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj": {}
+    "c:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj": {}
   },
   "projects": {
-    "C:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj": {
+    "c:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj",
+        "projectUniqueName": "c:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj",
         "projectName": "tracking_attack",
-        "projectPath": "C:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj",
+        "projectPath": "c:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj",
         "packagesPath": "C:\\Users\\lspie\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\obj\\",
+        "outputPath": "c:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\lspie\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -37,6 +37,20 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.1.0, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.4.1, )"
+            },
+            "xunit.runner.visualstudio": {
+              "target": "Package",
+              "version": "[2.4.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
