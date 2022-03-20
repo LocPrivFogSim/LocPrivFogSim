@@ -9,13 +9,17 @@ public class TrackingAttackHandler
 
     public List<Coord> Locations { get;}
 
+    Dictionary<int, List<Coord>> paths { get; set;}
     
 
     public void RunTrackingAttack()
     {   
         ArrayList results = ArrayList.Synchronized(new ArrayList());
         
-        //set Locations
+
+        paths =  new DB_Connector().GetAllPaths();
+
+        //TODO set Locations
 
         foreach (var file in 
         Directory.GetFiles(Constants.EventsFilesDir, "*.json" , SearchOption.AllDirectories))
@@ -40,7 +44,6 @@ public class TrackingAttackHandler
     int rate = 0;
     int iteration = 0;
     List<Event> events = JsonPaser.GetEvents(filepath);
-    Dictionary<int, List<Coord>> paths = DB_Connector.GetAllPaths();
     List<Device> devices = InitAllDevices();
 
 
@@ -58,11 +61,14 @@ public class TrackingAttackHandler
         return null;
     }
 
-
+    //TODO  init all fognodes with data from DB, eventlog.json and locations files (-> comments)
     public List<Device> InitAllDevices()
     {
         List<Device> devices = new List<Device>();
-        for ()
+    
+        List<int> relevant_device_ids = new List<int> (); //TODO just the relevant fognodes or all fognodes?! if just relevants get it from JsonParser 
+
+        foreach (int x in relevant_device_ids)  
         {
             int id = 0 ;//DB
             Coord position = new Coord(); //DB

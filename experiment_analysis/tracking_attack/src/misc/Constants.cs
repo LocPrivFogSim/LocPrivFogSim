@@ -8,4 +8,6 @@ public static class Constants
     public const String ResultsFilePath = "./.."; 
 
     public const String  EventsFilesDir= @"C:\Users\lspie\Desktop\LocPrivFogSim\experiment_analysis\input"; 
+
+    public const String DbPath = @"C:\Users\lspie\Desktop\LocPrivFogSim\geoLifePaths.db";
 }

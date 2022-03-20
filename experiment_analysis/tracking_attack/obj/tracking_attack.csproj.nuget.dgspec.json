@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj": {}
+    "C:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj": {}
   },
   "projects": {
-    "c:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj": {
+    "C:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj",
+        "projectUniqueName": "C:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj",
         "projectName": "tracking_attack",
-        "projectPath": "c:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj",
+        "projectPath": "C:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\tracking_attack.csproj",
         "packagesPath": "C:\\Users\\lspie\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\obj\\",
+        "outputPath": "C:\\Users\\lspie\\Desktop\\LocPrivFogSim\\experiment_analysis\\tracking_attack\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\lspie\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -41,6 +41,10 @@
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
               "version": "[17.1.0, )"
+            },
+            "System.Data.SQLite.Core": {
+              "target": "Package",
+              "version": "[1.0.115.5, )"
             },
             "xunit": {
               "target": "Package",
