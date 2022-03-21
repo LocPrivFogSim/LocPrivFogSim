@@ -13,7 +13,9 @@ public class TrackingAttackHandler
     Dictionary<int, List<Coord>> _paths { get; set;}
     
     Dictionary<int, Device> _fogNodes {get; set;}
- 
+    
+
+    //Controller Method for tracking attack
     public void RunTrackingAttack()
     {   
         ArrayList results = ArrayList.Synchronized(new ArrayList());
@@ -21,7 +23,6 @@ public class TrackingAttackHandler
         DB_Connector connector =  new DB_Connector();
         _paths =  connector.GetAllPaths();
         _fogNodes = connector.InitFogNodesWithPositions();
-
         
         JsonParser jsonParser = new JsonParser();
         _locations = jsonParser.GetLocations();
@@ -55,8 +56,6 @@ public class TrackingAttackHandler
 
     } 
 
-
-    
 
 
     private AttackResult calcAttackResults(int strategy, int rate, int iteration, Dictionary<int, Coord> locations, List<Event> events, Dictionary<int, List<Coord>> paths )

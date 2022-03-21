@@ -3,9 +3,8 @@ using Data;
 public static class Calculations
 {
 
-    //TODO Test all Methods
-
-
+    
+    
     public static double CalcDistanceInMetres(Coord coordA, Coord coordB)
     {
           
@@ -13,6 +12,7 @@ public static class Calculations
         var a = 0.5 - Math.Cos((coordB.Lat - coordA.Lat) * p)/2 + Math.Cos(coordA.Lat * p) * Math.Cos(coordB.Lat * p) * (1 - Math.Cos((coordB.Lon - coordA.Lon) * p)) / 2;
         return 1000 * 12742 * Math.Asin(Math.Sqrt(a));
     }
+   
 
     public static bool CoordIsInPolygon(Coord testPoint, Coord[] polygon)
     {
@@ -37,7 +37,7 @@ public static class Calculations
         int x =  pathA.Count();
         int y =  pathB.Count();
 
-        double[,] distMatrix = new double[x,y];
+        double[,] distMatrix = new double[x, y];
 
         for(int i = 0; i < x ; i++)
         {   
@@ -49,26 +49,27 @@ public static class Calculations
 
         double[,] resultMatrix = new double[x+1, y+1];
 
-        for(int i = 0; i < x+1 ; i++)
+        for(int i = 1; i < x+1 ; i++)
         {
             resultMatrix[i,0] = Double.MaxValue;
         }
 
-        for(int i = 0; i < x+1 ; i++)
+        for(int i = 1; i < y+1 ; i++)
         {
             resultMatrix[0,i] = Double.MaxValue;
         }
-
 
         for(int i = 1; i < x+1 ; i++)
         {   
             for(int j = 1; j < y+1 ; j++)
             {
                 double localDist = distMatrix[i - 1 , j - 1];
-                resultMatrix[i, j] = localDist + Math.Min(distMatrix[i - 1, j - 1], Math.Min(distMatrix[i, j - 1], distMatrix[i - 1, j]));
+                double botLeft = resultMatrix[i - 1, j - 1];
+                double bot = resultMatrix[i, j - 1];
+                double left = resultMatrix[i - 1, j];
+                resultMatrix[i, j] = localDist + Math.Min(botLeft, Math.Min(bot , left));
             }
         }
-
         return resultMatrix;
     }
 
@@ -138,6 +139,18 @@ public static class Calculations
 
         return upTransfereTime + downTransfereTime + calcTime;
     }
+
+
+    public static Coord TargetCoordOnLine(Coord c1, Coord c2, double distance){
+        
+        //TODO
+
+
+
+        return new Coord(-1, -1 , -1);
+
+    }
+
 }
 
 
