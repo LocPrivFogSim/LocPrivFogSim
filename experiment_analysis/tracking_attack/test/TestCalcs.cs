@@ -108,4 +108,11 @@
         Assert.True(t2.Lat == 1.75 && t2.Lon == 1.75);
         Assert.True(t3.Lat == 1.0 && t3.Lon == 1.0);
     }
+
+    [Fact]
+    public void TestSampleSegments()
+    {
+        //TODO
+
+    }
 }

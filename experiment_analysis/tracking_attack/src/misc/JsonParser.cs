@@ -104,10 +104,70 @@ public class JsonParser
             locations[i] = c;
         }
 
-        Console.WriteLine(jArr[0]);
         return locations;
     }
-    
+
+    public Dictionary<int, Device> InitFogNodes()
+    {
+        
+        Dictionary<int, Device> devices = new Dictionary<int, Device>();
+
+        var jsonString = File.ReadAllText(Constants.NodeLocationsFilePath);
+        var jArr = JArray.Parse(jsonString);
+
+        for(int i = 0; i < jArr.Count(); i ++ )
+        {   
+            var nodeInfo = (JArray) jArr[i];
+            int id = ((int)nodeInfo[0]);
+
+
+            Coord position = new Coord( 
+                (double) ((JArray) nodeInfo[1])[0], 
+                (double) ((JArray) nodeInfo[1])[1], 
+                -1);
+           
+
+            List<Coord> relevantLocations = new List<Coord>();
+            var relevantLocationsJArr = nodeInfo[2];
+            foreach (var relevantLoc in relevantLocationsJArr)
+            {
+                //Console.WriteLine("x  "+ relevantLocationsJArr);
+                double lat = ((double)relevantLoc[0]);
+                double lon = ((double)relevantLoc[1]);
+                Coord c = new Coord(lat, lon, -1);
+                relevantLocations.Add(c);
+            }
+
+            List<Coord> voronoiVertices = new List<Coord>();
+            var verticesJArr = nodeInfo[3];
+            foreach (var vertix in verticesJArr)
+            {   
+                double lat = ((double)vertix[0]);
+                double lon = ((double)vertix[1]);
+                Coord c = new Coord(lat, lon, -1);
+                voronoiVertices.Add(c);
+            }
+
+           
+
+            // Console.WriteLine("id  "+ id);
+            // Console.WriteLine("position  "+ position);
+            // Console.WriteLine("voronoiVertices[0]  "+ voronoiVertices[0]);
+            //Console.WriteLine("relevantLocations[0]  "+ relevantLocations[0]);
+
+
+            Device d = new Device();
+            d.Id = id;
+            d.Position = position;
+            d.VoronoiVertices = voronoiVertices;
+            d.RelevantLocations = relevantLocations;
+
+            devices[i] = d;
+        }
+
+        return devices;
+    }
+
 }
 
 

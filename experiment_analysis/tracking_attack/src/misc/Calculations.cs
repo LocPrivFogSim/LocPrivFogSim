@@ -129,12 +129,12 @@ public static class Calculations
         return warpingPath;
     }    
 
-    public static double ResponseTime(Event addEvent, Event removeEvent, Device device, Coord samplePoint)
+    public static double ResponseTime(Event addEvent, Event removeEvent, Device device, DeviceStats stats, Coord samplePoint)
     {
         double distance = CalcDistanceInMetres(samplePoint, device.Position);
         double distance_factor = 1 - ( distance / Constants.MaxDistance);
-        double upTransfereTime = addEvent.DataSize / (device.UplinkBandwidth * distance_factor ) ; 
-        double downTransfereTime = removeEvent.DataSize / (device.DownlinkBandwidth * distance_factor ) ; 
+        double upTransfereTime = addEvent.DataSize / (stats.UplinkBandwidth * distance_factor ) ; 
+        double downTransfereTime = removeEvent.DataSize / (stats.DownlinkBandwidth * distance_factor ) ; 
         double calcTime = addEvent.Mi / addEvent.AvailableMips ; 
 
         return upTransfereTime + downTransfereTime + calcTime;
@@ -149,6 +149,61 @@ public static class Calculations
 
         return new Coord(targetLat, targetLon, -1);
     }
+
+    public static Dictionary<int, Segment> SampleSegments(List<Coord> path)
+    {
+        Dictionary<int, Segment> segments = new Dictionary<int, Segment>();
+
+        int segmentIndex = 0;
+        Coord currSegmentStart = path[0];
+        double leftForCurrSegment = Constants.LenOfSegments; 
+
+        for (int i = 1; i < path.Count(); i++){
+            Coord x = path[i -1 ];
+            Coord y = path[i];
+
+            double distance = Calculations.CalcDistanceInMetres(x, y);
+
+            while(leftForCurrSegment < distance)
+            {
+                Segment segment = new Segment();
+                segment.SegmentLength = Constants.LenOfSegments;
+                segment.StartCoord = currSegmentStart;
+
+                double factor = leftForCurrSegment / distance;
+                Coord target = Calculations.TargetCoordOnLine(x,y,factor);
+                segment.EndCoord = target;
+
+                segment.Velocity = Constants.RandVelocity;
+                segment.TraversingTime = distance/segment.Velocity;
+
+                segments[segmentIndex] = segment;                
+                
+                segmentIndex ++;
+                x = target;
+                distance -= leftForCurrSegment;
+                leftForCurrSegment = Constants.LenOfSegments;
+            }
+            leftForCurrSegment -= distance;
+        }
+
+        //add final segment (has distance < LenOfSegments)
+        Coord finalCoord = path[path.Count() - 1];
+        Coord previousCoord = path[segmentIndex];
+        double dist = Calculations.CalcDistanceInMetres(previousCoord, finalCoord);
+        Segment s = new Segment();
+
+        s.StartCoord = previousCoord;
+        s.EndCoord = finalCoord;
+        s.SegmentLength = dist;
+        s.Velocity = Constants.RandVelocity;
+        s.TraversingTime = s.SegmentLength/s.Velocity;
+
+        segments[segmentIndex] = s;                
+        return segments;
+    }
+    
+
 }
 
 
@@ -169,4 +224,15 @@ public struct Coord
     public double Timestamp { get; }
 
     public override string ToString() => $"({Lat}, {Lon})   timestamp: {Timestamp}";
+}
+
+public class Segment 
+{
+    public Coord StartCoord {get;set;}
+    public Coord EndCoord {get;set;}
+    public double SegmentLength {get;set;}
+    public double Velocity {get;set;}
+    public double TraversingTime {get;set;}
+
+
 }
