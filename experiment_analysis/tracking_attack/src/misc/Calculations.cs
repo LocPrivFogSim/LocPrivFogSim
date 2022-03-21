@@ -140,23 +140,21 @@ public static class Calculations
         return upTransfereTime + downTransfereTime + calcTime;
     }
 
+    //e.g. factor = 0.5 -> target point is exact midpoint between c1 and c2
+    public static Coord TargetCoordOnLine(Coord c1, Coord c2, double factor){
+        double latV = c2.Lat - c1.Lat;
+        double lonV = c2.Lon - c1.Lon;
+        double targetLat = c1.Lat + latV * factor;
+        double targetLon = c1.Lon + lonV * factor;
 
-    public static Coord TargetCoordOnLine(Coord c1, Coord c2, double distance){
-        
-        //TODO
-
-
-
-        return new Coord(-1, -1 , -1);
-
+        return new Coord(targetLat, targetLon, -1);
     }
-
 }
 
 
 
 
-public struct Coord
+public struct Coord 
 {
     public Coord(double lat, double lon, double timestamp)
     {

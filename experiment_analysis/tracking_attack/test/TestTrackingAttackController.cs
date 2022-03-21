@@ -1,12 +1,12 @@
  using Xunit;
  
- public class TestTrackingAttackHandler
+ public class TestTrackingAttackController
 {
  [Fact]
     public void TestFileNameSplitting()
     {
         string filePath = @"C:\Users\lspie\Desktop\LocPrivFogSim\experiment_analysis\input\Test\output_3_20_13.json";
-        TrackingAttackHandler th = TrackingAttackHandler.Instance;        
+        TrackingAttackController th = TrackingAttackController.Instance;        
         int[] x =  th.getExperimentParamsFromFileName(filePath);
 
         Assert.True(x[0] == 3); //strat

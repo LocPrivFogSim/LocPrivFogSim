@@ -5,7 +5,7 @@ using Data;
 
 
 //Singleton 
-public class TrackingAttackHandler
+public class TrackingAttackController
 {
 
     public Dictionary<int, Coord> _locations { get; set;}
@@ -105,17 +105,17 @@ public class TrackingAttackHandler
 
     //---------- -- Singleton --------------------
 
-    private TrackingAttackHandler(){
+    private TrackingAttackController(){
     }
 
-    private static TrackingAttackHandler _instance = new TrackingAttackHandler();
+    private static TrackingAttackController _instance = new TrackingAttackController();
 
-      public static TrackingAttackHandler Instance
+      public static TrackingAttackController Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = new TrackingAttackHandler();
+                    _instance = new TrackingAttackController();
                 return _instance;
             }
         }

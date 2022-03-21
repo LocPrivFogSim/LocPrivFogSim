@@ -93,4 +93,19 @@
         }
     }
     
+
+    [Fact]
+    public void TestTargetCoordOnLine()
+    {
+        Coord c1 = new Coord (1.0, 1.0, -1);
+        Coord c2 = new Coord (2.0, 2.0, -1);
+
+        var t1 =  Calculations.TargetCoordOnLine(c1,c2, 0.5);
+        var t2 =  Calculations.TargetCoordOnLine(c1,c2, 0.75);
+        var t3 =  Calculations.TargetCoordOnLine(c1,c2, 0);
+
+        Assert.True(t1.Lat == 1.5 && t1.Lon == 1.5);
+        Assert.True(t2.Lat == 1.75 && t2.Lon == 1.75);
+        Assert.True(t3.Lat == 1.0 && t3.Lon == 1.0);
+    }
 }

@@ -1,9 +1,9 @@
 ﻿class Program
 {
     static void Main(string[] args)
-    {
-        TrackingAttackHandler th = TrackingAttackHandler.Instance;
-        th.RunTrackingAttack();
+    {   
+        TrackingAttackController tc = TrackingAttackController.Instance;
+        tc.RunTrackingAttack();
     }
 }
 
