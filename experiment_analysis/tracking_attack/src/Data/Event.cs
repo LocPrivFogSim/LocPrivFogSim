@@ -21,7 +21,7 @@ public class Event
 
     public double MaxMips { get; set;}
 
-    public List<Device> ConsideredFogNodes { get; set;}
+    public int[] ConsideredFogNodes { get; set;}
 
     public List<Coord> ConsideredField { get; set;}
 

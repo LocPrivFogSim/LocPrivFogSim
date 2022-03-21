@@ -19,14 +19,14 @@ public class JsonParser
         
         Dictionary<int, double[]> deviceInfos = new Dictionary<int, double[]> ();
         var fogDeviceInfoArr = jObj["fogDeviceInfos"];
-        foreach(var obj in fogDeviceInfoArr)
+        foreach(var deviceInfoObj in fogDeviceInfoArr)
         {
-            JObject jObj1 = (JObject) obj;   
+            JObject jDeviceInfoObj = (JObject) deviceInfoObj;   
 
-            int deviceId = ((int)jObj1["fog_device_id"]);
-            double downlinkBandwidth = ((int)jObj1["downlink_bandwidth"]);
-            double uplink_bandwidth = ((int)jObj1["uplink_bandwidth"]);
-            double uplink_latency = ((int)jObj1["uplink_latency"]);
+            int deviceId = ((int)jDeviceInfoObj["fog_device_id"]);
+            double downlinkBandwidth = ((int)jDeviceInfoObj["downlink_bandwidth"]);
+            double uplink_bandwidth = ((int)jDeviceInfoObj["uplink_bandwidth"]);
+            double uplink_latency = ((int)jDeviceInfoObj["uplink_latency"]);
             
             deviceInfos[deviceId] = new double[] {downlinkBandwidth, uplink_bandwidth, uplink_latency};
         }
@@ -34,26 +34,26 @@ public class JsonParser
         List<Event> events = new List<Event>();         //TODO check if c# Lists sorted by default
 
         var eventsArr = jObj["events"];
-        foreach(var obj in eventsArr)
+        foreach(var eventObj in eventsArr)
         {
-            JObject jObj1 = (JObject) obj;  
-            int event_id = ((int)jObj1["event_id"]);
-            int fog_device_id = ((int)jObj1["fog_device_id"]);
-            string eventName = ((string)jObj1["event_name"]);
-            int eventType =  ((int)jObj1["event_type"]);
-            double ts =  ((double)jObj1["timestamp"]);
-            double availableMips =  ((double)jObj1["availableMips"]);
-            double dataSize = ((double)jObj1["dataSize"]);
-            double mi = ((double)jObj1["mi"]);
-            double maxMips = ((double)jObj1["maxMips"]);
-            int [] consideredFogNodes = jObj["consideredFogNodes"].ToObject<int[]>();
+            JObject jEventObj = (JObject) eventObj;  
+            int event_id = ((int)jEventObj["event_id"]);
+            int fog_device_id = ((int)jEventObj["fog_device_id"]);
+            string eventName = ((string)jEventObj["event_name"]);
+            int eventType =  ((int)jEventObj["event_type"]);
+            double ts =  ((double)jEventObj["timestamp"]);
+            double availableMips =  ((double)jEventObj["availableMips"]);
+            double dataSize = ((double)jEventObj["dataSize"]);
+            double mi = ((double)jEventObj["mi"]);
+            double maxMips = ((double)jEventObj["maxMips"]);
+            int [] consideredFogNodes = jEventObj["consideredFogNodes"].ToObject<int[]>();
 
             List<Coord> consideredField = new List<Coord>();
-            foreach( var obj1 in jObj["consideredField"])
+            foreach( var consFieldObj in jEventObj["consideredField"])
             {
-                JObject jObj2 = (JObject) obj1;  
-                double lat = ((double)jObj2["lat"]);
-                double lon = ((double)jObj2["lon"]);
+                JObject jConsFieldObj = (JObject) consFieldObj;  
+                double lat = ((double)jConsFieldObj["lat"]);
+                double lon = ((double)jConsFieldObj["lon"]);
                 Coord c = new Coord(lat, lon , -1);
                 consideredField.Add(c);
             }
@@ -68,9 +68,10 @@ public class JsonParser
             e.DataSize = dataSize;
             e.Mi = mi;
             e.MaxMips = maxMips;
-            e.ConsideredFogNodes = null ;//consideredFogNodes; //TODO 
+            e.ConsideredFogNodes =consideredFogNodes ;
             e.ConsideredField = consideredField;
 
+            events.Add(e);
         }
 
 
@@ -80,7 +81,7 @@ public class JsonParser
         ef.Events = events;
     
 
-        Environment.Exit(0);
+        //Environment.Exit(0);
         return ef;
     }
 

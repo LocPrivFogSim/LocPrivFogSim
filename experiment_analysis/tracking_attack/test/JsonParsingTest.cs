@@ -30,9 +30,14 @@ public class JsonParsingTest
             first event with ts==4 and consideredFogNodes[0] == 1830 
         */
 
-        
+        JsonParser jp = new JsonParser();
+        EventFileData e = jp.ParseEventFile(path);
 
-        
+        Assert.True(e.SimulatedPathId ==36841 );
+        Assert.True(e.CompromisedFogNodes[0] == 28);
+        Assert.True(e.FogDeviceInfos[0][0] == 585.0 );
+        Assert.True(e.Events[0].Timestamp == 4);
+        Assert.True(e.Events[0].ConsideredFogNodes[0] == 1830);
     }
 
 
