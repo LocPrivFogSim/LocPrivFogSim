@@ -26,15 +26,11 @@ public class TrackingAttackHandler
         JsonParser jsonParser = new JsonParser();
         _locations = jsonParser.GetLocations();
 
-
-
         foreach (var file in  Directory.GetFiles(Constants.EventsFilesDir, "*.json" , SearchOption.AllDirectories))
         { 
             //TODO parallel execution of following 
             AttackResult r = getAttackResultForFile(file);
             results.Add(r);
-
-
         }
 
     }
@@ -42,33 +38,30 @@ public class TrackingAttackHandler
 
 
     private AttackResult getAttackResultForFile(String filepath)
-    {
-     //example: C:\Users\lspie\Desktop\LocPrivFogSim\experiment_analysis\input\Test\output_3_20_13.json
-    
-    //TODO parse from File name
-    int strategy = 0;
-    int rate = 0;
-    int iteration = 0;
-    JsonParser jsonParser = new JsonParser();
-    EventFileData eventFileData = jsonParser.ParseEventFile(filepath);
+    { 
+        int [] experimentParams = getExperimentParamsFromFileName(filepath);
+        int strategy = experimentParams[0];
+        int rate = experimentParams[1];
+        int iteration = experimentParams[2];
+
+        JsonParser jp = new JsonParser();
+        EventFileData eventFileData = jp.ParseEventFile(filepath);
+        List<Event> events = eventFileData.Events;
+
+        List<Device> devices = InitAllDevices();
 
 
-    List<Event> events = eventFileData.Events;
-
-
-    List<Device> devices = InitAllDevices();
-
-
-    return calcAttackResults(strategy, rate, iteration, _locations, events, _paths);
+        return calcAttackResults(strategy, rate, iteration, _locations, events, _paths);
 
     } 
 
 
+    
+
 
     private AttackResult calcAttackResults(int strategy, int rate, int iteration, Dictionary<int, Coord> locations, List<Event> events, Dictionary<int, List<Coord>> paths )
     {
-
-
+        //TODO
 
         return null;
     }
@@ -95,6 +88,22 @@ public class TrackingAttackHandler
         return devices;
     }
 
+
+    public int[] getExperimentParamsFromFileName(string filepath)
+    {
+        string[] subStrings = filepath.Split("\\");
+        string fileNameWithoutExtension = subStrings[subStrings.Length - 1].Split(".")[0];
+        
+        string[] fileNameSubStings = fileNameWithoutExtension.Split("_");  // eg. output_2_10_1
+
+        int strategy = int.Parse(fileNameSubStings[1]);
+        int rate = int.Parse(fileNameSubStings[2]);
+        int iteration = int.Parse(fileNameSubStings[3]);
+       
+        return new int[] {strategy, rate, iteration};
+    }
+
+
     //---------- -- Singleton --------------------
 
     private TrackingAttackHandler(){
@@ -117,12 +126,8 @@ public class TrackingAttackHandler
 
 
 
-
-
 class AttackResult
 {
-
-
-
-
+    //TODO
+    
 }
