@@ -3,40 +3,26 @@ namespace Data;
 
 public class Event
 {
-    public Event(int id, int fogDeviceId, int taskId, string eventName, int eventType, double timestamp, double availableMips, double dataSize, double mi, List<Device> consideredFogNodes, List<Coord> consideredField)
-    {
-        Id = id;
-        FogDeviceId = fogDeviceId;
-        TaskId = taskId;
-        EventName = eventName;
-        EventType = eventType;
-        Timestamp = timestamp;
-        AvailableMips = availableMips;
-        DataSize = dataSize;
-        Mi = mi;
-        ConsideredFogNodes = consideredFogNodes;
-        ConsideredField = consideredField;
-    }
-
-    public int Id { get; }
-    public int FogDeviceId { get; }
-
-    public int TaskId { get; }
+ 
+    public int Id { get; set; }
+    public int FogDeviceId { get; set;}
     
-    public String EventName { get; }
+    public String EventName { get; set;}
 
-    public int EventType { get; }
+    public int EventType { get; set;}
 
-    public double Timestamp { get; }
+    public double Timestamp { get; set;}
 
-    public double AvailableMips { get; }
+    public double AvailableMips { get; set;}
 
-    public double DataSize { get; }
+    public double DataSize { get; set;}
 
-    public double Mi { get; }
+    public double Mi { get; set;}
 
-    public List<Device> ConsideredFogNodes { get; }
+    public double MaxMips { get; set;}
 
-    public List<Coord> ConsideredField { get; }
+    public List<Device> ConsideredFogNodes { get; set;}
+
+    public List<Coord> ConsideredField { get; set;}
 
 }

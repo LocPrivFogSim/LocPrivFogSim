@@ -50,7 +50,12 @@ public class TrackingAttackHandler
     int rate = 0;
     int iteration = 0;
     JsonParser jsonParser = new JsonParser();
-    List<Event> events = jsonParser.GetEvents(filepath);
+    EventFileData eventFileData = jsonParser.ParseEventFile(filepath);
+
+
+    List<Event> events = eventFileData.Events;
+
+
     List<Device> devices = InitAllDevices();
 
 

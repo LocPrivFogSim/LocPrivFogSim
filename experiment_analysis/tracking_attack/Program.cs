@@ -4,8 +4,8 @@
     {
         //TrackingAttackHandler th = TrackingAttackHandler.Instance;
         //th.RunTrackingAttack();
-
-        
+        JsonParser jp = new JsonParser();
+        jp.ParseEventFile(@"C:\Users\lspie\Desktop\LocPrivFogSim\experiment_analysis\input\Strategie_2\output_2_10_1.json");
     }
 }
 
