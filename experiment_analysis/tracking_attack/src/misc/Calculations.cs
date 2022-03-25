@@ -174,8 +174,8 @@ public static class Calculations
                 Coord target = Calculations.TargetCoordOnLine(x,y,factor);
                 segment.EndCoord = target;
 
-                segment.Velocity = Constants.RandVelocity;
-                segment.TraversingTime = distance/segment.Velocity;
+                //segment.Velocity = Constants.RandVelocity;
+                //segment.TraversingTime = distance/segment.Velocity;
 
                 segments[segmentIndex] = segment;                
                 
@@ -196,15 +196,34 @@ public static class Calculations
         s.StartCoord = previousCoord;
         s.EndCoord = finalCoord;
         s.SegmentLength = dist;
-        s.Velocity = Constants.RandVelocity;
-        s.TraversingTime = s.SegmentLength/s.Velocity;
+        //s.Velocity = Constants.RandVelocity;
+        //s.TraversingTime = s.SegmentLength/s.Velocity;
 
         segments[segmentIndex] = s;                
         return segments;
     }
+
+
+    public static Dictionary<int, Segment> SampleSegmentVelocities(Dictionary<int, Segment> segments)
+    {
+        foreach(Segment s in segments)
+        {
+            s.Velocity = Constants.RandVelocity;
+            s.TraversingTime = s.SegmentLength/s.Velocity;
+        }
+    }
+
+
+
+    public static Dictionary<double, Coord> getSegmentCoordForTimestamp(Dictionary<int, Segment> segments, List<double> timestamps)
+    {
+        //TOOD     
+    }
     
 
 }
+
+
 
 
 

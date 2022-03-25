@@ -91,7 +91,8 @@ public class TrackingAttackController
         {
             double alpha = 0;
             List<Coord> path = paths[i];
-
+            
+            Dictionary<int, Segment> segments =  Calculations.SampleSegments(path);
 
         }
 
@@ -111,7 +112,18 @@ public class TrackingAttackController
         {
             double alpha = 0;
             List<Coord> path = paths[i];
-            
+            Dictionary<int, Segment> segments =  Calculations.SampleSegments(path);
+
+
+            for(int i  = 0 ; i < Constants.NumberOfIterations; i++)
+            {
+                segments = Calculations.SampleSegmentVelocities(segments);
+
+                double sumTraversingTime = 0 ;
+                
+
+            }
+
 
         }
 
@@ -130,6 +142,7 @@ public class TrackingAttackController
         {
             double alpha = 0;
             List<Coord> path = paths[i];
+            Dictionary<int, Segment> segments =  Calculations.SampleSegments(path);
 
         }
 
