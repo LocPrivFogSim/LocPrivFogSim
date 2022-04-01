@@ -13,8 +13,20 @@ public static class Calculations
         return 1000 * 12742 * Math.Asin(Math.Sqrt(a));
     }
    
+    public static double Bearing(Coord pt1, Coord pt2)
+    {
+        double x = Math.Cos(DegreesToRadians(pt1.Lat)) * Math.Sin(DegreesToRadians(pt2.Lat)) - Math.Sin(DegreesToRadians(pt1.Lat)) * Math.Cos(DegreesToRadians(pt2.Lat)) * Math.Cos(DegreesToRadians(pt2.Lon - pt1.Lon));
+        double y = Math.Sin(DegreesToRadians(pt2.Lon - pt1.Lon)) * Math.Cos(DegreesToRadians(pt2.Lat));
 
-    public static bool CoordIsInPolygon(Coord testPoint, Coord[] polygon)
+        return (((Math.Atan2(y, x) + Math.PI * 2) % (Math.PI * 2)) * 180.0) / Math.PI; ;
+    }
+
+    public static double DegreesToRadians(double angle)
+    {
+        return angle * Math.PI / 180.0d;
+    }
+
+    public static bool CoordIsInPolygon(Coord testPoint, List<Coord> polygon)
     {
         bool result = false;
         int j = polygon.Count() - 1;
@@ -183,13 +195,14 @@ public static class Calculations
                 x = target;
                 distance -= leftForCurrSegment;
                 leftForCurrSegment = Constants.LenOfSegments;
+                currSegmentStart = x;
             }
             leftForCurrSegment -= distance;
         }
 
         //add final segment (has distance < LenOfSegments)
         Coord finalCoord = path[path.Count() - 1];
-        Coord previousCoord = path[segmentIndex];
+        Coord previousCoord = currSegmentStart;
         double dist = Calculations.CalcDistanceInMetres(previousCoord, finalCoord);
         Segment s = new Segment();
 
@@ -218,11 +231,44 @@ public static class Calculations
 
 
 
-    public static Dictionary<double, Coord> getSegmentCoordForTimestamp(Dictionary<int, Segment> segments, List<double> timestamps)
-    {
-        //TOOD     
+    public static Dictionary<double, Coord> mapSegmentCoordsToTimestamps(Dictionary<int, Segment> segments, List<Event> events, double t0)
+    {   
+        Dictionary<double, Coord> coordsAtTimestamp = new Dictionary<double, Coord>();
+      
+        List<double> timestamps = events.Where(e =>  e.EventName == "add").Select(e => e.Timestamp).ToList<double>();  //TODO verify if this works to get Timestamps of each add-Event
 
-        return null;
+        int segIndex = 0;
+        double currTraversingTimeSum = 0;
+        
+        Segment currSegment = segments[segIndex];
+
+    
+        foreach( double ts in timestamps)
+        {      
+            
+            double correspondingSegmentTimestamp = ts + t0;
+
+            //walk along the segements until correspondingSegmentTimestamp is on the checked segment
+            while(true)
+            {
+                if (currTraversingTimeSum + currSegment.TraversingTime > correspondingSegmentTimestamp)
+                {
+                    break;
+                }
+                currTraversingTimeSum += currSegment.TraversingTime;
+                segIndex++;
+                
+                if(segIndex == segments.Count) break;
+
+                currSegment = segments[segIndex];
+                              
+            }
+
+            double factor = currSegment.TraversingTime / (correspondingSegmentTimestamp - currTraversingTimeSum); 
+            coordsAtTimestamp[ts] = TargetCoordOnLine(currSegment.StartCoord, currSegment.EndCoord, factor);
+
+        }
+        return coordsAtTimestamp;
     }
     
 
@@ -247,7 +293,7 @@ public struct Coord
 
     public double Timestamp { get; }
 
-    public override string ToString() => $"({Lat}, {Lon})   timestamp: {Timestamp}";
+    public override string ToString() => $"({Lat}. {Lon})   timestamp: {Timestamp}";
 }
 
 public class Segment 

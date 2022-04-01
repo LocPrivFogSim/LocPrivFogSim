@@ -26,13 +26,15 @@
     [Fact]
      public void TestCoordIsInPolygon()
     {
-        Coord [] poly = new Coord[] {
+        List<Coord> poly = new List<Coord>( new Coord[] {
             new Coord(50.9763375260645, 7.6424811325967505, -1),
             new Coord(50.98948921708571, 7.6235130717907955, -1),
             new Coord(50.994079541032, 7.638779227264003, -1),
             new Coord(50.98607843920678, 7.639409472114132, -1),
             new Coord(50.98690446540096, 7.650592757906544, -1),
-        };
+        });
+
+        
 
         Coord isIn1 = new Coord(50.9890015488522, 7.632687680014726, -1);
         Coord isIn2 = new Coord(50.98684073942077, 7.65041363473669, -1);
@@ -109,10 +111,44 @@
         Assert.True(t3.Lat == 1.0 && t3.Lon == 1.0);
     }
 
+
     [Fact]
-    public void TestSampleSegments()
+    public void TestMapSegmentsToTimestampCoords()
     {
         //TODO
+        // needed: segements for path, events from a file
+
+        double t0 = 20;
+
+
+
+
 
     }
+
+
+
+    //helper Method
+
+    public void printGPXToFile(List<Coord> coords, string filename)
+    {
+        string beginning = "<gpx>\n<trk>\n<trkseg>\n";
+        string end = "</trkseg>\n</trk>\n</gpx>";
+
+        string coordsString = "";
+
+        foreach(Coord c in coords)
+        {
+            string lat =  c.Lat.ToString();
+            string lon =  c.Lon.ToString();
+
+            coordsString += "<trkpt lat=\"" + lat + "\" lon=\"" + lon + "\"> </trkpt>\n";
+        }
+
+        string fullGPX = beginning + coordsString + end;
+
+        File.WriteAllText(filename, fullGPX);
+    }
+
+
 }
