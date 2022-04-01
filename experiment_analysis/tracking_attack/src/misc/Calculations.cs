@@ -206,11 +206,14 @@ public static class Calculations
 
     public static Dictionary<int, Segment> SampleSegmentVelocities(Dictionary<int, Segment> segments)
     {
-        foreach(Segment s in segments)
+        foreach(int key in segments.Keys)
         {
+            Segment s = segments[key];
             s.Velocity = Constants.RandVelocity;
             s.TraversingTime = s.SegmentLength/s.Velocity;
         }
+
+        return segments;
     }
 
 
@@ -218,6 +221,8 @@ public static class Calculations
     public static Dictionary<double, Coord> getSegmentCoordForTimestamp(Dictionary<int, Segment> segments, List<double> timestamps)
     {
         //TOOD     
+
+        return null;
     }
     
 

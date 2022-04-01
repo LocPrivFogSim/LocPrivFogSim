@@ -115,7 +115,7 @@ public class TrackingAttackController
             Dictionary<int, Segment> segments =  Calculations.SampleSegments(path);
 
 
-            for(int i  = 0 ; i < Constants.NumberOfIterations; i++)
+            for(int j  = 0 ; j < Constants.NumberOfIterations; j++)
             {
                 segments = Calculations.SampleSegmentVelocities(segments);
 
