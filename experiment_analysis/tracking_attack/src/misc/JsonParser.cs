@@ -168,6 +168,81 @@ public class JsonParser
         return devices;
     }
 
+  
+    //to complete the json file
+    public List<SquareField> GetSquareFields(Dictionary<int, Coord> locations, Dictionary<int, Device> fogNodes)
+    {
+        List<SquareField> fields = new List<SquareField>();
+        
+        var jsonString = File.ReadAllText(Constants.SquaresFilePath);
+        var jArr = JArray.Parse(jsonString);
+        for(int i = 0; i < jArr.Count(); i ++ )
+        {
+            var fieldObj = (JObject) jArr[i];
+            
+            int id = (int) fieldObj["id"];
+            
+            List<Coord> edges = new List<Coord>();
+            var edgesArr = (JArray) fieldObj["edges"];
+            for(int j = 0 ; j < edgesArr.Count ; j ++)
+            {
+                var edgeObj = (JObject) edgesArr[j];
+                double lat = (double) edgeObj["lat"];
+                double lon = (double) edgeObj["lon"];
+                Coord c = new Coord(lat, lon, -1);
+                edges.Add(c);
+            }    
+
+            SquareField f = new SquareField();
+            f.Id = id;
+            f.edges = edges;
+            f.locations = new List<Coord>();
+            f.fogNodeIDs = new List<int>();
+            fields.Add(f);
+
+        }
+
+       
+        foreach(int i in locations.Keys)
+        {
+
+            Coord l = locations[i];
+
+            foreach(SquareField f in fields)
+            {
+                if (Calculations.CoordIsInPolygon(l, f.edges)){
+                    f.locations.Add(l);
+                    break;
+                }
+            }
+
+        }
+
+        foreach(int i in fogNodes.Keys)
+        {
+
+            Device d = fogNodes[i];
+
+            foreach(SquareField f in fields)
+            {
+                if (Calculations.CoordIsInPolygon(d.Position, f.edges)){
+                    f.fogNodeIDs.Add(d.Id);
+                    break;
+                }
+            }
+
+        }
+
+        //var targetJson = JsonSerializer.Serialize(fields);
+        //File.WriteAllText(@"C:\Users\lspie\Desktop\LocPrivFogSim\experiment_analysis\json\10x10_squares_after.json", targetJson);
+        
+        return fields;
+    }
+
+
+
+
+
 }
 
 

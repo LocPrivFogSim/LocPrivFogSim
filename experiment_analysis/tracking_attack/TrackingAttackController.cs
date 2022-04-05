@@ -13,7 +13,10 @@ public class TrackingAttackController
     Dictionary<int, List<Coord>> _paths { get; set;}
     
     Dictionary<int, Device> _fogNodes {get; set;}
-  
+
+    List<SquareField> _squareFields {get; set;}
+
+
     
 
     //Controller Method for tracking attack
@@ -28,6 +31,9 @@ public class TrackingAttackController
         JsonParser jsonParser = new JsonParser();
         _locations = jsonParser.GetLocations();
         _fogNodes = jsonParser.InitFogNodes();
+        _squareFields = jsonParser.GetSquareFields(_locations, _fogNodes);
+
+      
 
         foreach (var file in  Directory.GetFiles(Constants.EventsFilesDir, "*.json" , SearchOption.AllDirectories))
         { 
@@ -115,8 +121,7 @@ public class TrackingAttackController
         List<Event> events = eventFileData.Events;
     
         for(int pathID = 0 ; pathID < paths.Count(); pathID++)
-        //for(int pathID = 25381 ; pathID < 25382; pathID++)
-
+        //for(int pathID = 25381 -50 ; pathID < 25381 + 50; pathID++)
         {
             //heuristic filter to improve perfomance
             Coord a_first = _paths[pathID][0];
@@ -195,13 +200,25 @@ public class TrackingAttackController
                     int countOfOtherPossibleLocations = 0;
 
                     
+                    List<Coord> relevantLocations = new List<Coord>();
+
+                    foreach(SquareField sf in _squareFields)
+                    {
+                        if(sf.fogNodeIDs.Contains(device.Id)){
+                            relevantLocations = sf.locations;
+                            break;
+                        }
+                    }
                   
 
-                    foreach( int locID in _locations.Keys)
+                    foreach( Coord l in relevantLocations)
+                    //foreach(int locID in _locations.Keys)
                     {
-                        Coord l = _locations[locID];
+                        //Coord l = _locations[locID];
 
-                        if(!Calculations.CoordIsInPolygon(l, addEvent.ConsideredField)) continue;
+                        //if (Calculations.CalcDistanceInMetres(l, device.Position) > 15000) continue;
+
+//                        if(!Calculations.CoordIsInPolygon(l, addEvent.ConsideredField)) continue;
 
                         chosenDeviceId = fastestRespondingDeviceId(l, addEvent, removeEvent, eventFileData, fogDeviceStats);
 
@@ -228,12 +245,13 @@ public class TrackingAttackController
             }
         }  
 
-        Console.WriteLine("echter Pfad: "+pathProbablity[25381]);
-        Console.WriteLine(" +1 : "+pathProbablity[25381 + 1]);
-        Console.WriteLine("+10: "+pathProbablity[25381 +10]);
-        Console.WriteLine("+100: "+pathProbablity[25381 + 100]);
-        Console.WriteLine("+1000: "+pathProbablity[25381 + 1000]);
+        //Console.WriteLine("echter Pfad: "+pathProbablity[25381]);
+        //Console.WriteLine(" +1 : "+pathProbablity[25381 + 1]);
+        //Console.WriteLine("+10: "+pathProbablity[25381 +10]);
+        //Console.WriteLine("+100: "+pathProbablity[25381 + 100]);
+        //Console.WriteLine("+1000: "+pathProbablity[25381 + 1000]);
 
+        //Console.WriteLine("   Breakpoint");
 
          
         Environment.Exit(0);
@@ -313,18 +331,27 @@ public class TrackingAttackController
     
     public Coord getActualCoordOnPath(List<Coord> path, double timestamp)
     {
+        return getActualCoordOnPath(path, timestamp, 0, path.Count);
+    }
+    public Coord getActualCoordOnPath(List<Coord> path, double timestamp, int start, int end){
+       
+        if( start > end ){
+            throw new Exception("getActualCoordOnPath(): no Coordinate with correct timestamp found");
+        }
         
-        foreach(Coord c in path)
+        double x = (double) ((start +  end ) / 2);
+        int middle = (int) Math.Floor( x); 
+
+        if(path[middle].Timestamp == timestamp) return path[middle];
+
+        if(path[middle].Timestamp > timestamp) 
         {
-            if (c.Timestamp == timestamp){
-                return c;
-            }
+            return getActualCoordOnPath(path, timestamp, start, middle - 1);
         }
 
-
-        throw new Exception("getActualCoordOnPath(): no Coordinate with correct timestamp found");
-
-        return new Coord(-1, -1, -1);
+        
+        return getActualCoordOnPath(path, timestamp, middle + 1, end);
+        
     }
     
     public int fastestRespondingDeviceId(Coord guessedLoc, Event addE, Event removeE, EventFileData eFileData,  Dictionary<int, DeviceStats> stats)

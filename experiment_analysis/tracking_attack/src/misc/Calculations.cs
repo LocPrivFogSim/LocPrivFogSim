@@ -6,8 +6,7 @@ public static class Calculations
     
     
     public static double CalcDistanceInMetres(Coord coordA, Coord coordB)
-    {
-          
+    { 
         double p = 0.017453292519943295;
         var a = 0.5 - Math.Cos((coordB.Lat - coordA.Lat) * p)/2 + Math.Cos(coordA.Lat * p) * Math.Cos(coordB.Lat * p) * (1 - Math.Cos((coordB.Lon - coordA.Lon) * p)) / 2;
         return 1000 * 12742 * Math.Asin(Math.Sqrt(a));
@@ -143,13 +142,32 @@ public static class Calculations
 
     public static double ResponseTime(Event addEvent, Event removeEvent, Device device, DeviceStats stats, Coord samplePoint)
     {
-        double distance = CalcDistanceInMetres(samplePoint, device.Position);
-        double distance_factor = 1 - ( distance / Constants.MaxDistance);
+        //TODO repeat testing
+
+        //double distance = CalcDistanceInMetres(samplePoint, device.Position);
+        //double distance_factor = 1 - ( distance / Constants.MaxDistance);
+        
+        double distance_factor = CalcDistanceFactor ( samplePoint, device.Position);
+
+        //Console.WriteLine("factor og: "+distance_factor);
+        //Console.WriteLine("factor new: "+distance_factor1);
+
         double upTransfereTime = addEvent.DataSize / (stats.UplinkBandwidth * distance_factor ) ; 
         double downTransfereTime = removeEvent.DataSize / (stats.DownlinkBandwidth * distance_factor ) ; 
         double calcTime = addEvent.Mi / addEvent.AvailableMips ; 
 
         return upTransfereTime + downTransfereTime + calcTime;
+    }
+
+    private static double CalcDistanceFactor(Coord samplePoint, Coord devicePosition)
+    {
+        //TODO
+        double deltaLat = Math.Abs(samplePoint.Lat - devicePosition.Lat);
+        double deltaLon = Math.Abs(samplePoint.Lon - samplePoint.Lon);
+
+        double factor = Math.Sqrt((deltaLat + deltaLon)) / Math.Sqrt((Constants.DeltaLatFullArea + Constants.DeltaLonFullArea));
+        return 1 - factor;
+
     }
 
     //e.g. factor = 0.5 -> target point is exact midpoint between c1 and c2
@@ -179,12 +197,14 @@ public static class Calculations
             while(leftForCurrSegment < distance)
             {
                 Segment segment = new Segment();
-                segment.SegmentLength = Constants.LenOfSegments;
                 segment.StartCoord = currSegmentStart;
 
                 double factor = leftForCurrSegment / distance;
                 Coord target = Calculations.TargetCoordOnLine(x,y,factor);
                 segment.EndCoord = target;
+
+                segment.SegmentLength = Calculations.CalcDistanceInMetres(segment.EndCoord, segment.StartCoord);
+
 
                 //segment.Velocity = Constants.RandVelocity;
                 //segment.TraversingTime = distance/segment.Velocity;
