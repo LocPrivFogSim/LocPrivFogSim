@@ -38,8 +38,18 @@ public class TrackingAttackController
             var res = getAttackResultForFile(file);
             results.Add(res);
         });
+
+
+       printResultsToCSV(results);
     }
 
+
+    public void printResultsToCSV(ArrayList results)
+    {
+        //TODO
+        String file = Constants.ResultsFilePath;
+
+    }
 
 
     private AttackResult getAttackResultForFile(String filepath)
@@ -98,7 +108,6 @@ public class TrackingAttackController
         }
 
 
-
         return result;
     }
 
@@ -111,17 +120,17 @@ public class TrackingAttackController
 
         List<Event> events = eventFileData.Events;
 
-   
-        //for(int pathID = 0 ; pathID < paths.Count(); pathID++)
-        //for(int pathID = 25381 -50 ; pathID < 25381 + 50; pathID++)
-        for(int pathID = 25381; pathID < 25381 +1 ; pathID++)
+        List<Coord> originalPath = _paths[eventFileData.SimulatedPathId];
+
+
+        for(int pathID = 0 ; pathID < paths.Count(); pathID++)
         {
             //heuristic filter to improve perfomance
             List<Coord> path = _paths[pathID];
             Coord a_first = path[0];
             Coord a_last = path.Last();
-            Coord b_first = _paths[eventFileData.SimulatedPathId][0];
-            Coord b_last = _paths[eventFileData.SimulatedPathId].Last();
+            Coord b_first = originalPath[0];
+            Coord b_last = originalPath.Last();
             if(Calculations.CalcDistanceInMetres(a_first,b_first) > 10000 ) continue;
 
             double bearingA = Calculations.Bearing(a_first, a_last);
@@ -130,11 +139,7 @@ public class TrackingAttackController
 
             if(bearingDelta > 30) continue;
 
-            
-
-
-            Console.WriteLine("path: "+pathID);
-
+            //Console.WriteLine("path: "+pathID);
 
             double alpha = 0;
             Dictionary<int, Segment> segments =  Calculations.SampleSegments(path);
@@ -199,25 +204,22 @@ public class TrackingAttackController
 
 
                     foreach( Coord l in relevantLocations)
-               
+
                     {
-                        
+
                         chosenDeviceId = fastestRespondingDeviceId(l, addEvent, removeEvent, eventFileData, fogDeviceStats);
 
                         if(chosenDeviceId == device.Id)
                         {
                             countOfOtherPossibleLocations ++;
                         }
-
                     }
-                   
+
 
                     if(countOfOtherPossibleLocations > 0)
                     {
-                       beta += (1 / countOfOtherPossibleLocations);          
+                       beta += (1 / countOfOtherPossibleLocations);
                     }
-                
-
                 }
 
                 alpha += beta;
@@ -231,7 +233,7 @@ public class TrackingAttackController
             }
         }
 
-        return result;
+        return finalizeResult(result, pathProbablity, originalPath);
     }
 
       private AttackResult calcNotSlow(Dictionary<int, Coord> locations, EventFileData eventFileData, Dictionary<int, List<Coord>> paths, Dictionary<int, Device> fogNodes, Dictionary<int, DeviceStats> fogDeviceStats )
@@ -254,6 +256,35 @@ public class TrackingAttackController
     }
 
 
+    private AttackResult finalizeResult(AttackResult result, Dictionary<int, double> pathProbablity, List<Coord> originalPath)
+    {
+        double totalAlpha = pathProbablity.Values.Sum();
+
+        double correctnessFull = 0;
+        double correctnessAvg = 0;
+
+        foreach(int i in pathProbablity.Keys)
+        {
+            List<Coord> samplePath = _paths[i];
+
+            double[,] fullDTWMatrix = Calculations.DtwMatrix(samplePath, originalPath);
+
+            double fullDTWDistance = Calculations.DtwDistance(fullDTWMatrix);
+
+            var warpingPathLength = Calculations.DtwWarpingPath(fullDTWMatrix).Count;
+
+            double avgDTWDist = fullDTWDistance / warpingPathLength;
+
+            correctnessFull += fullDTWDistance;
+            correctnessAvg += avgDTWDist;
+
+        }
+
+        result.corrFullDtwDist = correctnessFull;
+        result.corrAvgDtwDist = correctnessAvg;
+
+        return result;
+    }
 
     public Dictionary<int, DeviceStats> getDeviceStats(EventFileData ev)
     {
@@ -351,7 +382,6 @@ public class TrackingAttackController
                 fastestNodeId = deviceID;
                 minRt = rt;
             }
-
         }
         return fastestNodeId;
     }
@@ -378,13 +408,12 @@ public class TrackingAttackController
 
 
 
-class AttackResult
+public class AttackResult
 {
     public int strat {get;set;}
     public int rate {get;set;}
     public int iteration {get;set;}
     public double corrFullDtwDist {get;set;}
     public double corrAvgDtwDist {get; set;}
-    public int nrOfObservations {get;set;}
 
 }

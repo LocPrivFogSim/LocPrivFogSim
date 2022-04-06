@@ -126,29 +126,4 @@
 
     }
 
-
-
-    //helper Method
-
-    public void printGPXToFile(List<Coord> coords, string filename)
-    {
-        string beginning = "<gpx>\n<trk>\n<trkseg>\n";
-        string end = "</trkseg>\n</trk>\n</gpx>";
-
-        string coordsString = "";
-
-        foreach(Coord c in coords)
-        {
-            string lat =  c.Lat.ToString();
-            string lon =  c.Lon.ToString();
-
-            coordsString += "<trkpt lat=\"" + lat + "\" lon=\"" + lon + "\"> </trkpt>\n";
-        }
-
-        string fullGPX = beginning + coordsString + end;
-
-        File.WriteAllText(filename, fullGPX);
-    }
-
-
 }
