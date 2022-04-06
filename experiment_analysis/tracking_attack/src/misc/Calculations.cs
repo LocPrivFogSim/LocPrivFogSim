@@ -3,16 +3,16 @@ using Data;
 public static class Calculations
 {
 
-    
-    
-    public static double CalcDistanceInMetres(Coord coordA, Coord coordB)
-    { 
+
+
+    public static double CalcDistanceInMetres(in Coord coordA, in Coord coordB)
+    {
         double p = 0.017453292519943295;
         var a = 0.5 - Math.Cos((coordB.Lat - coordA.Lat) * p)/2 + Math.Cos(coordA.Lat * p) * Math.Cos(coordB.Lat * p) * (1 - Math.Cos((coordB.Lon - coordA.Lon) * p)) / 2;
         return 1000 * 12742 * Math.Asin(Math.Sqrt(a));
     }
-   
-    public static double Bearing(Coord pt1, Coord pt2)
+
+    public static double Bearing(in Coord pt1, in Coord pt2)
     {
         double x = Math.Cos(DegreesToRadians(pt1.Lat)) * Math.Sin(DegreesToRadians(pt2.Lat)) - Math.Sin(DegreesToRadians(pt1.Lat)) * Math.Cos(DegreesToRadians(pt2.Lat)) * Math.Cos(DegreesToRadians(pt2.Lon - pt1.Lon));
         double y = Math.Sin(DegreesToRadians(pt2.Lon - pt1.Lon)) * Math.Cos(DegreesToRadians(pt2.Lat));
@@ -51,7 +51,7 @@ public static class Calculations
         double[,] distMatrix = new double[x, y];
 
         for(int i = 0; i < x ; i++)
-        {   
+        {
             for(int j = 0; j < y ; j++)
             {
               distMatrix[i, j] = Calculations.CalcDistanceInMetres(pathA[i], pathB[j]);
@@ -71,7 +71,7 @@ public static class Calculations
         }
 
         for(int i = 1; i < x+1 ; i++)
-        {   
+        {
             for(int j = 1; j < y+1 ; j++)
             {
                 double localDist = distMatrix[i - 1 , j - 1];
@@ -85,7 +85,7 @@ public static class Calculations
     }
 
     public static double DtwDistance(double[,] dtwMatr)
-    {   
+    {
         int x = dtwMatr.GetLength(0);
         int y = dtwMatr.GetLength(1);
 
@@ -98,7 +98,7 @@ public static class Calculations
         int m = dtwMatr.GetLength(1) - 1;
 
         List<int[]> warpingPath = new List<int[]>();
-        
+
         while( n > 0 || m > 0)
         {
             int a = 0;
@@ -118,16 +118,16 @@ public static class Calculations
                 var min_val = Math.Min(dtwMatr[n-1, m-1] , Math.Min(dtwMatr[n-1, m], dtwMatr[n, m-1] ));
                 if (min_val == dtwMatr[n-1, m-1])
                 {
-                    a = n-1; 
+                    a = n-1;
                     b = m -1 ;
                 }
                 else if(min_val == dtwMatr[n-1, m])
                 {
-                    a = n-1; 
+                    a = n-1;
                     b = m;
                 }
                 else{
-                    a = n; 
+                    a = n;
                     b = m -1 ;
                 }
             }
@@ -138,7 +138,7 @@ public static class Calculations
         }
         warpingPath.Reverse();
         return warpingPath;
-    }    
+    }
 
     public static double ResponseTime(Event addEvent, Event removeEvent, Device device, DeviceStats stats, Coord samplePoint)
     {
@@ -146,15 +146,15 @@ public static class Calculations
 
         double distance = CalcDistanceInMetres(samplePoint, device.Position);
         double distance_factor = 1 - ( distance / Constants.MaxDistance);
-        
+
         //double distance_factor = CalcDistanceFactor ( samplePoint, device.Position);
 
         //Console.WriteLine("factor og: "+distance_factor);
         //Console.WriteLine("factor new: "+distance_factor1);
 
-        double upTransfereTime = addEvent.DataSize / (stats.UplinkBandwidth * distance_factor ) ; 
-        double downTransfereTime = removeEvent.DataSize / (stats.DownlinkBandwidth * distance_factor ) ; 
-        double calcTime = addEvent.Mi / addEvent.AvailableMips ; 
+        double upTransfereTime = addEvent.DataSize / (stats.UplinkBandwidth * distance_factor ) ;
+        double downTransfereTime = removeEvent.DataSize / (stats.DownlinkBandwidth * distance_factor ) ;
+        double calcTime = addEvent.Mi / addEvent.AvailableMips ;
 
         return upTransfereTime + downTransfereTime + calcTime;
     }
@@ -186,7 +186,7 @@ public static class Calculations
 
         int segmentIndex = 0;
         Coord currSegmentStart = path[0];
-        double leftForCurrSegment = Constants.LenOfSegments; 
+        double leftForCurrSegment = Constants.LenOfSegments;
 
         for (int i = 1; i < path.Count(); i++){
             Coord x = path[i -1 ];
@@ -209,8 +209,8 @@ public static class Calculations
                 //segment.Velocity = Constants.RandVelocity;
                 //segment.TraversingTime = distance/segment.Velocity;
 
-                segments[segmentIndex] = segment;                
-                
+                segments[segmentIndex] = segment;
+
                 segmentIndex ++;
                 x = target;
                 distance -= leftForCurrSegment;
@@ -232,7 +232,7 @@ public static class Calculations
         //s.Velocity = Constants.RandVelocity;
         //s.TraversingTime = s.SegmentLength/s.Velocity;
 
-        segments[segmentIndex] = s;                
+        segments[segmentIndex] = s;
         return segments;
     }
 
@@ -252,20 +252,20 @@ public static class Calculations
 
 
     public static Dictionary<double, Coord> mapSegmentCoordsToTimestamps(Dictionary<int, Segment> segments, List<Event> events, double t0)
-    {   
+    {
         Dictionary<double, Coord> coordsAtTimestamp = new Dictionary<double, Coord>();
-      
+
         List<double> timestamps = events.Where(e =>  e.EventName == "add").Select(e => e.Timestamp).ToList<double>();  //TODO verify if this works to get Timestamps of each add-Event
 
         int segIndex = 0;
         double currTraversingTimeSum = 0;
-        
+
         Segment currSegment = segments[segIndex];
 
-    
+
         foreach( double ts in timestamps)
-        {      
-            
+        {
+
             double correspondingSegmentTimestamp = ts + t0;
 
             //walk along the segements until correspondingSegmentTimestamp is on the checked segment
@@ -277,20 +277,20 @@ public static class Calculations
                 }
                 currTraversingTimeSum += currSegment.TraversingTime;
                 segIndex++;
-                
+
                 if(segIndex == segments.Count) break;
 
                 currSegment = segments[segIndex];
-                              
+
             }
 
-            double factor = currSegment.TraversingTime / (correspondingSegmentTimestamp - currTraversingTimeSum); 
+            double factor = currSegment.TraversingTime / (correspondingSegmentTimestamp - currTraversingTimeSum);
             coordsAtTimestamp[ts] = TargetCoordOnLine(currSegment.StartCoord, currSegment.EndCoord, factor);
 
         }
         return coordsAtTimestamp;
     }
-    
+
 
 }
 
@@ -299,7 +299,7 @@ public static class Calculations
 
 
 
-public struct Coord 
+public readonly struct Coord
 {
     public Coord(double lat, double lon, double timestamp)
     {
@@ -316,7 +316,7 @@ public struct Coord
     public override string ToString() => $"({Lat}. {Lon})   timestamp: {Timestamp}";
 }
 
-public class Segment 
+public class Segment
 {
     public Coord StartCoord {get;set;}
     public Coord EndCoord {get;set;}
