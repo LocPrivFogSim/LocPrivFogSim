@@ -4,50 +4,46 @@ using Data;
 
 
 
-//Singleton 
+//Singleton
 public class TrackingAttackController
 {
 
     public Dictionary<int, Coord> _locations { get; set;}
 
     Dictionary<int, List<Coord>> _paths { get; set;}
-    
+
     Dictionary<int, Device> _fogNodes {get; set;}
 
     List<SquareField> _squareFields {get; set;}
 
 
-    
+
 
     //Controller Method for tracking attack
-    public void RunTrackingAttack()
-    {   
-        ArrayList results = ArrayList.Synchronized(new ArrayList());
-        
+    public async Task RunTrackingAttack()
+    {
         DB_Connector connector =  new DB_Connector();
         _paths =  connector.GetAllPaths();
-        
-        
+
         JsonParser jsonParser = new JsonParser();
         _locations = jsonParser.GetLocations();
         _fogNodes = jsonParser.InitFogNodes();
         _squareFields = jsonParser.GetSquareFields(_locations, _fogNodes);
 
-      
+        var files = Directory.GetFiles(Constants.EventsFilesDir, "*.json" , SearchOption.AllDirectories);
+        var results = ArrayList.Synchronized(new ArrayList(files.Length));
 
-        foreach (var file in  Directory.GetFiles(Constants.EventsFilesDir, "*.json" , SearchOption.AllDirectories))
-        { 
-            //TODO parallel execution of following 
-            AttackResult r = getAttackResultForFile(file);
-            results.Add(r);
-        }
-
+        Parallel.ForEach(files, (file, _, _) =>
+        {
+            var res = getAttackResultForFile(file);
+            results.Add(res);
+        });
     }
 
 
 
     private AttackResult getAttackResultForFile(String filepath)
-    { 
+    {
         Console.WriteLine(filepath);
 
         int [] experimentParams = getExperimentParamsFromFileName(filepath);
@@ -77,10 +73,10 @@ public class TrackingAttackController
         result.strat = strategy;
         result.rate = rate;
         result.iteration = iteration;
-        
-        
-        return result;        
-    } 
+
+
+        return result;
+    }
 
 
 
@@ -96,7 +92,7 @@ public class TrackingAttackController
         {
             double alpha = 0;
             List<Coord> path = paths[i];
-            
+
             Dictionary<int, Segment> segments =  Calculations.SampleSegments(path);
 
         }
@@ -112,14 +108,14 @@ public class TrackingAttackController
         Console.WriteLine("In calc Fastest");
         Console.WriteLine("actual path is: "+ eventFileData.SimulatedPathId);
 
-        
+
         //TODO
         AttackResult result = new AttackResult();
 
         Dictionary<int, double> pathProbablity = new Dictionary<int, double>();
 
         List<Event> events = eventFileData.Events;
-    
+
         for(int pathID = 0 ; pathID < paths.Count(); pathID++)
         //for(int pathID = 25381 -50 ; pathID < 25381 + 50; pathID++)
         {
@@ -131,7 +127,7 @@ public class TrackingAttackController
             if(Calculations.CalcDistanceInMetres(a_first,b_first) > 10000 ) continue;
 
             double bearingA = Calculations.Bearing(a_first, a_last);
-            double bearingB = Calculations.Bearing(b_first, b_last); 
+            double bearingB = Calculations.Bearing(b_first, b_last);
             double bearingDelta = Math.Abs(bearingA - bearingB);
 
             //Console.WriteLine(bearingDelta+ "        delta");
@@ -152,7 +148,7 @@ public class TrackingAttackController
 
             for(int j  = 0 ; j < Constants.NumberOfIterations; j++)
             {
-              
+
                 segments = Calculations.SampleSegmentVelocities(segments);
 
                 double sumTraversingTime = calcSumTraversingTime(segments) ;
@@ -164,10 +160,10 @@ public class TrackingAttackController
                 nrOfValidSegmentations ++;
 
                 double beta = 0;
-                
+
                 double maximumStartTime = sumTraversingTime - trackedDuration;
 
-                double randStartTime = Constants.rnd.NextDouble() * maximumStartTime; 
+                double randStartTime = Constants.rnd.NextDouble() * maximumStartTime;
 
                 Dictionary<double, Coord> segmentCoordsAtTimestamps = Calculations.mapSegmentCoordsToTimestamps(segments, events, randStartTime);
 
@@ -182,7 +178,7 @@ public class TrackingAttackController
 
                     Device device = _fogNodes[addEvent.FogDeviceId];
 
-                     
+
                     if (!Calculations.CoordIsInPolygon(guessedLocation, addEvent.ConsideredField)){
                         continue;
                     }
@@ -192,14 +188,14 @@ public class TrackingAttackController
                     if(chosenDeviceId != device.Id)
                     {
                         continue;
-                    }   
+                    }
 
                    //Console.WriteLine("chosenid = actualId"+ "    pathId: "+pathID+ "    actual path: "+eventFileData.SimulatedPathId);
 
 
                     int countOfOtherPossibleLocations = 0;
 
-                    
+
                     List<Coord> relevantLocations = new List<Coord>();
 
                     foreach(SquareField sf in _squareFields)
@@ -209,7 +205,7 @@ public class TrackingAttackController
                             break;
                         }
                     }
-                  
+
 
                     foreach( Coord l in relevantLocations)
                     //foreach(int locID in _locations.Keys)
@@ -228,13 +224,13 @@ public class TrackingAttackController
                         }
 
                     }
-                    
+
                     //Console.WriteLine("nach all locations loop,    count ist: "+countOfOtherPossibleLocations);
 
-                    beta += (1 / countOfOtherPossibleLocations);          
-                
+                    beta += (1 / countOfOtherPossibleLocations);
+
                 }
-                
+
                 alpha += beta;
 
                 if(alpha > 0)
@@ -243,7 +239,7 @@ public class TrackingAttackController
                     pathProbablity[pathID] = alpha;
                 }
             }
-        }  
+        }
 
         //Console.WriteLine("echter Pfad: "+pathProbablity[25381]);
         //Console.WriteLine(" +1 : "+pathProbablity[25381 + 1]);
@@ -253,7 +249,7 @@ public class TrackingAttackController
 
         //Console.WriteLine("   Breakpoint");
 
-         
+
         Environment.Exit(0);
         return result;
     }
@@ -282,21 +278,21 @@ public class TrackingAttackController
     public Dictionary<int, DeviceStats> getDeviceStats(EventFileData ev)
     {
         Dictionary<int, DeviceStats> deviceStats = new Dictionary<int, DeviceStats>();
-    
-        foreach (int x in ev.FogDeviceInfos.Keys)  
+
+        foreach (int x in ev.FogDeviceInfos.Keys)
         {
-            bool isCompromised = ev.CompromisedFogNodes.Contains(x); 
+            bool isCompromised = ev.CompromisedFogNodes.Contains(x);
             double downlinkBandwidth = ev.FogDeviceInfos[x][0];
             double uplinkBandwidth = ev.FogDeviceInfos[x][1];
             double uplinkLatency = ev.FogDeviceInfos[x][2];
-           
+
 
            DeviceStats ds = new DeviceStats();
            ds.IsCompromised = isCompromised;
            ds.DownlinkBandwidth = downlinkBandwidth;
            ds.UplinkBandwidth = uplinkBandwidth;
            ds.UplinkLatency = uplinkLatency;
-           
+
            deviceStats[x] = ds;
         }
         return deviceStats;
@@ -307,13 +303,13 @@ public class TrackingAttackController
     {
         string[] subStrings = filepath.Split("\\");
         string fileNameWithoutExtension = subStrings[subStrings.Length - 1].Split(".")[0];
-        
+
         string[] fileNameSubStings = fileNameWithoutExtension.Split("_");  // eg. output_2_10_1
 
         int strategy = int.Parse(fileNameSubStings[1]);
         int rate = int.Parse(fileNameSubStings[2]);
         int iteration = int.Parse(fileNameSubStings[3]);
-       
+
         return new int[] {strategy, rate, iteration};
     }
 
@@ -328,32 +324,32 @@ public class TrackingAttackController
 
         return counter;
     }
-    
+
     public Coord getActualCoordOnPath(List<Coord> path, double timestamp)
     {
         return getActualCoordOnPath(path, timestamp, 0, path.Count);
     }
     public Coord getActualCoordOnPath(List<Coord> path, double timestamp, int start, int end){
-       
+
         if( start > end ){
             throw new Exception("getActualCoordOnPath(): no Coordinate with correct timestamp found");
         }
-        
+
         double x = (double) ((start +  end ) / 2);
-        int middle = (int) Math.Floor( x); 
+        int middle = (int) Math.Floor( x);
 
         if(path[middle].Timestamp == timestamp) return path[middle];
 
-        if(path[middle].Timestamp > timestamp) 
+        if(path[middle].Timestamp > timestamp)
         {
             return getActualCoordOnPath(path, timestamp, start, middle - 1);
         }
 
-        
+
         return getActualCoordOnPath(path, timestamp, middle + 1, end);
-        
+
     }
-    
+
     public int fastestRespondingDeviceId(Coord guessedLoc, Event addE, Event removeE, EventFileData eFileData,  Dictionary<int, DeviceStats> stats)
     {
         int[] consideredDeviceIDs = addE.ConsideredFogNodes;
@@ -370,7 +366,7 @@ public class TrackingAttackController
                 minRt = rt;
             }
 
-        }        
+        }
         return fastestNodeId;
     }
 
