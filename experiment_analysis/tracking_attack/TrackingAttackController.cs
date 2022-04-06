@@ -55,25 +55,18 @@ public class TrackingAttackController
         EventFileData eventFileData = jp.ParseEventFile(filepath);
 
         Dictionary<int, DeviceStats> fogDeviceStats = getDeviceStats(eventFileData);
-        AttackResult result = null;
 
-        switch (strategy)
+        var result = strategy switch
         {
-            case 1:
-                result =  calcNotSlow(_locations, eventFileData, _paths, _fogNodes, fogDeviceStats);
-                break;
-            case 2:
-                result =  calcFastest(_locations, eventFileData, _paths, _fogNodes, fogDeviceStats);
-                break;
-            case 3:
-                result =  calcClosest(_locations, eventFileData, _paths, _fogNodes);
-                break;
-        }
+            1 => calcNotSlow(_locations, eventFileData, _paths, _fogNodes, fogDeviceStats),
+            2 => calcFastest(_locations, eventFileData, _paths, _fogNodes, fogDeviceStats),
+            3 => calcClosest(_locations, eventFileData, _paths, _fogNodes),
+            _ => throw new ArgumentOutOfRangeException("Unknown value for strategy")
+        };
 
         result.strat = strategy;
         result.rate = rate;
         result.iteration = iteration;
-
 
         return result;
     }
