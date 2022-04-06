@@ -144,10 +144,10 @@ public static class Calculations
     {
         //TODO repeat testing
 
-        //double distance = CalcDistanceInMetres(samplePoint, device.Position);
-        //double distance_factor = 1 - ( distance / Constants.MaxDistance);
+        double distance = CalcDistanceInMetres(samplePoint, device.Position);
+        double distance_factor = 1 - ( distance / Constants.MaxDistance);
         
-        double distance_factor = CalcDistanceFactor ( samplePoint, device.Position);
+        //double distance_factor = CalcDistanceFactor ( samplePoint, device.Position);
 
         //Console.WriteLine("factor og: "+distance_factor);
         //Console.WriteLine("factor new: "+distance_factor1);
