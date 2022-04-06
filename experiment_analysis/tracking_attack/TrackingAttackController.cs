@@ -98,23 +98,14 @@ public class TrackingAttackController
     private AttackResult calcFastest(Dictionary<int, Coord> locations, EventFileData eventFileData, Dictionary<int, List<Coord>> paths, Dictionary<int, Device> fogNodes, Dictionary<int, DeviceStats> fogDeviceStats )
     {
 
-        Console.WriteLine("In calc Fastest");
-        Console.WriteLine("actual path is: "+ eventFileData.SimulatedPathId);
-
-
-        //TODO
         AttackResult result = new AttackResult();
 
         Dictionary<int, double> pathProbablity = new Dictionary<int, double>();
 
         List<Event> events = eventFileData.Events;
-<<<<<<< Updated upstream
 
-        for(int pathID = 0 ; pathID < paths.Count(); pathID++)
-=======
-    
+   
         //for(int pathID = 0 ; pathID < paths.Count(); pathID++)
->>>>>>> Stashed changes
         //for(int pathID = 25381 -50 ; pathID < 25381 + 50; pathID++)
         for(int pathID = 25381; pathID < 25381 +1 ; pathID++)
         {
@@ -130,13 +121,9 @@ public class TrackingAttackController
             double bearingB = Calculations.Bearing(b_first, b_last);
             double bearingDelta = Math.Abs(bearingA - bearingB);
 
-            //Console.WriteLine(bearingDelta+ "        delta");
-
             if(bearingDelta > 30) continue;
 
-            //Environment.Exit(0);
-
-            // ######################################################
+            
 
 
             Console.WriteLine("path: "+pathID);
@@ -144,25 +131,6 @@ public class TrackingAttackController
 
             double alpha = 0;
             Dictionary<int, Segment> segments =  Calculations.SampleSegments(path);
-
-
-            //Testing Segments
-             JsonParser.printGPXToFile(path, @"C:\Users\lspie\Desktop\test_gpx\path.gpx");
-
-            List<Coord> segmentStarts = new List<Coord>();
-
-            foreach(Segment s in segments.Values)
-            {
-                segmentStarts.Add(s.StartCoord);
-            }
-
-            JsonParser.printGPXToFile(segmentStarts, @"C:\Users\lspie\Desktop\test_gpx\segments.gpx");
-
-            Console.WriteLine("gpx created");
-            
-
-            // ++++++++++++++++++
-
 
             int nrOfValidSegmentations = 0;
 
@@ -187,7 +155,6 @@ public class TrackingAttackController
 
                 Dictionary<double, Coord> segmentCoordsAtTimestamps = Calculations.mapSegmentCoordsToTimestamps(segments, events, randStartTime);
 
-//               Console.WriteLine("t0 is: "+randStartTime+ "    segment Coord at first ts: " + segmentCoordsAtTimestamps[segmentCoordsAtTimestamps.Keys.First()]);
 
                 for(int eventIndex = 0 ; eventIndex < events.Count/2 ; eventIndex++){
                     Event addEvent = events[eventIndex * 2];
@@ -210,9 +177,6 @@ public class TrackingAttackController
                         continue;
                     }
 
-                   //Console.WriteLine("chosenid = actualId"+ "    pathId: "+pathID+ "    actual path: "+eventFileData.SimulatedPathId);
-
-
                     int countOfOtherPossibleLocations = 0;
 
 
@@ -228,14 +192,9 @@ public class TrackingAttackController
 
 
                     foreach( Coord l in relevantLocations)
-                    //foreach(int locID in _locations.Keys)
+               
                     {
-                        //Coord l = _locations[locID];
-
-                        //if (Calculations.CalcDistanceInMetres(l, device.Position) > 15000) continue;
-
-//                        if(!Calculations.CoordIsInPolygon(l, addEvent.ConsideredField)) continue;
-
+                        
                         chosenDeviceId = fastestRespondingDeviceId(l, addEvent, removeEvent, eventFileData, fogDeviceStats);
 
                         if(chosenDeviceId == device.Id)
@@ -244,19 +203,14 @@ public class TrackingAttackController
                         }
 
                     }
+                   
 
-                    //Console.WriteLine("nach all locations loop,    count ist: "+countOfOtherPossibleLocations);
-<<<<<<< Updated upstream
-
-                    beta += (1 / countOfOtherPossibleLocations);
-
-=======
                     if(countOfOtherPossibleLocations > 0)
                     {
                        beta += (1 / countOfOtherPossibleLocations);          
                     }
                 
->>>>>>> Stashed changes
+
                 }
 
                 alpha += beta;
@@ -270,24 +224,6 @@ public class TrackingAttackController
             }
         }
 
-        //Console.WriteLine("echter Pfad: "+pathProbablity[25381]);
-        //Console.WriteLine(" +1 : "+pathProbablity[25381 + 1]);
-        //Console.WriteLine("+10: "+pathProbablity[25381 +10]);
-        //Console.WriteLine("+100: "+pathProbablity[25381 + 100]);
-        //Console.WriteLine("+1000: "+pathProbablity[25381 + 1000]);
-
-        Console.WriteLine("   Breakpoint");
-
-<<<<<<< Updated upstream
-
-        Environment.Exit(0);
-=======
-         
-        
-        //TODO add to results
-        
-        //Environment.Exit(0);
->>>>>>> Stashed changes
         return result;
     }
 
