@@ -108,13 +108,20 @@ public class TrackingAttackController
         Dictionary<int, double> pathProbablity = new Dictionary<int, double>();
 
         List<Event> events = eventFileData.Events;
+<<<<<<< Updated upstream
 
         for(int pathID = 0 ; pathID < paths.Count(); pathID++)
+=======
+    
+        //for(int pathID = 0 ; pathID < paths.Count(); pathID++)
+>>>>>>> Stashed changes
         //for(int pathID = 25381 -50 ; pathID < 25381 + 50; pathID++)
+        for(int pathID = 25381; pathID < 25381 +1 ; pathID++)
         {
             //heuristic filter to improve perfomance
-            Coord a_first = _paths[pathID][0];
-            Coord a_last = _paths[pathID].Last();
+            List<Coord> path = _paths[pathID];
+            Coord a_first = path[0];
+            Coord a_last = path.Last();
             Coord b_first = _paths[eventFileData.SimulatedPathId][0];
             Coord b_last = _paths[eventFileData.SimulatedPathId].Last();
             if(Calculations.CalcDistanceInMetres(a_first,b_first) > 10000 ) continue;
@@ -133,9 +140,29 @@ public class TrackingAttackController
 
 
             Console.WriteLine("path: "+pathID);
+
+
             double alpha = 0;
-            List<Coord> path = paths[pathID];
             Dictionary<int, Segment> segments =  Calculations.SampleSegments(path);
+
+
+            //Testing Segments
+             JsonParser.printGPXToFile(path, @"C:\Users\lspie\Desktop\test_gpx\path.gpx");
+
+            List<Coord> segmentStarts = new List<Coord>();
+
+            foreach(Segment s in segments.Values)
+            {
+                segmentStarts.Add(s.StartCoord);
+            }
+
+            JsonParser.printGPXToFile(segmentStarts, @"C:\Users\lspie\Desktop\test_gpx\segments.gpx");
+
+            Console.WriteLine("gpx created");
+            
+
+            // ++++++++++++++++++
+
 
             int nrOfValidSegmentations = 0;
 
@@ -219,18 +246,27 @@ public class TrackingAttackController
                     }
 
                     //Console.WriteLine("nach all locations loop,    count ist: "+countOfOtherPossibleLocations);
+<<<<<<< Updated upstream
 
                     beta += (1 / countOfOtherPossibleLocations);
 
+=======
+                    if(countOfOtherPossibleLocations > 0)
+                    {
+                       beta += (1 / countOfOtherPossibleLocations);          
+                    }
+                
+>>>>>>> Stashed changes
                 }
 
                 alpha += beta;
 
-                if(alpha > 0)
-                {
-                    alpha = alpha / nrOfValidSegmentations;
-                    pathProbablity[pathID] = alpha;
-                }
+            }
+
+            if(alpha > 0)
+            {
+                alpha = alpha / nrOfValidSegmentations;
+                pathProbablity[pathID] = alpha;
             }
         }
 
@@ -240,10 +276,18 @@ public class TrackingAttackController
         //Console.WriteLine("+100: "+pathProbablity[25381 + 100]);
         //Console.WriteLine("+1000: "+pathProbablity[25381 + 1000]);
 
-        //Console.WriteLine("   Breakpoint");
+        Console.WriteLine("   Breakpoint");
 
+<<<<<<< Updated upstream
 
         Environment.Exit(0);
+=======
+         
+        
+        //TODO add to results
+        
+        //Environment.Exit(0);
+>>>>>>> Stashed changes
         return result;
     }
 
@@ -348,10 +392,16 @@ public class TrackingAttackController
         int[] consideredDeviceIDs = addE.ConsideredFogNodes;
         int fastestNodeId = 0;
         double minRt = Double.MaxValue;
+
+         Dictionary<int, double> tmp = new Dictionary<int, double>(); //TODO Remove
+
+
         foreach (int deviceID in consideredDeviceIDs)
         {
             Device d = _fogNodes[deviceID];
             double rt = Calculations.ResponseTime(addE, removeE, d, stats[deviceID], guessedLoc);
+
+            tmp[d.Id] = rt; //TODO remove
 
             if(rt < minRt)
             {
