@@ -159,7 +159,7 @@ def createLocationsFile(): #create List of all Locations and serialize it as Jso
             locations_not_added.append(l)
       
         
-    file = open("json/node_locations.json",'w+')
+    file = open("json/locs_in_voronoy_for_node.json",'w+')
     file.write(json.dumps(nodes_with_locations))
     file.close()
 

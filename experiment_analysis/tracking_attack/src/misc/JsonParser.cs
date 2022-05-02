@@ -2,32 +2,34 @@ using Data;
 using System.Text.Json;
 using Newtonsoft.Json.Linq;
 
+
+
 public class JsonParser
 {
- 
+
    public EventFileData ParseEventFile(string filepath)
     {
         EventFileData ef = new EventFileData();
-        
+
         var jsonString = File.ReadAllText(filepath);
         var jObj = JObject.Parse(jsonString);
 
         int simulatedPathId = ((int)jObj["simulatedPath"]);
 
         int [] compFogNodes = jObj["compromisedFogNodes"].ToObject<int[]>();
-        
-        
+
+
         Dictionary<int, double[]> deviceInfos = new Dictionary<int, double[]> ();
         var fogDeviceInfoArr = jObj["fogDeviceInfos"];
         foreach(var deviceInfoObj in fogDeviceInfoArr)
         {
-            JObject jDeviceInfoObj = (JObject) deviceInfoObj;   
+            JObject jDeviceInfoObj = (JObject) deviceInfoObj;
 
             int deviceId = ((int)jDeviceInfoObj["fog_device_id"]);
             double downlinkBandwidth = ((int)jDeviceInfoObj["downlink_bandwidth"]);
             double uplink_bandwidth = ((int)jDeviceInfoObj["uplink_bandwidth"]);
             double uplink_latency = ((int)jDeviceInfoObj["uplink_latency"]);
-            
+
             deviceInfos[deviceId] = new double[] {downlinkBandwidth, uplink_bandwidth, uplink_latency};
         }
 
@@ -36,7 +38,7 @@ public class JsonParser
         var eventsArr = jObj["events"];
         foreach(var eventObj in eventsArr)
         {
-            JObject jEventObj = (JObject) eventObj;  
+            JObject jEventObj = (JObject) eventObj;
             int event_id = ((int)jEventObj["event_id"]);
             int fog_device_id = ((int)jEventObj["fog_device_id"]);
             string eventName = ((string)jEventObj["event_name"]);
@@ -51,7 +53,7 @@ public class JsonParser
             List<Coord> consideredField = new List<Coord>();
             foreach( var consFieldObj in jEventObj["consideredField"])
             {
-                JObject jConsFieldObj = (JObject) consFieldObj;  
+                JObject jConsFieldObj = (JObject) consFieldObj;
                 double lat = ((double)jConsFieldObj["lat"]);
                 double lon = ((double)jConsFieldObj["lon"]);
                 Coord c = new Coord(lat, lon , -1);
@@ -79,7 +81,7 @@ public class JsonParser
         ef.CompromisedFogNodes = compFogNodes;
         ef.FogDeviceInfos = deviceInfos;
         ef.Events = events;
-    
+
 
         //Environment.Exit(0);
         return ef;
@@ -87,7 +89,7 @@ public class JsonParser
 
     public Dictionary<int, Coord> GetLocations()
     {
-        
+
         Dictionary<int, Coord> locations = new Dictionary<int, Coord>();
 
         var jsonString = File.ReadAllText(Constants.LocationsFilePath);
@@ -109,23 +111,23 @@ public class JsonParser
 
     public Dictionary<int, Device> InitFogNodes()
     {
-        
+
         Dictionary<int, Device> devices = new Dictionary<int, Device>();
 
         var jsonString = File.ReadAllText(Constants.NodeLocationsFilePath);
         var jArr = JArray.Parse(jsonString);
 
         for(int i = 0; i < jArr.Count(); i ++ )
-        {   
+        {
             var nodeInfo = (JArray) jArr[i];
             int id = ((int)nodeInfo[0]);
 
 
-            Coord position = new Coord( 
-                (double) ((JArray) nodeInfo[1])[0], 
-                (double) ((JArray) nodeInfo[1])[1], 
+            Coord position = new Coord(
+                (double) ((JArray) nodeInfo[1])[0],
+                (double) ((JArray) nodeInfo[1])[1],
                 -1);
-           
+
 
             List<Coord> relevantLocations = new List<Coord>();
             var relevantLocationsJArr = nodeInfo[2];
@@ -141,14 +143,14 @@ public class JsonParser
             List<Coord> voronoiVertices = new List<Coord>();
             var verticesJArr = nodeInfo[3];
             foreach (var vertix in verticesJArr)
-            {   
+            {
                 double lat = ((double)vertix[0]);
                 double lon = ((double)vertix[1]);
                 Coord c = new Coord(lat, lon, -1);
                 voronoiVertices.Add(c);
             }
 
-           
+
 
             // Console.WriteLine("id  "+ id);
             // Console.WriteLine("position  "+ position);
@@ -168,20 +170,20 @@ public class JsonParser
         return devices;
     }
 
-  
+
     //to complete the json file
     public List<SquareField> GetSquareFields(Dictionary<int, Coord> locations, Dictionary<int, Device> fogNodes)
     {
         List<SquareField> fields = new List<SquareField>();
-        
+
         var jsonString = File.ReadAllText(Constants.SquaresFilePath);
         var jArr = JArray.Parse(jsonString);
         for(int i = 0; i < jArr.Count(); i ++ )
         {
             var fieldObj = (JObject) jArr[i];
-            
+
             int id = (int) fieldObj["id"];
-            
+
             List<Coord> edges = new List<Coord>();
             var edgesArr = (JArray) fieldObj["edges"];
             for(int j = 0 ; j < edgesArr.Count ; j ++)
@@ -191,7 +193,7 @@ public class JsonParser
                 double lon = (double) edgeObj["lon"];
                 Coord c = new Coord(lat, lon, -1);
                 edges.Add(c);
-            }    
+            }
 
             SquareField f = new SquareField();
             f.Id = id;
@@ -202,7 +204,7 @@ public class JsonParser
 
         }
 
-       
+
         foreach(int i in locations.Keys)
         {
 
@@ -235,7 +237,7 @@ public class JsonParser
 
         //var targetJson = JsonSerializer.Serialize(fields);
         //File.WriteAllText(@"C:\Users\lspie\Desktop\LocPrivFogSim\experiment_analysis\json\10x10_squares_after.json", targetJson);
-        
+
         return fields;
     }
 
@@ -260,9 +262,6 @@ public class JsonParser
 
         File.WriteAllText(filename, fullGPX);
     }
-
-
-
 }
 
 
@@ -270,11 +269,11 @@ public class EventFileData
 {
     public int SimulatedPathId {get; set;}
     public int[] CompromisedFogNodes {get; set;}
-    
+
     public Dictionary<int, double[]> FogDeviceInfos {get; set;} // FogDeviceInfos[id] =  {downlinkBandwidth, uplink_bandwidth, uplink_latency};
 
     public List<Event> Events {get; set;}
-    
 
-    
+
+
 }

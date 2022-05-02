@@ -88,8 +88,7 @@ public static class Calculations
     {
         int x = dtwMatr.GetLength(0);
         int y = dtwMatr.GetLength(1);
-
-        return dtwMatr[x,y];
+        return dtwMatr[x -1,y - 1];
     }
 
     public static List<int[]> DtwWarpingPath(double[,] dtwMatr)
@@ -255,7 +254,7 @@ public static class Calculations
     {
         Dictionary<double, Coord> coordsAtTimestamp = new Dictionary<double, Coord>();
 
-        List<double> timestamps = events.Where(e =>  e.EventName == "add").Select(e => e.Timestamp).ToList<double>();  //TODO verify if this works to get Timestamps of each add-Event
+        List<double> timestamps = events.Where(e =>  e.EventName == "add").Select(e => e.Timestamp).ToList<double>();
 
         int segIndex = 0;
         double currTraversingTimeSum = 0;
@@ -278,8 +277,7 @@ public static class Calculations
                 currTraversingTimeSum += currSegment.TraversingTime;
                 segIndex++;
 
-                if(segIndex == segments.Count) break;
-
+                if(segIndex >= segments.Count) break;
                 currSegment = segments[segIndex];
 
             }
