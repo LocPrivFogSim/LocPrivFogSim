@@ -1,13 +1,12 @@
 namespace Data;
 
-
 public class Event
 {
- 
     public int Id { get; set; }
-    public int FogDeviceId { get; set;}
-    
-    public String EventName { get; set;}
+
+    public int FogDeviceId { get; set; }
+
+    public string EventName { get; set; }
 
     public int EventType { get; set;}
 
@@ -24,5 +23,4 @@ public class Event
     public int[] ConsideredFogNodes { get; set;}
 
     public List<Coord> ConsideredField { get; set;}
-
 }

@@ -14,8 +14,6 @@ public class SquareField
 
     public List<Coord> locations { get; set; }
 
-   
-
     public override string? ToString()
     {
         Type objType = this.GetType();
