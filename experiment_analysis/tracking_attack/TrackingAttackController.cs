@@ -47,8 +47,20 @@ public class TrackingAttackController
     public void printResultsToCSV(ArrayList results)
     {
         //TODO
-        String file = Constants.ResultsFilePath;
+        var file = Path.Combine(Directory.GetCurrentDirectory(), Constants.ResultsFilePath, "test.csv");
+        using var writer = new StreamWriter(file, false);
+        writer.WriteLine($"Strategy,Rate,Iteration,CorrAvgDtwDist,CorrFullDtwDist");
 
+        foreach(var obj in results )
+        {
+            var result = obj as AttackResult;
+            if (result is null)
+                continue;
+
+            writer.WriteLine($"{result.strat},{result.rate},{result.iteration},{result.corrAvgDtwDist},{result.corrFullDtwDist}");
+        }
+
+        writer.Flush();
     }
 
 
@@ -136,10 +148,8 @@ public class TrackingAttackController
             double alpha = 0;
             Dictionary<int, Segment> segments = Calculations.SampleSegments(path);
 
-
-            JsonParser.segmentsAndPathToGPX(segments, path);
-
-
+            // NOTE(markus): For testing TODO do remove
+            // JsonParser.segmentsAndPathToGPX(segments, path);
 
             int nrOfValidSegmentations = 0;
 
