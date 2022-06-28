@@ -258,10 +258,26 @@ public class JsonParser
         }
 
         string fullGPX = beginning + coordsString + end;
-        fullGPX.Replace(",",".");
+        fullGPX = fullGPX.Replace(",",".");
 
         File.WriteAllText(filename, fullGPX);
     }
+
+
+    public static void segmentsAndPathToGPX( Dictionary<int, Segment> segments, List<Coord> path){
+
+          List<Coord> segmentCoords = new List<Coord>();
+
+            foreach(int s in segments.Keys){
+
+                segmentCoords.Add(segments[s].StartCoord);
+            }
+
+            JsonParser.printGPXToFile(segmentCoords, "./_segments.gpx");
+            JsonParser.printGPXToFile(path, "./_path.gpx");
+
+    }
+
 }
 
 

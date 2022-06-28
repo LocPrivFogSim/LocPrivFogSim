@@ -136,6 +136,11 @@ public class TrackingAttackController
             double alpha = 0;
             Dictionary<int, Segment> segments = Calculations.SampleSegments(path);
 
+
+            JsonParser.segmentsAndPathToGPX(segments, path);
+
+
+
             int nrOfValidSegmentations = 0;
 
             for (int j = 0; j < Constants.NumberOfIterations; j++)
