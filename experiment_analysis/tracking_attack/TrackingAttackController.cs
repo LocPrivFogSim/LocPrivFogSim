@@ -43,10 +43,8 @@ public class TrackingAttackController
        printResultsToCSV(results);
     }
 
-
     public void printResultsToCSV(ArrayList results)
     {
-        //TODO
         var file = Path.Combine(Directory.GetCurrentDirectory(), Constants.ResultsFilePath, "test.csv");
         using var writer = new StreamWriter(file, false);
         writer.WriteLine($"Strategy,Rate,Iteration,CorrAvgDtwDist,CorrFullDtwDist");
@@ -378,15 +376,10 @@ public class TrackingAttackController
         int fastestNodeId = 0;
         double minRt = Double.MaxValue;
 
-        Dictionary<int, double> tmp = new Dictionary<int, double>(); //TODO Remove
-
-
         foreach (int deviceID in consideredDeviceIDs)
         {
             Device d = _fogNodes[deviceID];
             double rt = Calculations.ResponseTime(addE, removeE, d, stats[deviceID], guessedLoc);
-
-            tmp[d.Id] = rt; //TODO remove
 
             if (rt < minRt)
             {
@@ -401,8 +394,7 @@ public class TrackingAttackController
     //---------- -- Singleton --------------------
 
     private TrackingAttackController()
-    {
-    }
+    { }
 
     private static TrackingAttackController _instance = new TrackingAttackController();
 
