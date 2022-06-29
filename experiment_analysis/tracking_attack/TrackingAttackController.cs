@@ -43,12 +43,22 @@ public class TrackingAttackController
        printResultsToCSV(results);
     }
 
-
     public void printResultsToCSV(ArrayList results)
     {
-        //TODO
-        String file = Constants.ResultsFilePath;
+        var file = Path.Combine(Directory.GetCurrentDirectory(), Constants.ResultsFilePath, "test.csv");
+        using var writer = new StreamWriter(file, false);
+        writer.WriteLine($"Strategy,Rate,Iteration,CorrAvgDtwDist,CorrFullDtwDist");
 
+        foreach(var obj in results )
+        {
+            var result = obj as AttackResult;
+            if (result is null)
+                continue;
+
+            writer.WriteLine($"{result.strat},{result.rate},{result.iteration},{result.corrAvgDtwDist},{result.corrFullDtwDist}");
+        }
+
+        writer.Flush();
     }
 
 
@@ -119,7 +129,7 @@ public class TrackingAttackController
 
 
 
-        for(int pathID = 25380 ; pathID < paths.Count(); pathID++)
+        for(int pathID = 0 ; pathID < paths.Count(); pathID++)
         {   
             Console.WriteLine("path: "+ pathID);
 
@@ -148,9 +158,8 @@ public class TrackingAttackController
             Dictionary<int, Segment> segments = Calculations.SampleSegments(path);
 
 
-            //JsonParser.segmentsAndPathToGPX(segments, path);
-
-
+            // NOTE(markus): For testing TODO do remove
+            // JsonParser.segmentsAndPathToGPX(segments, path);
 
             int nrOfValidSegmentations = 0;
 
@@ -239,10 +248,15 @@ public class TrackingAttackController
             {
                 alpha = alpha / nrOfValidSegmentations;
                 pathProbablity[pathID] = alpha;
+                
+                /*   
+
+                Lukas: only for testing 
 
                 JsonParser.printGPXToFile(path, "./testingGPX/B_path_"+pathID+"_probabiliy_"+alpha+".gpx");
                 JsonParser.segmentsToGPX(segments, "./testingGPX/B_path_"+pathID+"_probabiliy_"+alpha+"_segments_"+".gpx");
                 Console.WriteLine();
+                */
             }
         }
 
@@ -383,15 +397,10 @@ public class TrackingAttackController
         int fastestNodeId = 0;
         double minRt = Double.MaxValue;
 
-        Dictionary<int, double> tmp = new Dictionary<int, double>(); //TODO Remove
-
-
         foreach (int deviceID in consideredDeviceIDs)
         {
             Device d = _fogNodes[deviceID];
             double rt = Calculations.ResponseTime(addE, removeE, d, stats[deviceID], guessedLoc);
-
-            tmp[d.Id] = rt; //TODO remove
 
             if (rt < minRt)
             {
@@ -406,8 +415,7 @@ public class TrackingAttackController
     //---------- -- Singleton --------------------
 
     private TrackingAttackController()
-    {
-    }
+    { }
 
     private static TrackingAttackController _instance = new TrackingAttackController();
 

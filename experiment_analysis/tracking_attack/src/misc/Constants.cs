@@ -8,7 +8,7 @@ public static class Constants
     public const String NodeLocationsFilePath =@"..\json\locs_in_voronoy_for_node.json";
 
     public const String SquaresFilePath = @"..\json\10x10_squares.json";
-    public const String ResultsFilePath = "./.."; //TODO
+    public const String ResultsFilePath = "./../results";
 
     public const String  EventsFilesDir= @"..\input";
 
