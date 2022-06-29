@@ -37,5 +37,5 @@ public static class Constants
 
     static double[] velocitiesInKPH = new double[]{4, 4, 4, 4 ,5 , 5, 5, 5, 6, 6, 7 ,7 ,7, 8, 10, 10, 10, 11, 15, 20, 20, 30, 50};
 
-    public static int NumberOfIterations = 20;
+    public static int NumberOfIterations = 10000;
 }

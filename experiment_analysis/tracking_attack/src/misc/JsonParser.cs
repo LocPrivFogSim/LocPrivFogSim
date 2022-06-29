@@ -278,6 +278,20 @@ public class JsonParser
 
     }
 
+
+      public static void segmentsToGPX( Dictionary<int, Segment> segments,string filename ){
+
+          List<Coord> segmentCoords = new List<Coord>();
+
+            foreach(int s in segments.Keys){
+
+                segmentCoords.Add(segments[s].StartCoord);
+            }
+            JsonParser.printGPXToFile(segmentCoords, filename);
+    }
+
+
+
 }
 
 

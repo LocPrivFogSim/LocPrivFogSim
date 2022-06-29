@@ -115,9 +115,20 @@ public class TrackingAttackController
 
         List<Coord> originalPath = _paths[eventFileData.SimulatedPathId];
 
+        JsonParser.printGPXToFile(originalPath, "./testingGPX/A_og_path_"+eventFileData.SimulatedPathId+".gpx");
 
-        for(int pathID = 0 ; pathID < paths.Count(); pathID++)
-        {
+
+
+        for(int pathID = 25380 ; pathID < paths.Count(); pathID++)
+        {   
+            Console.WriteLine("path: "+ pathID);
+
+
+            if(pathID == eventFileData.SimulatedPathId){
+                Console.WriteLine("path: "+ pathID);
+            }
+
+
             //heuristic filter to improve perfomance
             List<Coord> path = _paths[pathID];
             Coord a_first = path[0];
@@ -137,7 +148,7 @@ public class TrackingAttackController
             Dictionary<int, Segment> segments = Calculations.SampleSegments(path);
 
 
-            JsonParser.segmentsAndPathToGPX(segments, path);
+            //JsonParser.segmentsAndPathToGPX(segments, path);
 
 
 
@@ -145,7 +156,6 @@ public class TrackingAttackController
 
             for (int j = 0; j < Constants.NumberOfIterations; j++)
             {
-
                 segments = Calculations.SampleSegmentVelocities(segments);
 
                 double sumTraversingTime = calcSumTraversingTime(segments);
@@ -188,6 +198,7 @@ public class TrackingAttackController
                         continue;
                     }
 
+
                     int countOfOtherPossibleLocations = 0;
 
 
@@ -228,6 +239,10 @@ public class TrackingAttackController
             {
                 alpha = alpha / nrOfValidSegmentations;
                 pathProbablity[pathID] = alpha;
+
+                JsonParser.printGPXToFile(path, "./testingGPX/B_path_"+pathID+"_probabiliy_"+alpha+".gpx");
+                JsonParser.segmentsToGPX(segments, "./testingGPX/B_path_"+pathID+"_probabiliy_"+alpha+"_segments_"+".gpx");
+                Console.WriteLine();
             }
         }
 
